@@ -24,43 +24,51 @@
 #'shadowLastChange'.  The value of this attribute is set when the password is
 # changed and is not calculated at the time of the query.
 attributetype ( 1.3.6.1.4.1.27893.4.2.1.5
-   NAME 'pwdShadowLastChange'
+   NAME ( 'pwdShadowLastChange' )
    DESC 'The auto-generated value for shadowLastChange'
    EQUALITY integerMatch
    ORDERING integerOrderingMatch
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
-   SINGLE-VALUE )
+   SINGLE-VALUE
+   NO-USER-MODIFICATION
+   USAGE directoryOperation )
 
 # pwdShadowMin: The minimum number of days before a password can be changed.
 # This attribute is the equivalent of 'shadowMin', but is derived from the
 # value of 'pwdMinAge' in current password policy (pwdMinAge / 60 / 60 /24).
 attributetype ( 1.3.6.1.4.1.27893.4.2.1.6
-   NAME 'pwdShadowMin'
+   NAME ( 'pwdShadowMin' )
    DESC 'The value of pwdMinAge converted for shadowMin'
    EQUALITY integerMatch
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
-   SINGLE-VALUE )
+   SINGLE-VALUE
+   NO-USER-MODIFICATION
+   USAGE directoryOperation )
 
 # pwdShadowMax: The maximum number of days before a password expires. This
 # attribute is the equivalent of 'shadowMax', but is derived from the value of
 # 'pwdMaxAge' in current password policy (pwdMaxAge / 60 / 60 /24).
 attributetype ( 1.3.6.1.4.1.27893.4.2.1.7
-   NAME 'pwdShadowMax'
+   NAME ( 'pwdShadowMax' )
    DESC 'The value of pwdMaxAge converted for shadowMax'
    EQUALITY integerMatch
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
-   SINGLE-VALUE )
+   SINGLE-VALUE
+   NO-USER-MODIFICATION
+   USAGE directoryOperation )
 
 # pwdShadowWarning: The number of days before a password expires during which
 # a user should be warned.  This attribute is the equivalent of
 # 'shadowWarning', but is derived from the value of 'pwdExpireWarning' in
 # current password policy (pwdExpireWarning / 60 / 60 /24).
 attributetype ( 1.3.6.1.4.1.27893.4.2.1.8
-   NAME 'pwdShadowWarning'
+   NAME ( 'pwdShadowWarning' )
    DESC 'The value of pwdExpireWarning converted for shadowWarning'
    EQUALITY integerMatch
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
-   SINGLE-VALUE )
+   SINGLE-VALUE
+   NO-USER-MODIFICATION
+   USAGE directoryOperation )
 
 # pwdShadowInactive: The number of days after a password expires during which
 # the password should still be accepted.  This attribute is the equivalent of
@@ -68,11 +76,13 @@ attributetype ( 1.3.6.1.4.1.27893.4.2.1.8
 # current password policy (pwdGraceExpiry / 60 / 60 /24).
 # 
 attributetype ( 1.3.6.1.4.1.27893.4.2.1.9
-   NAME 'pwdShadowInactive'
+   NAME ( 'pwdShadowInactive' )
    DESC 'The value of pwdGraceExpiry converted for shadowInactive'
    EQUALITY integerMatch
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
-   SINGLE-VALUE )
+   SINGLE-VALUE
+   NO-USER-MODIFICATION
+   USAGE directoryOperation )
 
 # pwdShadowExpire: The number of days after January 1, 1970 on which the
 # account expires. This attribute is the equivalent of 'shadowExpire', but is
@@ -81,27 +91,41 @@ attributetype ( 1.3.6.1.4.1.27893.4.2.1.9
 # and 'pwdShadowInactive' (pwdShadowLastChange + pwdShadowMax +
 # pwdShadowInactive ).
 attributetype ( 1.3.6.1.4.1.27893.4.2.1.10
-   NAME 'pwdShadowExpire'
+   NAME ( 'pwdShadowExpire' )
+   DESC 'The time the password was last changed'
    EQUALITY integerMatch
+   ORDERING integerOrderingMatch
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
-   SINGLE-VALUE )
+   SINGLE-VALUE
+   NO-USER-MODIFICATION
+   USAGE directoryOperation )
 
 # pwdShadowFlag: This attribute is the equivalent of 'shadowFlag'. This
 # attribute is not used by the overlay and is included so pwdShadowAccount is
 # able to be used as a one for one replacement with shadowAccount.
 attributetype ( 1.3.6.1.4.1.27893.4.2.1.11
-   NAME 'pwdShadowFlag'
+   NAME ( 'pwdShadowFlag' )
    EQUALITY integerMatch
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+   SINGLE-VALUE
+   NO-USER-MODIFICATION
+   USAGE directoryOperation )
+
+# pwdShadowGenerate: This attribute enables or disables the generation
+# of shadow compatible attributes from the password policy attributes.
+attributetype ( 1.3.6.1.4.1.27893.4.2.2.1
+   NAME ( 'pwdShadowGenerate' )
+   DESC 'Enables the generation of shadow compatible attributes'
+   EQUALITY booleanMatch
+   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
    SINGLE-VALUE )
 
-objectclass ( 1.3.6.1.4.1.27893.4.2.2.1
-   NAME 'pwdShadowAccount'
-   DESC 'Additional attributes for shadow passwords derived from pwdPolicies'
-   SUP top AUXILIARY
-   MUST uid
-   MAY ( userPassword $ pwdShadowLastChange $ pwdShadowMin $
-         pwdShadowMax $ pwdShadowWarning $ pwdShadowInactive $
-         pwdShadowExpire $ pwdShadowFlag $ description ) )
+objectclass ( 1.3.6.1.4.1.27893.4.2.3.1"
+   NAME 'pwdShadowAccount'"
+   DESC 'Attributes for controlling pwdShadow overlay'"
+   SUP top"
+   AUXILIARY"
+   MUST ( uid )"
+   MAY ( pwdShadowGenerate ) )
 
 # end of schema
