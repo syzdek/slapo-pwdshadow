@@ -4,6 +4,7 @@
 *.swp
 .deps
 .dirstamp
+.libs
 /ABOUT-NLS
 /INSTALL
 /Makefile
