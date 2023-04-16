@@ -64,11 +64,10 @@ openldap-$(OPENLDAP_VERSION).tgz:
 
 openldap/.downloaded: openldap-$(OPENLDAP_VERSION).tgz
 	rm -Rf openldap
-	mkdir openldap
-	cd openldap && tar \
-	   -x \
-	   -f ../openldap-$(OPENLDAP_VERSION).tgz \
-	   --strip-components=1
+	rm -Rf openldap-$(OPENLDAP_VERSION)
+	gzip -cd openldap-$(OPENLDAP_VERSION).tgz |tar -xf - \
+	   || rm -Rf openldap-$(OPENLDAP_VERSION)
+	mv openldap-$(OPENLDAP_VERSION) openldap
 	touch $(@)
 
 
@@ -91,13 +90,13 @@ openldap/Makefile: openldap/.downloaded
 
 openldap/.pwdshadow-depend: openldap/Makefile
 	rm -f $(@)
-	cd openldap && make depend
+	cd openldap && make -j 8 depend
 	touch $(@)
 
 
 openldap/.pwdshadow-all: openldap/.pwdshadow-depend
 	rm -f $(@)
-	cd openldap && make
+	cd openldap && make -j 8
 	touch $(@)
 
 
