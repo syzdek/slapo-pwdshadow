@@ -34,7 +34,7 @@ mandir			?= $(exec_prefix)/share/man
 man5dir			?= $(mandir)/man5
 
 
-.PHONY: all clean install test-env test-env-install
+.PHONY: all clean install test test-install test-env test-env-install
 
 
 .SUFFIXES: .c .o .lo
@@ -52,6 +52,14 @@ pwdshadow.la: pwdshadow.lo
 	$(LIBTOOL) --tag=CC --mode=link $(CC) $(LDFLAGS) $(LDFLAGS_EXTRA) \
 	   -version-info $(LTVERSION) \
 	   -rpath $(moduledir) -module -o pwdshadow.la pwdshadow.lo
+
+
+test: test-env
+	make -C openldap/contrib/slapd-modules/pwdshadow prefix=/tmp/openldap
+
+
+test-install: test-env-install
+	make -C openldap/contrib/slapd-modules/pwdshadow prefix=/tmp/openldap install
 
 
 test-env-install: .test-env-install
