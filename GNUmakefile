@@ -75,15 +75,22 @@ openldap/Makefile: openldap/.downloaded
 	rm -f $(@)
 	cd openldap && ./configure \
 	   --prefix=/tmp/openldap \
+	   --enable-local \
+	   --enable-slapd \
+	   --enable-dynacl \
+	   --enable-aci \
+	   --enable-cleartext \
+	   --enable-crypt \
 	   --enable-syslog \
 	   --enable-dynamic \
 	   --enable-modules \
+           --enable-accesslog=mod \
 	   --enable-ppolicy=mod \
 	   --enable-mdb=mod \
 	   --enable-null=mod \
-	   CFLAGS=-I/opt/local/include \
-	   CPPFLAGS=-I/opt/local/include \
-	   LDFLAGS=-L/opt/local/lib \
+	   CFLAGS="-I/tmp/openldap/include -I/opt/local/include" \
+	   CPPFLAGS="-I/tmp/openldap/include -I/opt/local/include" \
+	   LDFLAGS="-L/tmp/openldap/lib -L/opt/local/lib" \
 	   || rm -Rf openldap
 	touch $(@)
 
