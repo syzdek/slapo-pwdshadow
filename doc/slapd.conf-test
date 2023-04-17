@@ -1,0 +1,72 @@
+#
+# See slapd.conf(5) for details on configuration options.
+# This file should NOT be world readable.
+#
+
+# start daemon with:
+#
+#   /tmp/openldap/libexec/slapd \
+#      -d conns,filter,config,acl,stats,sync \
+#      -f /tmp/openldap/etc/openldap/slapd.conf \
+#      -h "ldap://localhost:8389 ldapi://%2Ftmp%2Fopenldap%2Fvar%2Frun%2Fslapd.sock"
+#
+
+# daemon options
+pidfile		/tmp/openldap/var/run/slapd.pid
+argsfile	/tmp/openldap/var/run/slapd.args
+
+# schema
+include		/tmp/openldap/etc/openldap/schema/core.schema
+include		/tmp/openldap/etc/openldap/schema/cosine.schema
+include		/tmp/openldap/etc/openldap/schema/inetorgperson.schema
+include		/tmp/openldap/etc/openldap/schema/java.schema
+include		/tmp/openldap/etc/openldap/schema/nis.schema
+include		/tmp/openldap/etc/openldap/schema/misc.schema
+
+# load modules
+modulepath	/tmp/openldap/libexec/openldap
+moduleload	accesslog.la
+moduleload	back_mdb.la
+moduleload	back_null.la
+moduleload	ppolicy.la
+#moduleload	pwdshadow.la
+
+# password options
+password-hash               {CRYPT} {SSHA} {SMD5} {CLEARTEXT} 
+password-crypt-salt-format  "$6$%.16s"
+
+# access lists
+access to dn.base="cn=config"
+	by users			read stop
+	by * none stop
+access to dn.base="cn=Monitor"
+	by users			manage stop
+	by * none stop
+access to *
+	by users			manage stop
+	by sockname.regex=PATH=.*	read stop
+	by peername.ip=127.0.0.1	read stop
+	by peername.ipv6=::1		read stop
+	by * none stop
+
+# database cn=config
+database		config
+
+# database: dc=example,dc=com
+database		mdb
+suffix			"dc=example,dc=com"
+maxsize			1073741824
+rootdn			"cn=Manager,dc=example,dc=com"
+rootpw			"drowssap"
+directory		/tmp/openldap/var/openldap-data
+overlay			ppolicy
+ppolicy_default		"dc=example,dc=com"
+ppolicy_hash_cleartext
+index	default		eq,pres
+index	objectClass	eq
+index	uid		eq,pres,sub
+
+# Monitoring suffix (cn=monitor)
+database		monitor
+
+# end of slapd.conf

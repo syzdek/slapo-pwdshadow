@@ -5,6 +5,7 @@
 .deps
 .libs
 .test-env
+.test-env-install
 /openldap/
 /openldap-*.*.*.tgz
 /openldap-*.*.*/

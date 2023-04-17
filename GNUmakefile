@@ -34,7 +34,7 @@ mandir			?= $(exec_prefix)/share/man
 man5dir			?= $(mandir)/man5
 
 
-.PHONY: all clean install test-env
+.PHONY: all clean install test-env test-env-install
 
 
 .SUFFIXES: .c .o .lo
@@ -52,6 +52,9 @@ pwdshadow.la: pwdshadow.lo
 	$(LIBTOOL) --tag=CC --mode=link $(CC) $(LDFLAGS) $(LDFLAGS_EXTRA) \
 	   -version-info $(LTVERSION) \
 	   -rpath $(moduledir) -module -o pwdshadow.la pwdshadow.lo
+
+
+test-env-install: .test-env-install
 
 
 test-env: .test-env
@@ -138,6 +141,14 @@ openldap/contrib/slapd-modules/pwdshadow/pwdshadow.h: pwdshadow.h
 	touch $(@)
 
 
+.test-env-install: .test-env
+	rm -f $(@)
+	cd openldap && make -j 4 install
+	mkdir -p /tmp/openldap/var/openldap-data
+	cp doc/slapd.conf-test /tmp/openldap/etc/openldap/slapd.conf
+	touch $(@)
+
+
 install: pwdshadow.la
 	mkdir -p $(DESTDIR)/$(moduledir)
 	mkdir -p $(DESTDIR)$(man5dir)
@@ -152,10 +163,14 @@ uninstall:
 
 clean:
 	rm -rf *.o *.lo *.la .libs
+	rm -Rf openldap/contrib/slapd-modules/*.o
+	rm -Rf openldap/contrib/slapd-modules/*.lo
+	rm -Rf openldap/contrib/slapd-modules/*.la
+	rm -Rf openldap/contrib/slapd-modules/.libs
 
 
 distclean: clean
-	rm -Rf .test-env openldap openldap-$(OPENLDAP_VERSION).tgz
+	rm -Rf .test-env .test-env-install openldap openldap-$(OPENLDAP_VERSION).tgz
 
 
 # end of makefile
