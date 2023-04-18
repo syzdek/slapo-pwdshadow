@@ -22,7 +22,7 @@ LIBTOOL			?= libtool
 INSTALL			?= /usr/bin/install
 CC			?= gcc
 CFLAGS_EXTRA		+= -g -O2
-CPPFLAGS_EXTRA		+= -I../../../include -I../../../servers/slapd
+CPPFLAGS_EXTRA		+= -I../../../include -I../../../servers/slapd -DSLAPD_OVER_PSHADOW=SLAPD_MOD_DYNAMIC
 LDFLAGS_EXTRA		+=
 
 prefix			?= /usr/local
