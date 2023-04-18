@@ -58,7 +58,7 @@ typedef struct pwdshadow_info
 //              //
 //////////////////
 
-#if SLAPD_OVER_PPOLICY == SLAPD_MOD_DYNAMIC
+#if SLAPD_OVER_PSHADOW == SLAPD_MOD_DYNAMIC
 extern int
 init_module(
         int                             argc,
@@ -332,7 +332,7 @@ static ConfigOCs pshadow_cfg_ocs[] =
 //             //
 /////////////////
 
-#if SLAPD_OVER_PPOLICY == SLAPD_MOD_DYNAMIC
+#if SLAPD_OVER_PSHADOW == SLAPD_MOD_DYNAMIC
 int
 init_module(
 	int				argc,
