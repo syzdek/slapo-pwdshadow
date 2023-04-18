@@ -228,7 +228,8 @@ static struct
                   " DESC 'Enables the generation of shadow compatible attributes'"
                   " EQUALITY booleanMatch"
                   " SYNTAX 1.3.6.1.4.1.1466.115.121.1.7"
-                  " SINGLE-VALUE )",
+                  " SINGLE-VALUE "
+                  " USAGE directoryOperation )",
       .ad      = &ad_pwdShadowGenerate
    },
    {  
