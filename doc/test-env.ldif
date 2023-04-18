@@ -1,0 +1,187 @@
+dn: dc=example,dc=com
+objectClass: top
+objectClass: domain
+objectClass: pwdPolicy
+dc: example
+pwdAttribute: userPassword
+pwdLockout: TRUE
+pwdMaxFailure: 10
+pwdFailureCountInterval: 600
+pwdMustChange: TRUE
+pwdMinLength: 8
+pwdCheckQuality: 2
+pwdMinAge: 30
+pwdInHistory: 40
+pwdGraceAuthNLimit: 0
+pwdExpireWarning: 1209600
+pwdMaxRecordedFailure: 100
+pwdLockoutDuration: 600
+
+dn: ou=PPolicies,dc=example,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: PPolicies
+description: LDAP password policies for slapo-ppolicy overlay
+
+dn: cn=none,ou=PPolicies,dc=example,dc=com
+objectClass: top
+objectClass: pwdPolicy
+objectClass: person
+cn: none
+pwdAttribute: userPassword
+pwdLockout: FALSE
+pwdMustChange: FALSE
+pwdMinLength: 1
+pwdCheckQuality: 0
+pwdInHistory: 1
+pwdMinAge: 0
+pwdMaxAge: 0
+pwdExpireWarning: 0
+pwdMaxFailure: 0
+pwdAllowUserChange: TRUE
+sn: Password Policy: none
+description: Do not enforce password restrictions or limitations.
+
+dn: cn=applications,ou=PPolicies,dc=example,dc=com
+objectClass: top
+objectClass: pwdPolicy
+objectClass: pwdPolicyChecker
+objectClass: person
+cn: applications
+sn: Password Policy: applications
+description: Password policy for application bind DN
+pwdAttribute: userPassword
+pwdInHistory: 0
+pwdLockout: FALSE
+pwdMustChange: FALSE
+pwdMinLength: 16
+pwdCheckQuality: 2
+
+dn: cn=bofh,ou=PPolicies,dc=example,dc=com
+objectClass: top
+objectClass: pwdPolicy
+objectClass: person
+cn: bofh
+sn: Password Policy: bofh
+description: Enforce strict password restrictions and limitations.
+pwdAttribute: userPassword
+pwdMinAge: 172800
+pwdMaxAge: 604800
+pwdInHistory: 200
+pwdCheckQuality: 2
+pwdMinLength: 16
+pwdExpireWarning: 86400
+pwdGraceAuthnLimit: 0
+pwdLockout: TRUE
+pwdLockoutDuration: 3600
+pwdMaxFailure: 3
+pwdMaxRecordedFailure: 5
+pwdFailureCountInterval: 3600
+pwdMustChange: FALSE
+pwdAllowUserChange: TRUE
+pwdSafeModify: FALSE
+
+dn: ou=People,dc=example,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: People
+description: LDAP entries for individual users
+
+dn: uid=root,ou=People,dc=example,dc=com
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+uid: root
+cn: Root User
+sn: Root
+givenName: Root
+
+dn: uid=jdoe,ou=People,dc=example,dc=com
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+objectClass: organizationalPerson
+objectClass: person
+uid: jdoe
+cn: John Doe
+givenName: John
+sn: Doe
+initials: JD
+title: Systems Administrator
+uidNumber: 1000
+gidNumber: 1000
+loginShell: /bin/bash
+homeDirectory: /home/jdoe
+gecos: John Doe
+userPassword: joedoedrowssap
+pwdShadowGenerate: TRUE
+
+dn: uid=ldap,ou=People,dc=example,dc=com
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+objectClass: organizationalPerson
+objectClass: person
+uid: ldap
+cn: OpenLDAP server
+sn: OpenLDAP server
+uidNumber: 330
+gidNumber: 330
+loginShell: /bin/false
+homeDirectory: /var/lib/openldap
+gecos: OpenLDAP server
+userPassword: {CRYPT}*
+pwdPolicySubentry: cn=none,ou=PPolicies,dc=example,dc=com
+pwdShadowGenerate: TRUE
+
+dn: uid=jbuck,ou=People,dc=example,dc=com
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+objectClass: organizationalPerson
+objectClass: person
+uid: jbuck
+cn: Jane Buck
+givenName: Jane
+sn: Buck
+initials: JB
+title: Technician
+uidNumber: 1001
+gidNumber: 1001
+loginShell: /bin/bash
+homeDirectory: /home/jbuck
+gecos: Jane Buck
+userPassword: janebuckdrowssap
+pwdPolicySubentry: cn=bofh,ou=PPolicies,dc=example,dc=com
+pwdShadowGenerate: TRUE
+
+dn: ou=Groups,dc=example,dc=com
+ou: Groups
+objectClass: organizationalUnit
+description: LDAP groups for LDAP users
+
+dn: cn=jdoe,ou=Groups,dc=example,dc=com
+objectClass: top
+objectClass: posixGroup
+gidNumber: 1000
+cn: jdoe
+memberUid: jdoe
+
+dn: cn=jbuck,ou=Groups,dc=example,dc=com
+objectClass: top
+objectClass: posixGroup
+gidNumber: 1001
+cn: jbuck
+memberUid: jbuck
+
+dn: cn=ldap,ou=Groups,dc=example,dc=com
+objectClass: top
+objectClass: posixGroup
+gidNumber: 330
+cn: ldap
+memberUid: ldap
+
