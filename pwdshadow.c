@@ -287,7 +287,7 @@ static ConfigTable pshadow_cfg_ats[] =
       .length        = 0,
       .arg_type      = ARG_ON_OFF|ARG_OFFSET,
       .arg_item      = pshadow_cf_default,
-      .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.2"
+      .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.3"
                         " NAME 'olcPwdShadowOverride'"
                         " DESC 'Attribute which indicates shadow attributes should be generated'"
                         " EQUALITY booleanMatch"
@@ -383,7 +383,7 @@ pshadow_cf_default(
       break;
 
       case SLAP_CONFIG_ADD:
-      /* fallthru to LDAP_MOD_ADD */
+      // fallthru to LDAP_MOD_ADD
 
       case LDAP_MOD_ADD:
       Debug(LDAP_DEBUG_TRACE, "==> pshadow_cf_default add\n" );
@@ -487,8 +487,8 @@ pwdshadow_initialize( void )
       return(code);
    };
 
-   //pshadow.on_bi.bi_type               = "ppolicy";
-   //pshadow.on_bi.bi_flags              = SLAPO_BFLAG_SINGLE;
+   pshadow.on_bi.bi_type               = "pshadow";
+   pshadow.on_bi.bi_flags              = SLAPO_BFLAG_SINGLE;
 
    pshadow.on_bi.bi_db_init            = pshadow_db_init;
    //pshadow.on_bi.bi_db_open            = pshadow_db_open;
