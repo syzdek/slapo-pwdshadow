@@ -29,7 +29,7 @@ moduleload	accesslog.la
 moduleload	back_mdb.la
 moduleload	back_null.la
 moduleload	ppolicy.la
-#moduleload	pwdshadow.la
+moduleload	pwdshadow.la
 
 # password options
 password-hash               {CRYPT} {SSHA} {SMD5} {CLEARTEXT} 
