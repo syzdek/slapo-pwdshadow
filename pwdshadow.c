@@ -49,6 +49,7 @@ typedef struct pwdshadow_info
    struct berval        def_policy;
    char *               pshadow_genattr;
    int                  pshadow_override;
+   int                  pshadow_realtime;
 } pwdshadow_info;
 
 
@@ -304,6 +305,23 @@ static ConfigTable pshadow_cfg_ats[] =
       .arg_default   = NULL
    },
    {
+      .name          = "pwdshadow_realtime",
+      .what          = "on|off",
+      .min_args      = 2,
+      .max_args      = 2,
+      .length        = 0,
+      .arg_type      = ARG_ON_OFF|ARG_OFFSET,
+      .arg_item      = (void *)offsetof(pwdshadow_info,pshadow_realtime),
+      .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.4"
+                        " NAME 'olcPwdShadowRealTime'"
+                        " DESC 'Attribute which indicates shadow attributes should be generated in realtime'"
+                        " EQUALITY booleanMatch"
+                        " SYNTAX OMsBoolean"
+                        " SINGLE-VALUE )",
+      .ad            = NULL,
+      .arg_default   = NULL
+   },
+   {
       .name          = NULL,
       .what          = NULL,
       .min_args      = 0,
@@ -322,7 +340,8 @@ static ConfigOCs pshadow_cfg_ocs[] =
                         " SUP olcOverlayConfig"
                         " MAY ( olcPwdShadowDefault $"
                               " olcPwdShadowGenerationAttribute $"
-                              " olcPwdShadowOverride ) )",
+                              " olcPwdShadowOverride $"
+                              " olcPwdShadowRealTime ) )",
       .co_type       = Cft_Overlay,
       .co_table      = pshadow_cfg_ats
    },
