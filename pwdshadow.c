@@ -72,6 +72,12 @@ pshadow_cf_default(
 
 
 static int
+pshadow_db_destroy(
+        BackendDB *                     be,
+        ConfigReply *                   cr );
+
+
+static int
 pshadow_db_init(
         BackendDB *                     be,
         ConfigReply *                   cr );
@@ -493,7 +499,7 @@ pwdshadow_initialize( void )
    pshadow.on_bi.bi_db_init            = pshadow_db_init;
    //pshadow.on_bi.bi_db_open            = pshadow_db_open;
    //pshadow.on_bi.bi_db_close           = pshadow_db_close;
-   //pshadow.on_bi.bi_db_destroy         = pshadow_db_destroy;
+   pshadow.on_bi.bi_db_destroy         = pshadow_db_destroy;
 
    //pshadow.on_bi.bi_op_add             = pshadow_add;
    //pshadow.on_bi.bi_op_bind            = pshadow_bind;
