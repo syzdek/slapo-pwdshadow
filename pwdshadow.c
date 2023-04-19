@@ -451,6 +451,9 @@ pshadow_db_destroy(
    free( psinfo->def_policy.bv_val );
    free( psinfo );
 
+   if ((cr))
+      return(0);
+
    return(0);
 }
 
