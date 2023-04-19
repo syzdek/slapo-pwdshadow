@@ -35,7 +35,8 @@
 //               //
 ///////////////////
 
-#define PSHADOW_DEFAULT       1
+#define PSHADOW_DEFAULT       0x01
+#define PSHADOW_GENATTR       0x02
 
 
 /////////////////
@@ -278,7 +279,7 @@ static ConfigTable pshadow_cfg_ats[] =
       .min_args      = 2,
       .max_args      = 2,
       .length        = 0,
-      .arg_type      = ARG_DN|ARG_QUOTE|ARG_MAGIC|PSHADOW_DEFAULT,
+      .arg_type      = ARG_MAGIC|PSHADOW_GENATTR,
       .arg_item      = pshadow_cf_default,
       .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.2"
                         " NAME 'olcPwdShadowGenerationAttribute'"
@@ -481,6 +482,9 @@ pshadow_db_init(
 
    // allocate memory for database instance configuration
    psinfo = on->on_bi.bi_private = ch_calloc( sizeof(pwdshadow_info), 1 );
+   psinfo->genattr  = NULL;
+   psinfo->override = 1;
+   psinfo->realtime = 0;
 
    return(0);
 }
