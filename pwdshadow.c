@@ -364,7 +364,11 @@ init_module(
 	int				argc,
 	char *				argv[] )
 {
-	return( pwdshadow_initialize() );
+   if ((argc))
+      return( pwdshadow_initialize() );
+   if ((argv))
+      return( pwdshadow_initialize() );
+   return( pwdshadow_initialize() );
 }
 #endif
 
