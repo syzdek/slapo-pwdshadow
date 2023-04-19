@@ -173,10 +173,10 @@ uninstall:
 
 clean:
 	rm -rf *.o *.lo *.la .libs
-	rm -Rf openldap/contrib/slapd-modules/*.o
-	rm -Rf openldap/contrib/slapd-modules/*.lo
-	rm -Rf openldap/contrib/slapd-modules/*.la
-	rm -Rf openldap/contrib/slapd-modules/.libs
+	rm -Rf openldap/contrib/slapd-modules/pwdshadow/*.o
+	rm -Rf openldap/contrib/slapd-modules/pwdshadow/*.lo
+	rm -Rf openldap/contrib/slapd-modules/pwdshadow/*.la
+	rm -Rf openldap/contrib/slapd-modules/pwdshadow/.libs
 
 
 distclean: clean
