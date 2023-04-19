@@ -21,7 +21,7 @@ OPENLDAP_DOWNLOAD	?= https://www.openldap.org/software/download/OpenLDAP/openlda
 LIBTOOL			?= libtool
 INSTALL			?= /usr/bin/install
 CC			?= gcc
-CFLAGS_EXTRA		+= -g -O2
+CFLAGS_EXTRA		+= -g -O2 -W -Wall
 CPPFLAGS_EXTRA		+= -I../../../include \
 			   -I../../../servers/slapd \
 			   -DSLAPD_OVER_PSHADOW=SLAPD_MOD_DYNAMIC
