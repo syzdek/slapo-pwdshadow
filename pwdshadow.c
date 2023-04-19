@@ -47,9 +47,9 @@
 typedef struct pwdshadow_info
 {
    struct berval        def_policy;
-   char *               pshadow_genattr;
-   int                  pshadow_override;
-   int                  pshadow_realtime;
+   char *               genattr;
+   int                  override;
+   int                  realtime;
 } pwdshadow_info;
 
 
@@ -294,7 +294,7 @@ static ConfigTable pshadow_cfg_ats[] =
       .max_args      = 2,
       .length        = 0,
       .arg_type      = ARG_ON_OFF|ARG_OFFSET,
-      .arg_item      = (void *)offsetof(pwdshadow_info,pshadow_override),
+      .arg_item      = (void *)offsetof(pwdshadow_info,override),
       .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.3"
                         " NAME 'olcPwdShadowOverride'"
                         " DESC 'Attribute which indicates shadow attributes should be generated'"
@@ -311,7 +311,7 @@ static ConfigTable pshadow_cfg_ats[] =
       .max_args      = 2,
       .length        = 0,
       .arg_type      = ARG_ON_OFF|ARG_OFFSET,
-      .arg_item      = (void *)offsetof(pwdshadow_info,pshadow_realtime),
+      .arg_item      = (void *)offsetof(pwdshadow_info,realtime),
       .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.4"
                         " NAME 'olcPwdShadowRealTime'"
                         " DESC 'Attribute which indicates shadow attributes should be generated in realtime'"
