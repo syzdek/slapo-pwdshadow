@@ -60,14 +60,6 @@ typedef struct pwdshadow_info
 //              //
 //////////////////
 
-#if SLAPD_OVER_PSHADOW == SLAPD_MOD_DYNAMIC
-extern int
-init_module(
-        int                             argc,
-        char *                          argv[] );
-#endif
-
-
 static int
 pshadow_cf_default(
         ConfigArgs *                    c );
@@ -83,11 +75,6 @@ static int
 pshadow_db_init(
         BackendDB *                     be,
         ConfigReply *                   cr );
-
-
-extern int
-pwdshadow_initialize(
-        void );
 
 
 /////////////////
