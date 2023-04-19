@@ -46,11 +46,13 @@ all: pwdshadow.la
 
 
 pwdshadow.lo: pwdshadow.c pwdshadow.h
+	rm -f $(@)
 	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(CFLAGS) $(CFLAGS_EXTRA) \
 	   $(CPPFLAGS) $(CPPFLAGS_EXTRA) -o pwdshadow.lo -c pwdshadow.c
 
 
 pwdshadow.la: pwdshadow.lo
+	rm -f $(@)
 	$(LIBTOOL) --tag=CC --mode=link $(CC) $(LDFLAGS) $(LDFLAGS_EXTRA) \
 	   -version-info $(LTVERSION) \
 	   -rpath $(moduledir) -module -o pwdshadow.la pwdshadow.lo
@@ -65,6 +67,8 @@ test-install: test-env-install
 
 
 test-env-install: .test-env-install
+	mkdir -p /tmp/openldap/var/openldap-data
+	cp doc/slapd.conf-test /tmp/openldap/etc/openldap/slapd.conf
 
 
 test-env: .test-env
@@ -154,8 +158,6 @@ openldap/contrib/slapd-modules/pwdshadow/pwdshadow.h: pwdshadow.h
 .test-env-install: .test-env
 	rm -f $(@)
 	cd openldap && make -j 4 install
-	mkdir -p /tmp/openldap/var/openldap-data
-	cp doc/slapd.conf-test /tmp/openldap/etc/openldap/slapd.conf
 	touch $(@)
 
 
