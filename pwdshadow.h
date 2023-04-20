@@ -20,7 +20,6 @@
 //  Headers  //
 //           //
 ///////////////
-#progma mark - Headers
 
 #include "portable.h"
 //#include <ldap.h>
@@ -32,7 +31,6 @@
 //  Prototypes  //
 //              //
 //////////////////
-#progma mark - Prototypes
 
 extern int
 init_module(

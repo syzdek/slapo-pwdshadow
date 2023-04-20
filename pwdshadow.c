@@ -19,7 +19,6 @@
 //  Headers  //
 //           //
 ///////////////
-#pragam mark - Headers
 
 #include "portable.h"
 #include <ldap.h>
@@ -35,7 +34,6 @@
 //  Definitions  //
 //               //
 ///////////////////
-#pragma mark - Definitions
 
 #define PSHADOW_DEFAULT       0x01
 #define PSHADOW_GENATTR       0x02
@@ -46,7 +44,6 @@
 //  Datatypes  //
 //             //
 /////////////////
-#pragma mark - Datatypes
 
 typedef struct pwdshadow_info
 {
@@ -62,7 +59,6 @@ typedef struct pwdshadow_info
 //  Prototypes  //
 //              //
 //////////////////
-#pragma mark - Protoypes
 
 static int
 pshadow_cf_default(
@@ -86,7 +82,6 @@ pshadow_db_init(
 //  Variables  //
 //             //
 /////////////////
-#pragma mark - Variables
 
 static slap_overinst pshadow;
 
@@ -112,7 +107,6 @@ static AttributeDescription *       ad_pwdShadowFlag;
 static AttributeDescription *       ad_pwdShadowGenerate;
 
 
-#pragma mark pshadow_ats
 static struct
 {
    char *                    def;
@@ -236,7 +230,6 @@ static struct
 };
 
 
-#pragma mark pshadow_ocs
 static char * pshadow_ocs[] =
 {
    "( 1.3.6.1.4.1.27893.4.2.3.1"
@@ -250,7 +243,6 @@ static char * pshadow_ocs[] =
 };
 
 
-#pragma mark pshadow_cfg_ats
 static ConfigTable pshadow_cfg_ats[] =
 {
    {
@@ -330,7 +322,6 @@ static ConfigTable pshadow_cfg_ats[] =
 };
 
 
-#pragma mark pshadow_cfg_ocs
 static ConfigOCs pshadow_cfg_ocs[] =
 {
    {  .co_def        = "( 1.3.6.1.4.1.27893.4.2.4.1"
@@ -356,7 +347,6 @@ static ConfigOCs pshadow_cfg_ocs[] =
 //  Functions  //
 //             //
 /////////////////
-#pragma mark - Functions
 
 #if SLAPD_OVER_PSHADOW == SLAPD_MOD_DYNAMIC
 int
