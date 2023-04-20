@@ -47,10 +47,10 @@
 
 typedef struct pwdshadow_info
 {
-   struct berval        def_policy;
-   char *               genattr;
-   int                  override;
-   int                  realtime;
+   struct berval              ps_def_policy;
+   AttributeDescription *     ps_ad_genattr;
+   int                        ps_override;
+   int                        ps_realtime;
 } pwdshadow_info;
 
 
@@ -268,7 +268,7 @@ static ConfigTable pshadow_cfg_ats[] =
       .min_args      = 2,
       .max_args      = 2,
       .length        = 0,
-      .arg_type      = ARG_MAGIC|PSHADOW_GENATTR,
+      .arg_type      = ARG_MAGIC|ARG_ATDESC|PSHADOW_GENATTR,
       .arg_item      = pshadow_cf_default,
       .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.2"
                         " NAME 'olcPwdShadowGenerationAttribute'"
@@ -284,7 +284,7 @@ static ConfigTable pshadow_cfg_ats[] =
       .max_args      = 2,
       .length        = 0,
       .arg_type      = ARG_ON_OFF|ARG_OFFSET,
-      .arg_item      = (void *)offsetof(pwdshadow_info,override),
+      .arg_item      = (void *)offsetof(pwdshadow_info,ps_override),
       .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.3"
                         " NAME 'olcPwdShadowOverride'"
                         " DESC 'Attribute which indicates shadow attributes should be generated'"
@@ -301,7 +301,7 @@ static ConfigTable pshadow_cfg_ats[] =
       .max_args      = 2,
       .length        = 0,
       .arg_type      = ARG_ON_OFF|ARG_OFFSET,
-      .arg_item      = (void *)offsetof(pwdshadow_info,realtime),
+      .arg_item      = (void *)offsetof(pwdshadow_info,ps_realtime),
       .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.4"
                         " NAME 'olcPwdShadowRealTime'"
                         " DESC 'Attribute which indicates shadow attributes should be generated in realtime'"
@@ -368,57 +368,90 @@ pshadow_cf_default(
         ConfigArgs *                    c )
 {
    slap_overinst *   on;
-   pwdshadow_info *  psinfo;
+   pwdshadow_info *  ps;
    int               rc;
 
    on     = (slap_overinst *)c->bi;
-   psinfo = (pwdshadow_info *)on->on_bi.bi_private;
+   ps = (pwdshadow_info *)on->on_bi.bi_private;
    rc     = ARG_BAD_CONF;
 
-   assert ( c->type == PSHADOW_DEFAULT );
    Debug(LDAP_DEBUG_TRACE, "==> pshadow_cf_default\n" );
 
    switch ( c->op )
    {
       case SLAP_CONFIG_EMIT:
-      Debug(LDAP_DEBUG_TRACE, "==> pshadow_cf_default emit\n" );
-      rc = 0;
-      if ( !BER_BVISEMPTY( &psinfo->def_policy ))
+      switch( c->type )
       {
-         if ((rc = value_add_one( &c->rvalue_vals, &psinfo->def_policy )) != 0)
-            return(rc);
-         rc = value_add_one( &c->rvalue_nvals, &psinfo->def_policy );
+         case PSHADOW_DEFAULT:
+         if ( ps->ps_def_policy.bv_val != NULL)
+         {
+            if ((rc = value_add_one( &c->rvalue_vals, &ps->ps_def_policy )) != 0)
+               return(rc);
+            return( value_add_one( &c->rvalue_nvals, &ps->ps_def_policy ) );
+         };
+         return(0);
+
+         case PSHADOW_GENATTR:
+         c->value_ad = ps->ps_ad_genattr;
+         return(0);
+
+         default:
+         Debug(LDAP_DEBUG_ANY, "pshadow_cf_default: unknown configuration option\n" );
+         return( ARG_BAD_CONF );
       };
       break;
 
       case LDAP_MOD_DELETE:
-      Debug(LDAP_DEBUG_TRACE, "==> pshadow_cf_default delete\n" );
-      if ( psinfo->def_policy.bv_val )
+      switch( c->type )
       {
-         ber_memfree ( psinfo->def_policy.bv_val );
-         psinfo->def_policy.bv_val = NULL;
+         case PSHADOW_DEFAULT:
+         Debug(LDAP_DEBUG_TRACE, "==> pshadow_cf_default delete\n" );
+         if ( ps->ps_def_policy.bv_val )
+         {
+            ber_memfree ( ps->ps_def_policy.bv_val );
+            ps->ps_def_policy.bv_val = NULL;
+         };
+         ps->ps_def_policy.bv_len = 0;
+         return(0);
+
+         case PSHADOW_GENATTR:
+         return(0);
+
+         default:
+         Debug(LDAP_DEBUG_ANY, "pshadow_cf_default: unknown configuration option\n" );
+         return( ARG_BAD_CONF );
       };
-      psinfo->def_policy.bv_len = 0;
-      rc = 0;
       break;
 
       case SLAP_CONFIG_ADD:
       // fallthru to LDAP_MOD_ADD
 
       case LDAP_MOD_ADD:
-      Debug(LDAP_DEBUG_TRACE, "==> pshadow_cf_default add\n" );
-      if ( psinfo->def_policy.bv_val )
+      switch( c->type )
       {
-         ber_memfree ( psinfo->def_policy.bv_val );
+         case PSHADOW_DEFAULT:
+         Debug(LDAP_DEBUG_TRACE, "==> pshadow_cf_default add\n" );
+         if (( ps->ps_def_policy.bv_val ))
+         {
+            ber_memfree ( ps->ps_def_policy.bv_val );
+         };
+         ps->ps_def_policy = c->value_ndn;
+         ber_memfree( c->value_dn.bv_val );
+         BER_BVZERO( &c->value_dn );
+         BER_BVZERO( &c->value_ndn );
+         return(0);
+
+         case PSHADOW_GENATTR:
+         return(0);
+
+         default:
+         Debug(LDAP_DEBUG_ANY, "pshadow_cf_default: unknown configuration option\n" );
+         return( ARG_BAD_CONF );
       };
-      psinfo->def_policy = c->value_ndn;
-      ber_memfree( c->value_dn.bv_val );
-      BER_BVZERO( &c->value_dn );
-      BER_BVZERO( &c->value_ndn );
-      rc = 0;
       break;
       
       default:
+      Debug(LDAP_DEBUG_ANY, "pshadow_cf_default: unknown configuration operation\n" );
       abort ();
    };
 
@@ -438,7 +471,7 @@ pshadow_db_destroy(
    psinfo               = on->on_bi.bi_private;
    on->on_bi.bi_private = NULL;
 
-   free( psinfo->def_policy.bv_val );
+   free( psinfo->ps_def_policy.bv_val );
    free( psinfo );
 
    if ((cr))
@@ -470,10 +503,11 @@ pshadow_db_init(
    };
 
    // allocate memory for database instance configuration
-   psinfo = on->on_bi.bi_private = ch_calloc( sizeof(pwdshadow_info), 1 );
-   psinfo->genattr  = NULL;
-   psinfo->override = 1;
-   psinfo->realtime = 0;
+   on->on_bi.bi_private   = ch_calloc( sizeof(pwdshadow_info), 1 );
+   psinfo                 = on->on_bi.bi_private;
+   psinfo->ps_ad_genattr  = ad_pwdShadowGenerate;
+   psinfo->ps_override    = 1;
+   psinfo->ps_realtime    = 0;
 
    return(0);
 }
@@ -530,7 +564,7 @@ pwdshadow_initialize( void )
 
    //pshadow.on_bi.bi_connection_destroy = pshadow_connection_destroy;
 
-   //pshadow.on_bi.bi_cf_ocs             = pshadow_cfg_ocs;
+   pshadow.on_bi.bi_cf_ocs             = pshadow_cfg_ocs;
 
    return(overlay_register( &pshadow ));
 }
