@@ -60,8 +60,12 @@ rootdn			"cn=Manager,dc=example,dc=com"
 rootpw			"drowssap"
 directory		/tmp/openldap/var/openldap-data
 overlay			ppolicy
+overlay			pshadow
 ppolicy_default		"dc=example,dc=com"
 ppolicy_hash_cleartext
+pwdshadow_genattr	"pwdShadowGenerate"
+pwdshadow_realtime	on
+pwdshadow_override	off
 index	default		eq,pres
 index	objectClass	eq
 index	uid		eq,pres,sub
