@@ -26,6 +26,7 @@ CPPFLAGS_EXTRA		+= -I../../../include \
 			   -I../../../servers/slapd \
 			   -DSLAPD_OVER_PSHADOW=SLAPD_MOD_DYNAMIC
 LDFLAGS_EXTRA		+=
+NUMJOBS			?= 4
 
 prefix			?= /usr/local
 exec_prefix		?= $(prefix)
@@ -36,7 +37,14 @@ mandir			?= $(exec_prefix)/share/man
 man5dir			?= $(mandir)/man5
 
 
-.PHONY: all clean install test test-install test-env test-env-install test-env-force
+TEST_TARGET		= openldap/pwdshadow-$(OPENLDAP_VERSION)
+TEST_FILES		= openldap/contrib/slapd-modules/pwdshadow/GNUmakefile \
+			  openldap/contrib/slapd-modules/pwdshadow/pwdshadow.c \
+			  openldap/contrib/slapd-modules/pwdshadow/pwdshadow.h \
+			  openldap/contrib/slapd-modules/pwdshadow/doc/slapo-pwdshadow.5
+
+
+.PHONY: all clean distclean install test-env test-install uninstall
 
 
 .SUFFIXES: .c .o .lo
@@ -58,29 +66,13 @@ pwdshadow.la: pwdshadow.lo
 	   -rpath $(moduledir) -module -o pwdshadow.la pwdshadow.lo
 
 
-test: test-env
-	make -C openldap/contrib/slapd-modules/pwdshadow prefix=/tmp/openldap
-
-
-test-install: test-env-install
+test-install: test-env $(TEST_TARGET)-install
 	make -C openldap/contrib/slapd-modules/pwdshadow prefix=/tmp/openldap install
+	$(INSTALL) -m 644 doc/slapd.conf-test /tmp/openldap/etc/openldap
 
 
-test-env-install: .test-env-install
-	mkdir -p /tmp/openldap/var/openldap-data
-	cp doc/slapd.conf-test /tmp/openldap/etc/openldap/slapd.conf
-
-
-test-env: .test-env
-
-
-test-env-force: openldap/.pwdshadow-all
-	mkdir -p           openldap/contrib/slapd-modules/pwdshadow/doc
-	ln -f  pwdshadow.c openldap/contrib/slapd-modules/pwdshadow/pwdshadow.c
-	ln -f  pwdshadow.h openldap/contrib/slapd-modules/pwdshadow/pwdshadow.h
-	ln -f  GNUmakefile openldap/contrib/slapd-modules/pwdshadow/GNUmakefile
-	ln -f  doc/slapo-pwdshadow.5 \
-	       openldap/contrib/slapd-modules/pwdshadow/doc/slapo-pwdshadow.5
+test-env: $(TEST_FILES)
+	make -C openldap/contrib/slapd-modules/pwdshadow prefix=/tmp/openldap
 
 
 openldap-$(OPENLDAP_VERSION).tgz:
@@ -88,7 +80,7 @@ openldap-$(OPENLDAP_VERSION).tgz:
 	touch $(@)
 
 
-openldap/.downloaded: openldap-$(OPENLDAP_VERSION).tgz
+$(TEST_TARGET)-downloaded: openldap-$(OPENLDAP_VERSION).tgz
 	rm -Rf openldap
 	rm -Rf openldap-$(OPENLDAP_VERSION)
 	gzip -cd openldap-$(OPENLDAP_VERSION).tgz |tar -xf - \
@@ -97,7 +89,7 @@ openldap/.downloaded: openldap-$(OPENLDAP_VERSION).tgz
 	touch $(@)
 
 
-openldap/Makefile: openldap/.downloaded
+$(TEST_TARGET)-configure: $(TEST_TARGET)-downloaded
 	rm -f $(@)
 	cd openldap && ./configure \
 	   --prefix=/tmp/openldap \
@@ -117,56 +109,49 @@ openldap/Makefile: openldap/.downloaded
 	   CFLAGS="-I/tmp/openldap/include -I/opt/local/include" \
 	   CPPFLAGS="-I/tmp/openldap/include -I/opt/local/include" \
 	   LDFLAGS="-L/tmp/openldap/lib -L/opt/local/lib" \
-	   || rm -Rf openldap
+	   || rm -Rf ../openldap
 	touch $(@)
 
 
-openldap/.pwdshadow-depend: openldap/Makefile
+$(TEST_TARGET)-depend: $(TEST_TARGET)-configure
 	rm -f $(@)
-	cd openldap && make -j 8 depend
+	cd openldap && make -j $(NUMJOBS) depend
 	touch $(@)
 
 
-openldap/.pwdshadow-all: openldap/.pwdshadow-depend
+$(TEST_TARGET)-all: $(TEST_TARGET)-depend
 	rm -f $(@)
-	cd openldap && make -j 8
+	cd openldap && make -j $(NUMJOBS)
 	touch $(@)
 
 
-openldap/contrib/slapd-modules/pwdshadow/GNUmakefile: GNUmakefile
+$(TEST_TARGET)-install: $(TEST_TARGET)-all
+	rm -f $(@)
+	cd openldap && make -j $(NUMJOBS) install
+	touch $(@)
+
+
+openldap/contrib/slapd-modules/pwdshadow/GNUmakefile: GNUmakefile $(TEST_TARGET)-all
 	mkdir -p openldap/contrib/slapd-modules/pwdshadow
 	cp -p GNUmakefile $(@)
 	touch $(@)
 
 
-openldap/contrib/slapd-modules/pwdshadow/pwdshadow.c: pwdshadow.c
+openldap/contrib/slapd-modules/pwdshadow/pwdshadow.c: pwdshadow.c $(TEST_TARGET)-all
 	mkdir -p openldap/contrib/slapd-modules/pwdshadow
 	cp -p pwdshadow.c $(@)
 	touch $(@)
 
 
-openldap/contrib/slapd-modules/pwdshadow/pwdshadow.h: pwdshadow.h
+openldap/contrib/slapd-modules/pwdshadow/pwdshadow.h: pwdshadow.h $(TEST_TARGET)-all
 	mkdir -p openldap/contrib/slapd-modules/pwdshadow
 	cp -p pwdshadow.h $(@)
 	touch $(@)
 
 
-.test-env: openldap/.pwdshadow-all
-	rm -f $(@)
-	rm -Rf openldap/contrib/slapd-modules/pwdshadow
-	mkdir -p           openldap/contrib/slapd-modules/pwdshadow/doc
-	ln     pwdshadow.c openldap/contrib/slapd-modules/pwdshadow/pwdshadow.c
-	ln     pwdshadow.h openldap/contrib/slapd-modules/pwdshadow/pwdshadow.h
-	ln     GNUmakefile openldap/contrib/slapd-modules/pwdshadow/GNUmakefile
-	ln doc/slapo-pwdshadow.5 \
-	   openldap/contrib/slapd-modules/pwdshadow/doc/slapo-pwdshadow.5
-	touch              openldap/contrib/slapd-modules/pwdshadow/.test-env
-	touch $(@)
-
-
-.test-env-install: .test-env
-	rm -f $(@)
-	cd openldap && make -j 4 install
+openldap/contrib/slapd-modules/pwdshadow/doc/slapo-pwdshadow.5: doc/slapo-pwdshadow.5 $(TEST_TARGET)-all
+	mkdir -p openldap/contrib/slapd-modules/pwdshadow/doc
+	cp -p doc/slapo-pwdshadow.5 $(@)
 	touch $(@)
 
 
@@ -191,7 +176,7 @@ clean:
 
 
 distclean: clean
-	rm -Rf .test-env .test-env-install openldap openldap-$(OPENLDAP_VERSION).tgz
+	rm -Rf openldap openldap-$(OPENLDAP_VERSION).tgz
 
 
 # end of makefile
