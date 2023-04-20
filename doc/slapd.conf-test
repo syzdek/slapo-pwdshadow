@@ -7,7 +7,7 @@
 #
 #   /tmp/openldap/libexec/slapd \
 #      -d conns,filter,config,acl,stats,sync \
-#      -f /tmp/openldap/etc/openldap/slapd.conf \
+#      -f /tmp/openldap/etc/openldap/slapd.conf-test \
 #      -h "ldap://localhost:8389 ldapi://%2Ftmp%2Fopenldap%2Fvar%2Frun%2Fslapd.sock"
 #
 
