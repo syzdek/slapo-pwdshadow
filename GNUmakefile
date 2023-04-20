@@ -44,7 +44,7 @@ TEST_FILES		= openldap/contrib/slapd-modules/pwdshadow/GNUmakefile \
 			  openldap/contrib/slapd-modules/pwdshadow/doc/slapo-pwdshadow.5
 
 
-.PHONY: all clean distclean install test-env test-install uninstall
+.PHONY: all clean distclean install test-env test-env-install uninstall
 
 
 .SUFFIXES: .c .o .lo
@@ -66,13 +66,13 @@ pwdshadow.la: pwdshadow.lo
 	   -rpath $(moduledir) -module -o pwdshadow.la pwdshadow.lo
 
 
-test-install: test-env $(TEST_TARGET)-install
-	make -C openldap/contrib/slapd-modules/pwdshadow prefix=/tmp/openldap install
-	$(INSTALL) -m 644 doc/slapd.conf-test /tmp/openldap/etc/openldap
-
-
 test-env: $(TEST_FILES)
 	make -C openldap/contrib/slapd-modules/pwdshadow prefix=/tmp/openldap
+
+
+test-env-install: test-env $(TEST_TARGET)-install
+	make -C openldap/contrib/slapd-modules/pwdshadow prefix=/tmp/openldap install
+	$(INSTALL) -m 644 doc/slapd.conf-test /tmp/openldap/etc/openldap
 
 
 openldap-$(OPENLDAP_VERSION).tgz:
