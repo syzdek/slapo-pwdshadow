@@ -229,7 +229,7 @@ static struct
 };
 
 
-static char * pshadow_ocs[] =
+static char * pwdshadow_ocs[] =
 {
    "( 1.3.6.1.4.1.27893.4.2.3.1"
     " NAME 'pwdShadowAccount'"
@@ -505,9 +505,9 @@ pwdshadow_initialize( void )
       };
    };
 
-   for (i = 0; ((pshadow_ocs[i])); i++)
+   for (i = 0; ((pwdshadow_ocs[i])); i++)
    {
-      if ((code = register_oc( pshadow_ocs[i], NULL, 0 )) != 0)
+      if ((code = register_oc( pwdshadow_ocs[i], NULL, 0 )) != 0)
       {
          Debug( LDAP_DEBUG_ANY, "pwdshadow_initialize: register_oc failed\n");
          return(code);
