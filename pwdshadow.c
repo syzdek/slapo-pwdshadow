@@ -82,7 +82,7 @@ pwdshadow_db_init(
 //             //
 /////////////////
 
-static slap_overinst pshadow;
+static slap_overinst pwdshadow;
 
 
 // # OID Base is iso(1) org(3) dod(6) internet(1) private(4) enterprise(1)
@@ -520,26 +520,26 @@ pwdshadow_initialize( void )
       return(code);
    };
 
-   pshadow.on_bi.bi_type               = "pshadow";
-   pshadow.on_bi.bi_flags              = SLAPO_BFLAG_SINGLE;
+   pwdshadow.on_bi.bi_type             = "pshadow";
+   pwdshadow.on_bi.bi_flags            = SLAPO_BFLAG_SINGLE;
 
-   pshadow.on_bi.bi_db_init            = pwdshadow_db_init;
-   //pshadow.on_bi.bi_db_open            = pshadow_db_open;
-   //pshadow.on_bi.bi_db_close           = pshadow_db_close;
-   pshadow.on_bi.bi_db_destroy         = pwdshadow_db_destroy;
+   pwdshadow.on_bi.bi_db_init          = pwdshadow_db_init;
+   //pwdshadow.on_bi.bi_db_open         = pshadow_db_open;
+   //pwdshadow.on_bi.bi_db_close        = pshadow_db_close;
+   pwdshadow.on_bi.bi_db_destroy       = pwdshadow_db_destroy;
 
-   //pshadow.on_bi.bi_op_add             = pshadow_add;
-   //pshadow.on_bi.bi_op_bind            = pshadow_bind;
-   //pshadow.on_bi.bi_op_compare         = pshadow_compare;
-   //pshadow.on_bi.bi_op_delete          = pshadow_restrict;
-   //pshadow.on_bi.bi_op_modify          = pshadow_modify;
-   //pshadow.on_bi.bi_op_search          = pshadow_search;
+   //pwdshadow.on_bi.bi_op_add          = pshadow_add;
+   //pwdshadow.on_bi.bi_op_bind         = pshadow_bind;
+   //pwdshadow.on_bi.bi_op_compare      = pshadow_compare;
+   //pwdshadow.on_bi.bi_op_delete       = pshadow_restrict;
+   //pwdshadow.on_bi.bi_op_modify       = pshadow_modify;
+   //pwdshadow.on_bi.bi_op_search       = pshadow_search;
 
-   //pshadow.on_bi.bi_connection_destroy = pshadow_connection_destroy;
+   //pwdshadow.on_bi.bi_connection_destroy = pshadow_connection_destroy;
 
-   pshadow.on_bi.bi_cf_ocs             = pshadow_cfg_ocs;
+   pwdshadow.on_bi.bi_cf_ocs             = pshadow_cfg_ocs;
 
-   return(overlay_register( &pshadow ));
+   return(overlay_register( &pwdshadow ));
 }
 
 
