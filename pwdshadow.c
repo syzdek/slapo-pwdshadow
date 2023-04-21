@@ -35,7 +35,7 @@
 //               //
 ///////////////////
 
-#define PSHADOW_DEFAULT       0x01
+#define PSHADOW_DEF_POLICY    0x01
 
 
 /////////////////
@@ -250,7 +250,7 @@ static ConfigTable pshadow_cfg_ats[] =
       .min_args      = 2,
       .max_args      = 2,
       .length        = 0,
-      .arg_type      = ARG_DN|ARG_QUOTE|ARG_MAGIC|PSHADOW_DEFAULT,
+      .arg_type      = ARG_DN|ARG_QUOTE|ARG_MAGIC|PSHADOW_DEF_POLICY,
       .arg_item      = pshadow_cf_default,
       .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.1"
                         " NAME 'olcPwdShadowDefault'"
@@ -365,7 +365,7 @@ pshadow_cf_default(
       case SLAP_CONFIG_EMIT:
       switch( c->type )
       {
-         case PSHADOW_DEFAULT:
+         case PSHADOW_DEF_POLICY:
          if ( ps->ps_def_policy.bv_val != NULL)
          {
             if ((rc = value_add_one( &c->rvalue_vals, &ps->ps_def_policy )) != 0)
@@ -383,7 +383,7 @@ pshadow_cf_default(
       case LDAP_MOD_DELETE:
       switch( c->type )
       {
-         case PSHADOW_DEFAULT:
+         case PSHADOW_DEF_POLICY:
          Debug(LDAP_DEBUG_TRACE, "==> pshadow_cf_default delete\n" );
          if ( ps->ps_def_policy.bv_val )
          {
@@ -405,7 +405,7 @@ pshadow_cf_default(
       case LDAP_MOD_ADD:
       switch( c->type )
       {
-         case PSHADOW_DEFAULT:
+         case PSHADOW_DEF_POLICY:
          Debug(LDAP_DEBUG_TRACE, "==> pshadow_cf_default add\n" );
          if (( ps->ps_def_policy.bv_val ))
          {
