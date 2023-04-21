@@ -242,7 +242,7 @@ static char * pwdshadow_ocs[] =
 };
 
 
-static ConfigTable pshadow_cfg_ats[] =
+static ConfigTable pwdshadow_cfg_ats[] =
 {
    {
       .name          = "pwdshadow_default",
@@ -316,7 +316,7 @@ static ConfigOCs pshadow_cfg_ocs[] =
                               " olcPwdShadowOverride $"
                               " olcPwdShadowRealTime ) )",
       .co_type       = Cft_Overlay,
-      .co_table      = pshadow_cfg_ats
+      .co_table      = pwdshadow_cfg_ats
    },
    {  .co_def        = NULL,
       .co_type       = 0,
@@ -514,7 +514,7 @@ pwdshadow_initialize( void )
       };
    };
 
-   if ((code = config_register_schema( pshadow_cfg_ats, pshadow_cfg_ocs )) != 0)
+   if ((code = config_register_schema( pwdshadow_cfg_ats, pshadow_cfg_ocs )) != 0)
    {
       Debug( LDAP_DEBUG_ANY, "pwdshadow_initialize: config_register_schema failed\n");
       return(code);
