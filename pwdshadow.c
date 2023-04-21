@@ -110,7 +110,7 @@ static struct
 {
    char *                    def;
    AttributeDescription **   ad;
-} pshadow_ats[] =
+} pwdshadow_ats[] =
 {
    {  // pwdShadowLastChange: The number of days since January 1, 1970 on which
       // the password was last changed.  This attribute is the equivalent of
@@ -492,16 +492,16 @@ pwdshadow_initialize( void )
    int i;
    int code;
 
-   for(i = 0; ((pshadow_ats[i].def)); i++)
+   for(i = 0; ((pwdshadow_ats[i].def)); i++)
    {
-      if ((code = register_at(pshadow_ats[i].def, pshadow_ats[i].ad, 0)) != 0)
+      if ((code = register_at(pwdshadow_ats[i].def, pwdshadow_ats[i].ad, 0)) != 0)
       {
          Debug( LDAP_DEBUG_ANY, "pwdshadow_initialize: register_at failed\n" );
          return(code);
       };
-      if ((is_at_no_user_mod((*pshadow_ats[i].ad)->ad_type)))
+      if ((is_at_no_user_mod((*pwdshadow_ats[i].ad)->ad_type)))
       {
-         (*pshadow_ats[i].ad)->ad_type->sat_flags |= SLAP_AT_MANAGEABLE;
+         (*pwdshadow_ats[i].ad)->ad_type->sat_flags |= SLAP_AT_MANAGEABLE;
       };
    };
 
@@ -537,7 +537,7 @@ pwdshadow_initialize( void )
 
    //pwdshadow.on_bi.bi_connection_destroy = pshadow_connection_destroy;
 
-   pwdshadow.on_bi.bi_cf_ocs             = pshadow_cfg_ocs;
+   pwdshadow.on_bi.bi_cf_ocs           = pshadow_cfg_ocs;
 
    return(overlay_register( &pwdshadow ));
 }
