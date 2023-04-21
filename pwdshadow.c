@@ -44,13 +44,13 @@
 //             //
 /////////////////
 
-typedef struct pwdshadow_info
+typedef struct pwdshadow_t
 {
    struct berval              ps_def_policy;
    AttributeDescription *     ps_ad_genattr;
    int                        ps_override;
    int                        ps_realtime;
-} pwdshadow_info;
+} pwdshadow_t;
 
 
 //////////////////
@@ -268,7 +268,7 @@ static ConfigTable pshadow_cfg_ats[] =
       .max_args      = 2,
       .length        = 0,
       .arg_type      = ARG_ON_OFF|ARG_OFFSET,
-      .arg_item      = (void *)offsetof(pwdshadow_info,ps_override),
+      .arg_item      = (void *)offsetof(pwdshadow_t,ps_override),
       .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.3"
                         " NAME 'olcPwdShadowOverride'"
                         " DESC 'Attribute which indicates shadow attributes should be generated'"
@@ -285,7 +285,7 @@ static ConfigTable pshadow_cfg_ats[] =
       .max_args      = 2,
       .length        = 0,
       .arg_type      = ARG_ON_OFF|ARG_OFFSET,
-      .arg_item      = (void *)offsetof(pwdshadow_info,ps_realtime),
+      .arg_item      = (void *)offsetof(pwdshadow_t,ps_realtime),
       .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.4"
                         " NAME 'olcPwdShadowRealTime'"
                         " DESC 'Attribute which indicates shadow attributes should be generated in realtime'"
@@ -351,11 +351,11 @@ pshadow_cf_default(
         ConfigArgs *                    c )
 {
    slap_overinst *   on;
-   pwdshadow_info *  ps;
+   pwdshadow_t *     ps;
    int               rc;
 
    on    = (slap_overinst *)c->bi;
-   ps    = (pwdshadow_info *)on->on_bi.bi_private;
+   ps    = (pwdshadow_t *)on->on_bi.bi_private;
    rc    = ARG_BAD_CONF;
 
    Debug(LDAP_DEBUG_TRACE, "==> pshadow_cf_default\n" );
@@ -438,7 +438,7 @@ pshadow_db_destroy(
         ConfigReply *                   cr )
 {
    slap_overinst *   on;
-   pwdshadow_info *  psinfo;
+   pwdshadow_t *     psinfo;
 
    on                   = (slap_overinst *) be->bd_info;
    psinfo               = on->on_bi.bi_private;
@@ -460,7 +460,7 @@ pshadow_db_init(
         ConfigReply *                   cr )
 {
    slap_overinst *   on;
-   pwdshadow_info *  psinfo;
+   pwdshadow_t *     psinfo;
 
    on = (slap_overinst *) be->bd_info;
 
@@ -476,7 +476,7 @@ pshadow_db_init(
    };
 
    // allocate memory for database instance configuration
-   on->on_bi.bi_private   = ch_calloc( sizeof(pwdshadow_info), 1 );
+   on->on_bi.bi_private   = ch_calloc( sizeof(pwdshadow_t), 1 );
    psinfo                 = on->on_bi.bi_private;
    psinfo->ps_ad_genattr  = ad_pwdShadowGenerate;
    psinfo->ps_override    = 1;
