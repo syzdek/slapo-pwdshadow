@@ -36,7 +36,6 @@
 ///////////////////
 
 #define PSHADOW_DEFAULT       0x01
-#define PSHADOW_GENATTR       0x02
 
 
 /////////////////
@@ -263,21 +262,6 @@ static ConfigTable pshadow_cfg_ats[] =
       .arg_default   = NULL
    },
    {
-      .name          = "pwdshadow_genattr",
-      .what          = "pwdshadowGenerationAttribute",
-      .min_args      = 2,
-      .max_args      = 2,
-      .length        = 0,
-      .arg_type      = ARG_MAGIC|ARG_ATDESC|PSHADOW_GENATTR,
-      .arg_item      = pshadow_cf_default,
-      .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.2"
-                        " NAME 'olcPwdShadowGenerationAttribute'"
-                        " DESC 'Attribute which indicates shadow attributes should be generated'"
-                        " EQUALITY distinguishedNameMatch"
-                        " SYNTAX OMsDN"
-                        " SINGLE-VALUE )",
-   },
-   {
       .name          = "pwdshadow_override",
       .what          = "on|off",
       .min_args      = 2,
@@ -329,7 +313,6 @@ static ConfigOCs pshadow_cfg_ocs[] =
                         " DESC 'Password Shadow configuration'"
                         " SUP olcOverlayConfig"
                         " MAY ( olcPwdShadowDefault $"
-                              " olcPwdShadowGenerationAttribute $"
                               " olcPwdShadowOverride $"
                               " olcPwdShadowRealTime ) )",
       .co_type       = Cft_Overlay,
@@ -391,10 +374,6 @@ pshadow_cf_default(
          };
          return(0);
 
-         case PSHADOW_GENATTR:
-         c->value_ad = ps->ps_ad_genattr;
-         return(0);
-
          default:
          Debug(LDAP_DEBUG_ANY, "pshadow_cf_default: unknown configuration option\n" );
          return( ARG_BAD_CONF );
@@ -412,9 +391,6 @@ pshadow_cf_default(
             ps->ps_def_policy.bv_val = NULL;
          };
          ps->ps_def_policy.bv_len = 0;
-         return(0);
-
-         case PSHADOW_GENATTR:
          return(0);
 
          default:
@@ -439,9 +415,6 @@ pshadow_cf_default(
          ber_memfree( c->value_dn.bv_val );
          BER_BVZERO( &c->value_dn );
          BER_BVZERO( &c->value_ndn );
-         return(0);
-
-         case PSHADOW_GENATTR:
          return(0);
 
          default:
