@@ -520,7 +520,7 @@ pwdshadow_initialize( void )
       return(code);
    };
 
-   pwdshadow.on_bi.bi_type             = "pshadow";
+   pwdshadow.on_bi.bi_type             = "pwdshadow";
    pwdshadow.on_bi.bi_flags            = SLAPO_BFLAG_SINGLE;
 
    pwdshadow.on_bi.bi_db_init          = pwdshadow_db_init;
