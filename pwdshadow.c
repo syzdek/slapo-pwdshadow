@@ -306,7 +306,7 @@ static ConfigTable pwdshadow_cfg_ats[] =
 };
 
 
-static ConfigOCs pshadow_cfg_ocs[] =
+static ConfigOCs pwdshadow_cfg_ocs[] =
 {
    {  .co_def        = "( 1.3.6.1.4.1.27893.4.2.4.1"
                         " NAME 'olcPwdShadowConfig'"
@@ -514,7 +514,7 @@ pwdshadow_initialize( void )
       };
    };
 
-   if ((code = config_register_schema( pwdshadow_cfg_ats, pshadow_cfg_ocs )) != 0)
+   if ((code = config_register_schema( pwdshadow_cfg_ats, pwdshadow_cfg_ocs )) != 0)
    {
       Debug( LDAP_DEBUG_ANY, "pwdshadow_initialize: config_register_schema failed\n");
       return(code);
@@ -537,7 +537,7 @@ pwdshadow_initialize( void )
 
    //pwdshadow.on_bi.bi_connection_destroy = pshadow_connection_destroy;
 
-   pwdshadow.on_bi.bi_cf_ocs           = pshadow_cfg_ocs;
+   pwdshadow.on_bi.bi_cf_ocs           = pwdshadow_cfg_ocs;
 
    return(overlay_register( &pwdshadow ));
 }
