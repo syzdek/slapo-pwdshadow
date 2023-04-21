@@ -24,7 +24,7 @@ CC			?= gcc
 CFLAGS_EXTRA		+= -g -O2 -W -Wall
 CPPFLAGS_EXTRA		+= -I../../../include \
 			   -I../../../servers/slapd \
-			   -DSLAPD_OVER_PSHADOW=SLAPD_MOD_DYNAMIC
+			   -DSLAPD_OVER_PWDSHADOW=SLAPD_MOD_DYNAMIC
 LDFLAGS_EXTRA		+=
 NUMJOBS			?= 4
 

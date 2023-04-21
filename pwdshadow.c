@@ -331,7 +331,7 @@ static ConfigOCs pwdshadow_cfg_ocs[] =
 //             //
 /////////////////
 
-#if SLAPD_OVER_PSHADOW == SLAPD_MOD_DYNAMIC
+#if SLAPD_OVER_PWDSHADOW == SLAPD_MOD_DYNAMIC
 int
 init_module(
 	int				argc,
