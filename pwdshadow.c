@@ -60,7 +60,7 @@ typedef struct pwdshadow_t
 //////////////////
 
 static int
-pshadow_cf_default(
+pwdshadow_cfg_gen(
         ConfigArgs *                    c );
 
 
@@ -251,7 +251,7 @@ static ConfigTable pshadow_cfg_ats[] =
       .max_args      = 2,
       .length        = 0,
       .arg_type      = ARG_DN|ARG_QUOTE|ARG_MAGIC|PSHADOW_DEF_POLICY,
-      .arg_item      = pshadow_cf_default,
+      .arg_item      = pwdshadow_cfg_gen,
       .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.1"
                         " NAME 'olcPwdShadowDefault'"
                         " DESC 'DN of a pwdPolicy object for uncustomized objects'"
@@ -347,7 +347,7 @@ init_module(
 
 
 int
-pshadow_cf_default(
+pwdshadow_cfg_gen(
         ConfigArgs *                    c )
 {
    slap_overinst *   on;
@@ -358,7 +358,7 @@ pshadow_cf_default(
    ps    = (pwdshadow_t *)on->on_bi.bi_private;
    rc    = ARG_BAD_CONF;
 
-   Debug(LDAP_DEBUG_TRACE, "==> pshadow_cf_default\n" );
+   Debug(LDAP_DEBUG_TRACE, "==> pwdshadow_cfg_gen\n" );
 
    switch ( c->op )
    {
@@ -375,7 +375,7 @@ pshadow_cf_default(
          return(0);
 
          default:
-         Debug(LDAP_DEBUG_ANY, "pshadow_cf_default: unknown configuration option\n" );
+         Debug(LDAP_DEBUG_ANY, "pwdshadow_cfg_gen: unknown configuration option\n" );
          return( ARG_BAD_CONF );
       };
       break;
@@ -384,7 +384,7 @@ pshadow_cf_default(
       switch( c->type )
       {
          case PSHADOW_DEF_POLICY:
-         Debug(LDAP_DEBUG_TRACE, "==> pshadow_cf_default delete\n" );
+         Debug(LDAP_DEBUG_TRACE, "==> pwdshadow_cfg_gen delete\n" );
          if ( ps->ps_def_policy.bv_val )
          {
             ber_memfree ( ps->ps_def_policy.bv_val );
@@ -394,7 +394,7 @@ pshadow_cf_default(
          return(0);
 
          default:
-         Debug(LDAP_DEBUG_ANY, "pshadow_cf_default: unknown configuration option\n" );
+         Debug(LDAP_DEBUG_ANY, "pwdshadow_cfg_gen: unknown configuration option\n" );
          return( ARG_BAD_CONF );
       };
       break;
@@ -406,7 +406,7 @@ pshadow_cf_default(
       switch( c->type )
       {
          case PSHADOW_DEF_POLICY:
-         Debug(LDAP_DEBUG_TRACE, "==> pshadow_cf_default add\n" );
+         Debug(LDAP_DEBUG_TRACE, "==> pwdshadow_cfg_gen add\n" );
          if (( ps->ps_def_policy.bv_val ))
          {
             ber_memfree ( ps->ps_def_policy.bv_val );
@@ -418,13 +418,13 @@ pshadow_cf_default(
          return(0);
 
          default:
-         Debug(LDAP_DEBUG_ANY, "pshadow_cf_default: unknown configuration option\n" );
+         Debug(LDAP_DEBUG_ANY, "pwdshadow_cfg_gen: unknown configuration option\n" );
          return( ARG_BAD_CONF );
       };
       break;
       
       default:
-      Debug(LDAP_DEBUG_ANY, "pshadow_cf_default: unknown configuration operation\n" );
+      Debug(LDAP_DEBUG_ANY, "pwdshadow_cfg_gen: unknown configuration operation\n" );
       abort ();
    };
 
