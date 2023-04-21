@@ -128,6 +128,7 @@ $(TEST_TARGET)-all: $(TEST_TARGET)-depend
 $(TEST_TARGET)-install: $(TEST_TARGET)-all
 	rm -f $(@)
 	cd openldap && make -j $(NUMJOBS) install
+	mkdir /tmp/openldap/var/openldap-data
 	touch $(@)
 
 
