@@ -354,9 +354,9 @@ pshadow_cf_default(
    pwdshadow_info *  ps;
    int               rc;
 
-   on     = (slap_overinst *)c->bi;
-   ps = (pwdshadow_info *)on->on_bi.bi_private;
-   rc     = ARG_BAD_CONF;
+   on    = (slap_overinst *)c->bi;
+   ps    = (pwdshadow_info *)on->on_bi.bi_private;
+   rc    = ARG_BAD_CONF;
 
    Debug(LDAP_DEBUG_TRACE, "==> pshadow_cf_default\n" );
 
