@@ -438,14 +438,14 @@ pwdshadow_db_destroy(
         ConfigReply *                   cr )
 {
    slap_overinst *   on;
-   pwdshadow_t *     psinfo;
+   pwdshadow_t *     ps;
 
    on                   = (slap_overinst *) be->bd_info;
-   psinfo               = on->on_bi.bi_private;
+   ps                   = on->on_bi.bi_private;
    on->on_bi.bi_private = NULL;
 
-   free( psinfo->ps_def_policy.bv_val );
-   free( psinfo );
+   free( ps->ps_def_policy.bv_val );
+   free( ps );
 
    if ((cr))
       return(0);
@@ -460,7 +460,7 @@ pwdshadow_db_init(
         ConfigReply *                   cr )
 {
    slap_overinst *   on;
-   pwdshadow_t *     psinfo;
+   pwdshadow_t *     ps;
 
    on = (slap_overinst *) be->bd_info;
 
@@ -476,11 +476,11 @@ pwdshadow_db_init(
    };
 
    // allocate memory for database instance configuration
-   on->on_bi.bi_private   = ch_calloc( sizeof(pwdshadow_t), 1 );
-   psinfo                 = on->on_bi.bi_private;
-   psinfo->ps_ad_genattr  = ad_pwdShadowGenerate;
-   psinfo->ps_override    = 1;
-   psinfo->ps_realtime    = 0;
+   on->on_bi.bi_private    = ch_calloc( sizeof(pwdshadow_t), 1 );
+   ps                      = on->on_bi.bi_private;
+   ps->ps_ad_genattr       = ad_pwdShadowGenerate;
+   ps->ps_override         = 1;
+   ps->ps_realtime         = 0;
 
    return(0);
 }
