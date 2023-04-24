@@ -71,6 +71,12 @@ pwdshadow_attr_bool(
 
 
 static int
+pwdshadow_attr_exists(
+      Entry *                          entry,
+      AttributeDescription *           ad );
+
+
+static int
 pwdshadow_cfg_gen(
         ConfigArgs *                    c );
 
@@ -412,6 +418,24 @@ pwdshadow_attr_bool(
    if ((a = attr_find(entry->e_attrs, ad)) == NULL)
       return(0);
    if (a->a_numvals == 0)
+      return(0);
+
+   return(1);
+}
+
+
+int
+pwdshadow_attr_exists(
+      Entry *                          entry,
+      AttributeDescription *           ad )
+{
+   Attribute *       a;
+
+   if ((a = attr_find(entry->e_attrs, ad)) == NULL)
+      return(0);
+   if (a->a_numvals == 0)
+      return(0);
+   if (a->a_nvals[0].bv_len == 0)
       return(0);
 
    return(1);
