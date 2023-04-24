@@ -439,6 +439,8 @@ pwdshadow_attr_exists(
 {
    Attribute *       a;
 
+   if (!(ad))
+      return(0);
    if ((a = attr_find(entry->e_attrs, ad)) == NULL)
       return(0);
    if (a->a_numvals == 0)
