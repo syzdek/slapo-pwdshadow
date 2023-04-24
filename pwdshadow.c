@@ -457,9 +457,9 @@ pwdshadow_attr_integer(
    int               i;
 
    if ((a = attr_find(entry->e_attrs, ad)) == NULL)
-      return(-1);
+      return(0);
    if (a->a_numvals == 0)
-      return(-1);
+      return(0);
 
    // process attribute as Integer
    if ((pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
@@ -468,7 +468,7 @@ pwdshadow_attr_integer(
       return(i);
    };
 
-   return(-1);
+   return(0);
 }
 
 
