@@ -77,6 +77,12 @@ pwdshadow_attr_exists(
 
 
 static int
+pwdshadow_attr_integer(
+      Entry *                          entry,
+      AttributeDescription *           ad);
+
+
+static int
 pwdshadow_cfg_gen(
         ConfigArgs *                    c );
 
@@ -439,6 +445,30 @@ pwdshadow_attr_exists(
       return(0);
 
    return(1);
+}
+
+
+int
+pwdshadow_attr_integer(
+      Entry *                          entry,
+      AttributeDescription *           ad)
+{
+   Attribute *       a;
+   int               i;
+
+   if ((a = attr_find(entry->e_attrs, ad)) == NULL)
+      return(-1);
+   if (a->a_numvals == 0)
+      return(-1);
+
+   // process attribute as Integer
+   if ((pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
+   {
+      lutil_atoi(&i, a->a_nvals[0].bv_val);
+      return(i);
+   };
+
+   return(-1);
 }
 
 
