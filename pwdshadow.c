@@ -417,20 +417,14 @@ pwdshadow_attr_bool(
 {
    Attribute *       a;
 
-   // process attribute as Boolean
-   if ((pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.7")))
-   {
-      if ((a = attr_find(entry->e_attrs, ad)) == NULL)
-         return(-1);
-      if (a->a_numvals == 0)
-         return(-1);
-      return(pwdshadow_parse_bool(&a->a_nvals[0]));
-   };
-
    if ((a = attr_find(entry->e_attrs, ad)) == NULL)
       return(0);
    if (a->a_numvals == 0)
       return(0);
+
+   // process attribute as Boolean
+   if ((pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.7")))
+      return(pwdshadow_parse_bool(&a->a_nvals[0]));
 
    return(1);
 }
