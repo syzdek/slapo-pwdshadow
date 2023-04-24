@@ -106,14 +106,14 @@ static slap_overinst pwdshadow;
 //  Configuration object classes are under 1.3.6.1.4.1.27893.4.2.5
 
 
-static AttributeDescription *       ad_pwdShadowLastChange;
-static AttributeDescription *       ad_pwdShadowMin;
-static AttributeDescription *       ad_pwdShadowMax;
-static AttributeDescription *       ad_pwdShadowWarning;
-static AttributeDescription *       ad_pwdShadowInactive;
-static AttributeDescription *       ad_pwdShadowExpire;
-static AttributeDescription *       ad_pwdShadowFlag;
-static AttributeDescription *       ad_pwdShadowGenerate;
+static AttributeDescription *       ad_pwdShadowLastChange  = NULL;
+static AttributeDescription *       ad_pwdShadowMin         = NULL;
+static AttributeDescription *       ad_pwdShadowMax         = NULL;
+static AttributeDescription *       ad_pwdShadowWarning     = NULL;
+static AttributeDescription *       ad_pwdShadowInactive    = NULL;
+static AttributeDescription *       ad_pwdShadowExpire      = NULL;
+static AttributeDescription *       ad_pwdShadowFlag        = NULL;
+static AttributeDescription *       ad_pwdShadowGenerate    = NULL;
 
 
 static struct
