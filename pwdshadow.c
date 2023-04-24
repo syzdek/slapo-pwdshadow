@@ -83,6 +83,12 @@ pwdshadow_attr_integer(
 
 
 static int
+pwdshadow_attr_time(
+      Entry *                          entry,
+      AttributeDescription *           ad );
+
+
+static int
 pwdshadow_cfg_gen(
         ConfigArgs *                    c );
 
@@ -460,6 +466,42 @@ pwdshadow_attr_integer(
       return(-1);
    if (a->a_numvals == 0)
       return(-1);
+
+   // process attribute as Integer
+   if ((pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
+   {
+      lutil_atoi(&i, a->a_nvals[0].bv_val);
+      return(i);
+   };
+
+   return(-1);
+}
+
+
+int
+pwdshadow_attr_time(
+      Entry *                          entry,
+      AttributeDescription *           ad)
+{
+   Attribute *       a;
+   time_t            t;
+   int               i;
+
+   if ((a = attr_find(entry->e_attrs, ad)) == NULL)
+      return(-1);
+   if (a->a_numvals == 0)
+      return(-1);
+
+   // process attribute as Generalized Time
+   if ((pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.24")))
+   {
+      if ((t = pwdshadow_parse_time(a->a_nvals[0].bv_val)) == ((time_t)-1))
+         return(-1);
+      t /= 60; // convert to minutes
+      t /= 60; // convert to hours
+      t /= 24; // convert to days
+      return((int)t);
+   };
 
    // process attribute as Integer
    if ((pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
