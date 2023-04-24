@@ -53,7 +53,7 @@ typedef struct pwdshadow_t
    AttributeDescription *     ps_ad_shadowLastChange;
    AttributeDescription *     ps_ad_shadowMax;
    AttributeDescription *     ps_ad_userPassword;
-   int                        ps_override;
+   int                        ps_cfg_override;
    int                        ps_realtime;
 } pwdshadow_t;
 
@@ -290,7 +290,7 @@ static ConfigTable pwdshadow_cfg_ats[] =
       .max_args      = 2,
       .length        = 0,
       .arg_type      = ARG_ON_OFF|ARG_OFFSET,
-      .arg_item      = (void *)offsetof(pwdshadow_t,ps_override),
+      .arg_item      = (void *)offsetof(pwdshadow_t,ps_cfg_override),
       .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.3"
                         " NAME 'olcPwdShadowOverride'"
                         " DESC 'Attribute which indicates shadow attributes should be generated'"
@@ -501,7 +501,7 @@ pwdshadow_db_init(
    // allocate memory for database instance configuration
    on->on_bi.bi_private          = ch_calloc( sizeof(pwdshadow_t), 1 );
    ps                            = on->on_bi.bi_private;
-   ps->ps_override               = 1;
+   ps->ps_cfg_override           = 1;
    ps->ps_realtime               = 0;
 
    // retrieve attribute descriptions
