@@ -76,6 +76,11 @@ pwdshadow_db_init(
         ConfigReply *                   cr );
 
 
+static time_t
+pwdshadow_parse_time(
+         char *                        atm );
+
+
 /////////////////
 //             //
 //  Variables  //
@@ -542,5 +547,23 @@ pwdshadow_initialize( void )
    return(overlay_register( &pwdshadow ));
 }
 
+
+time_t
+pwdshadow_parse_time(
+         char *                        atm )
+{
+   struct lutil_tm         tm;
+   struct lutil_timet      tt;
+   time_t                  ret;
+
+   ret = (time_t)-1;
+
+   if ( lutil_parsetime( atm, &tm ) == 0)
+   {
+      lutil_tm2time( &tm, &tt );
+      ret = tt.tt_sec;
+   };
+   return(ret);
+}
 
 /* end of source file */
