@@ -76,6 +76,11 @@ pwdshadow_db_init(
         ConfigReply *                   cr );
 
 
+static int
+pwdshadow_parse_bool(
+         BerValue *                    bv );
+
+
 static time_t
 pwdshadow_parse_time(
          char *                        atm );
@@ -545,6 +550,18 @@ pwdshadow_initialize( void )
    pwdshadow.on_bi.bi_cf_ocs           = pwdshadow_cfg_ocs;
 
    return(overlay_register( &pwdshadow ));
+}
+
+
+int
+pwdshadow_parse_bool(
+         BerValue *                    bv )
+{
+   if ( (!(bv)) || (!(bv->bv_val)) )
+      return(0);
+   if (!(strcasecmp(bv->bv_val, "TRUE")))
+      return(1);
+   return(0);
 }
 
 
