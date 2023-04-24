@@ -482,15 +482,15 @@ pwdshadow_attr_time(
    int               i;
 
    if ((a = attr_find(entry->e_attrs, ad)) == NULL)
-      return(-1);
+      return(0);
    if (a->a_numvals == 0)
-      return(-1);
+      return(0);
 
    // process attribute as Generalized Time
    if ((pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.24")))
    {
       if ((t = pwdshadow_parse_time(a->a_nvals[0].bv_val)) == ((time_t)-1))
-         return(-1);
+         return(0);
       t /= 60; // convert to minutes
       t /= 60; // convert to hours
       t /= 24; // convert to days
@@ -500,11 +500,12 @@ pwdshadow_attr_time(
    // process attribute as Integer
    if ((pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
    {
+      i = 0;
       lutil_atoi(&i, a->a_nvals[0].bv_val);
       return(i);
    };
 
-   return(-1);
+   return(0);
 }
 
 
