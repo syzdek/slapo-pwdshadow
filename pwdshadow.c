@@ -100,11 +100,23 @@ pwdshadow_parse_time(
 static slap_overinst pwdshadow;
 
 
+// external attribute descriptions
 static AttributeDescription *       ad_pwdChangedTime       = NULL;
 static AttributeDescription *       ad_pwdEndTime           = NULL;
 static AttributeDescription *       ad_shadowExpire         = NULL;
 static AttributeDescription *       ad_shadowLastChange     = NULL;
 static AttributeDescription *       ad_userPassword         = NULL;
+
+
+// external internal descriptions
+static AttributeDescription *       ad_pwdShadowLastChange  = NULL;
+static AttributeDescription *       ad_pwdShadowMin         = NULL;
+static AttributeDescription *       ad_pwdShadowMax         = NULL;
+static AttributeDescription *       ad_pwdShadowWarning     = NULL;
+static AttributeDescription *       ad_pwdShadowInactive    = NULL;
+static AttributeDescription *       ad_pwdShadowExpire      = NULL;
+static AttributeDescription *       ad_pwdShadowFlag        = NULL;
+static AttributeDescription *       ad_pwdShadowGenerate    = NULL;
 
 
 // # OID Base is iso(1) org(3) dod(6) internet(1) private(4) enterprise(1)
@@ -118,16 +130,7 @@ static AttributeDescription *       ad_userPassword         = NULL;
 //  Configuration object classes are under 1.3.6.1.4.1.27893.4.2.5
 
 
-static AttributeDescription *       ad_pwdShadowLastChange  = NULL;
-static AttributeDescription *       ad_pwdShadowMin         = NULL;
-static AttributeDescription *       ad_pwdShadowMax         = NULL;
-static AttributeDescription *       ad_pwdShadowWarning     = NULL;
-static AttributeDescription *       ad_pwdShadowInactive    = NULL;
-static AttributeDescription *       ad_pwdShadowExpire      = NULL;
-static AttributeDescription *       ad_pwdShadowFlag        = NULL;
-static AttributeDescription *       ad_pwdShadowGenerate    = NULL;
-
-
+// overlay's LDAP operational and user attributes
 static struct
 {
    char *                    def;
@@ -251,6 +254,7 @@ static struct
 };
 
 
+// overlay's LDAP user object classes
 static char * pwdshadow_ocs[] =
 {
    "( 1.3.6.1.4.1.27893.4.2.3.1"
@@ -264,6 +268,7 @@ static char * pwdshadow_ocs[] =
 };
 
 
+// overlay's configuration attribute types
 static ConfigTable pwdshadow_cfg_ats[] =
 {
    {
@@ -328,6 +333,7 @@ static ConfigTable pwdshadow_cfg_ats[] =
 };
 
 
+// overlay's configuration object classes
 static ConfigOCs pwdshadow_cfg_ocs[] =
 {
    {  .co_def        = "( 1.3.6.1.4.1.27893.4.2.4.1"
