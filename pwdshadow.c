@@ -95,6 +95,13 @@ pwdshadow_parse_time(
 static slap_overinst pwdshadow;
 
 
+static AttributeDescription *       ad_pwdChangedTime       = NULL;
+static AttributeDescription *       ad_pwdEndTime           = NULL;
+static AttributeDescription *       ad_shadowExpire         = NULL;
+static AttributeDescription *       ad_shadowLastChange     = NULL;
+static AttributeDescription *       ad_userPassword         = NULL;
+
+
 // # OID Base is iso(1) org(3) dod(6) internet(1) private(4) enterprise(1)
 //  dms(27893) software(4) slapo-pwdshadow(2).
 //  i.e. slapo-pwdshadow is 1.3.6.1.4.1.27893.4.2
@@ -501,6 +508,7 @@ pwdshadow_initialize( void )
 {
    int               i;
    int               code;
+   const char *      text;
 
    for(i = 0; ((pwdshadow_ats[i].def)); i++)
    {
@@ -529,6 +537,12 @@ pwdshadow_initialize( void )
       Debug( LDAP_DEBUG_ANY, "pwdshadow_initialize: config_register_schema failed\n");
       return(code);
    };
+
+   slap_str2ad("pwdChangedTime",       &ad_pwdChangedTime,     &text);
+   slap_str2ad("pwdEndTime",           &ad_pwdEndTime,         &text);
+   slap_str2ad("shadowExpire",         &ad_shadowExpire,       &text);
+   slap_str2ad("shadowLastChange",     &ad_shadowLastChange,   &text);
+   ad_userPassword                     = slap_schema.si_ad_userPassword;
 
    pwdshadow.on_bi.bi_type             = "pwdshadow";
    pwdshadow.on_bi.bi_flags            = SLAPO_BFLAG_SINGLE;
