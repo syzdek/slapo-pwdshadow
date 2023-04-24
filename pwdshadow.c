@@ -47,7 +47,12 @@
 typedef struct pwdshadow_t
 {
    struct berval              ps_def_policy;
-   AttributeDescription *     ps_ad_genattr;
+   AttributeDescription *     ps_ad_pwdChangedTime;
+   AttributeDescription *     ps_ad_pwdEndTime;
+   AttributeDescription *     ps_ad_shadowExpire;
+   AttributeDescription *     ps_ad_shadowLastChange;
+   AttributeDescription *     ps_ad_shadowMax;
+   AttributeDescription *     ps_ad_userPassword;
    int                        ps_override;
    int                        ps_realtime;
 } pwdshadow_t;
@@ -478,6 +483,7 @@ pwdshadow_db_init(
 {
    slap_overinst *   on;
    pwdshadow_t *     ps;
+   const char *      text;
 
    on = (slap_overinst *) be->bd_info;
 
@@ -495,9 +501,20 @@ pwdshadow_db_init(
    // allocate memory for database instance configuration
    on->on_bi.bi_private          = ch_calloc( sizeof(pwdshadow_t), 1 );
    ps                            = on->on_bi.bi_private;
-   ps->ps_ad_userPassword        = slap_schema.si_ad_userPassword;
    ps->ps_override               = 1;
    ps->ps_realtime               = 0;
+
+   // retrieve attribute descriptions
+   if ((ps->ps_ad_pwdChangedTime = ad_pwdChangedTime) == NULL)
+      slap_str2ad("pwdChangedTime", &ps->ps_ad_pwdChangedTime, &text);
+   if ((ps->ps_ad_pwdEndTime = ad_pwdEndTime) == NULL)
+      slap_str2ad("pwdEndTime", &ps->ps_ad_pwdEndTime, &text);
+   if ((ps->ps_ad_shadowExpire = ad_shadowExpire) == NULL)
+      slap_str2ad("shadowExpire", &ps->ps_ad_shadowExpire, &text);
+   if ((ps->ps_ad_shadowLastChange = ad_shadowLastChange) == NULL)
+      slap_str2ad("shadowLastChange", &ps->ps_ad_shadowLastChange, &text);
+   if ((ps->ps_ad_userPassword = ad_userPassword) == NULL)
+      slap_str2ad("userPassword", &ps->ps_ad_userPassword, &text);
 
    return(0);
 }
