@@ -481,11 +481,11 @@ pwdshadow_db_init(
    };
 
    // allocate memory for database instance configuration
-   on->on_bi.bi_private    = ch_calloc( sizeof(pwdshadow_t), 1 );
-   ps                      = on->on_bi.bi_private;
-   ps->ps_ad_genattr       = ad_pwdShadowGenerate;
-   ps->ps_override         = 1;
-   ps->ps_realtime         = 0;
+   on->on_bi.bi_private          = ch_calloc( sizeof(pwdshadow_t), 1 );
+   ps                            = on->on_bi.bi_private;
+   ps->ps_ad_userPassword        = slap_schema.si_ad_userPassword;
+   ps->ps_override               = 1;
+   ps->ps_realtime               = 0;
 
    return(0);
 }
@@ -494,8 +494,8 @@ pwdshadow_db_init(
 int
 pwdshadow_initialize( void )
 {
-   int i;
-   int code;
+   int               i;
+   int               code;
 
    for(i = 0; ((pwdshadow_ats[i].def)); i++)
    {
