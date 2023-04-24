@@ -79,7 +79,7 @@ pwdshadow_attr_exists(
 static int
 pwdshadow_attr_integer(
       Entry *                          entry,
-      AttributeDescription *           ad);
+      AttributeDescription *           ad );
 
 
 static int
@@ -413,7 +413,7 @@ init_module(
 int
 pwdshadow_attr_bool(
       Entry *                          entry,
-      AttributeDescription *           ad)
+      AttributeDescription *           ad )
 {
    Attribute *       a;
 
@@ -455,7 +455,7 @@ pwdshadow_attr_exists(
 int
 pwdshadow_attr_integer(
       Entry *                          entry,
-      AttributeDescription *           ad)
+      AttributeDescription *           ad )
 {
    Attribute *       a;
    int               i;
@@ -481,7 +481,7 @@ pwdshadow_attr_integer(
 int
 pwdshadow_attr_time(
       Entry *                          entry,
-      AttributeDescription *           ad)
+      AttributeDescription *           ad )
 {
    Attribute *       a;
    time_t            t;
