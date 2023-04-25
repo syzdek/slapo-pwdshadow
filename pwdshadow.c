@@ -111,6 +111,12 @@ pwdshadow_get_mods(
 
 
 static int
+pwdshadow_get_mods_bool(
+      Modifications *                  mods,
+      AttributeDescription *           ad );
+
+
+static int
 pwdshadow_op_search(
          Operation *                   op,
          SlapReply *                   rs );
@@ -688,6 +694,20 @@ pwdshadow_get_mods(
    if (mods->sml_numvals < 1)
       return(-1);
    return(0);
+}
+
+
+int
+pwdshadow_get_mods_bool(
+      Modifications *                  mods,
+      AttributeDescription *           ad )
+{
+   int rc;
+   if ((rc = pwdshadow_get_mods(mods)) != 0)
+      return(rc);
+   if ((pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.7")))
+      return(pwdshadow_parse_bool(&mods->sml_values[0]));
+   return(1);
 }
 
 
