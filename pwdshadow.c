@@ -39,6 +39,12 @@
 
 #define PWDSHADOW_DEF_POLICY     0x01
 
+#define PWDSHADOW_OP_UNKNOWN     -2
+#define PWDSHADOW_OP_DELETE      -1
+#define PWDSHADOW_OP_NONE        0
+#define PWDSHADOW_OP_ADD         1
+
+
 
 /////////////////
 //             //
