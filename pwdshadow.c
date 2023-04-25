@@ -105,6 +105,12 @@ pwdshadow_cfg_gen(
         ConfigArgs *                    c );
 
 
+static void
+pwdshadow_copy_int_bv(
+         int                           i,
+         BerValue *                    bv );
+
+
 static int
 pwdshadow_db_destroy(
         BackendDB *                     be,
@@ -583,6 +589,19 @@ pwdshadow_cfg_gen(
    };
 
    return(rc);
+}
+
+
+void
+pwdshadow_copy_int_bv(
+         int                           i,
+         BerValue *                    bv )
+{
+   bv->bv_len = snprintf(NULL, 0, "%i", i);
+   bv->bv_len++;
+   bv->bv_val = ch_malloc( (size_t)bv->bv_len );
+   bv->bv_len = snprintf(bv->bv_val, bv->bv_len, "%i", i);
+   return;
 }
 
 
