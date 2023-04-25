@@ -76,25 +76,25 @@ typedef struct pwdshadow_t
 } pwdshadow_t;
 
 
-typedef struct pwdshadow_mod_t
+typedef struct pwdshadow_data_t
 {
    int                        cur;
    int                        op;
    int                        new;
-} pwdshadow_mod_t;
+} pwdshadow_data_t;
 
 
 typedef struct pwdshadow_state_t
 {
    Entry *                    st_entry;
-   pwdshadow_mod_t            st_pwdChangedTime;
-   pwdshadow_mod_t            st_pwdEndTime;
-   pwdshadow_mod_t            st_pwdShadowExpire;
-   pwdshadow_mod_t            st_pwdShadowGenerate;
-   pwdshadow_mod_t            st_pwdShadowLastChange;
-   pwdshadow_mod_t            st_shadowExpire;
-   pwdshadow_mod_t            st_shadowLastChange;
-   pwdshadow_mod_t            st_userPassword;
+   pwdshadow_data_t           st_pwdChangedTime;
+   pwdshadow_data_t           st_pwdEndTime;
+   pwdshadow_data_t           st_pwdShadowExpire;
+   pwdshadow_data_t           st_pwdShadowGenerate;
+   pwdshadow_data_t           st_pwdShadowLastChange;
+   pwdshadow_data_t           st_shadowExpire;
+   pwdshadow_data_t           st_shadowLastChange;
+   pwdshadow_data_t           st_userPassword;
 } pwdshadow_state_t;
 
 
@@ -171,31 +171,31 @@ pwdshadow_get_attr_time(
 static int
 pwdshadow_get_mods(
       Modifications *                  mods,
-      pwdshadow_mod_t *                psm );
+      pwdshadow_data_t *               psm );
 
 
 static int
 pwdshadow_get_mods_bool(
       Modifications *                  mods,
-      pwdshadow_mod_t *                psm );
+      pwdshadow_data_t *               psm );
 
 
 static int
 pwdshadow_get_mods_exists(
       Modifications *                  mods,
-      pwdshadow_mod_t *                psm );
+      pwdshadow_data_t *               psm );
 
 
 static int
 pwdshadow_get_mods_integer(
       Modifications *                  mods,
-      pwdshadow_mod_t *                psm );
+      pwdshadow_data_t *               psm );
 
 
 static int
 pwdshadow_get_mods_time(
       Modifications *                  mods,
-      pwdshadow_mod_t *                psm );
+      pwdshadow_data_t *               psm );
 
 
 static int
@@ -868,7 +868,7 @@ pwdshadow_get_attr_time(
 int
 pwdshadow_get_mods(
       Modifications *                  mods,
-      pwdshadow_mod_t *                psm )
+      pwdshadow_data_t *               psm )
 {
    switch(mods->sml_op)
    {
@@ -884,7 +884,7 @@ pwdshadow_get_mods(
 int
 pwdshadow_get_mods_bool(
       Modifications *                  mods,
-      pwdshadow_mod_t *                psm )
+      pwdshadow_data_t *               psm )
 {
    int rc;
    if ((rc = pwdshadow_get_mods(mods, psm)) != PWDSHADOW_OP_ADD)
@@ -899,7 +899,7 @@ pwdshadow_get_mods_bool(
 int
 pwdshadow_get_mods_exists(
       Modifications *                  mods,
-      pwdshadow_mod_t *                psm )
+      pwdshadow_data_t *               psm )
 {
    int rc;
    if ((rc = pwdshadow_get_mods(mods, psm)) != PWDSHADOW_OP_ADD)
@@ -912,7 +912,7 @@ pwdshadow_get_mods_exists(
 int
 pwdshadow_get_mods_integer(
       Modifications *                  mods,
-      pwdshadow_mod_t *                psm )
+      pwdshadow_data_t *               psm )
 {
    int rc;
    int i;
@@ -937,7 +937,7 @@ pwdshadow_get_mods_integer(
 int
 pwdshadow_get_mods_time(
       Modifications *                  mods,
-      pwdshadow_mod_t *                psm )
+      pwdshadow_data_t *               psm )
 {
    int      rc;
    time_t   t;
