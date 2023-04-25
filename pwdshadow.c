@@ -19,6 +19,7 @@
 //  Headers  //
 //           //
 ///////////////
+#pragma mark - Headers
 
 #include "portable.h"
 #include <ldap.h>
@@ -34,6 +35,7 @@
 //  Definitions  //
 //               //
 ///////////////////
+#pragma mark - Definitions
 
 #define PWDSHADOW_DEF_POLICY     0x01
 
@@ -43,6 +45,7 @@
 //  Datatypes  //
 //             //
 /////////////////
+#pragma mark - Datatypes
 
 typedef struct pwdshadow_t
 {
@@ -63,6 +66,7 @@ typedef struct pwdshadow_t
 //  Prototypes  //
 //              //
 //////////////////
+#pragma mark - Prototypes
 
 static int
 pwdshadow_cfg_gen(
@@ -157,6 +161,7 @@ pwdshadow_verify_attr_syntax(
 //  Variables  //
 //             //
 /////////////////
+#pragma mark - Variables
 
 static slap_overinst pwdshadow;
 
@@ -192,6 +197,7 @@ static AttributeDescription *       ad_pwdShadowGenerate    = NULL;
 
 
 // overlay's LDAP operational and user attributes
+#pragma mark pwdshadow_ats
 static struct
 {
    char *                    def;
@@ -316,6 +322,7 @@ static struct
 
 
 // overlay's LDAP user object classes
+#pragma mark pwdshadow_ocs
 static char * pwdshadow_ocs[] =
 {
    "( 1.3.6.1.4.1.27893.4.2.3.1"
@@ -330,6 +337,7 @@ static char * pwdshadow_ocs[] =
 
 
 // overlay's configuration attribute types
+#pragma mark pwdshadow_cfg_ats
 static ConfigTable pwdshadow_cfg_ats[] =
 {
    {
@@ -395,6 +403,7 @@ static ConfigTable pwdshadow_cfg_ats[] =
 
 
 // overlay's configuration object classes
+#pragma mark pwdshadow_cfg_ocs
 static ConfigOCs pwdshadow_cfg_ocs[] =
 {
    {  .co_def        = "( 1.3.6.1.4.1.27893.4.2.4.1"
@@ -419,6 +428,7 @@ static ConfigOCs pwdshadow_cfg_ocs[] =
 //  Functions  //
 //             //
 /////////////////
+#pragma mark - Functions
 
 #if SLAPD_OVER_PWDSHADOW == SLAPD_MOD_DYNAMIC
 int
