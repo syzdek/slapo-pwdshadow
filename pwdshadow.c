@@ -784,9 +784,10 @@ pwdshadow_get_mods_bool(
    int rc;
    if ((rc = pwdshadow_get_mods(mods, psm)) != PWDSHADOW_OP_ADD)
       return(rc);
+   psm->new = 1;
    if ((pwdshadow_verify_attr_syntax(mods->sml_desc, "1.3.6.1.4.1.1466.115.121.1.7")))
-      return(psm->cur = pwdshadow_parse_bool(&mods->sml_values[0]));
-   return(psm->cur = 1);
+      psm->new = pwdshadow_parse_bool(&mods->sml_values[0]);
+   return(psm->op);
 }
 
 
