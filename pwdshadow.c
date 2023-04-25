@@ -799,7 +799,8 @@ pwdshadow_get_mods_exists(
    int rc;
    if ((rc = pwdshadow_get_mods(mods, psm)) != PWDSHADOW_OP_ADD)
       return(rc);
-   return(psm->cur = 1);
+   psm->new = 1;
+   return(psm->op);
 }
 
 
