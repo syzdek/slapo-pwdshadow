@@ -816,14 +816,15 @@ pwdshadow_get_mods_integer(
       return(rc);
 
    // process attribute as Integer
+   psm->cur = 0;
    if ((pwdshadow_verify_attr_syntax(mods->sml_desc, "1.3.6.1.4.1.1466.115.121.1.27")))
    {
       i = 0;
       lutil_atoi(&i, mods->sml_values[0].bv_val);
-      return(psm->cur = i);
+      psm->new = i;
    };
 
-   return(psm->cur = 0);
+   return(psm->op);
 }
 
 
