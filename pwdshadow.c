@@ -86,6 +86,7 @@ typedef struct pwdshadow_state_t
    Entry *                    st_entry;
    pwdshadow_mod_t            st_pwdChangedTime;
    pwdshadow_mod_t            st_pwdEndTime;
+   pwdshadow_mod_t            st_pwdShadowExpire;
    pwdshadow_mod_t            st_pwdShadowGenerate;
    pwdshadow_mod_t            st_shadowExpire;
    pwdshadow_mod_t            st_shadowLastChange;
