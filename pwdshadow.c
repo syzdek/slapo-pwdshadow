@@ -106,6 +106,11 @@ pwdshadow_get_attr_time(
 
 
 static int
+pwdshadow_get_mods(
+      Modifications *                  mods );
+
+
+static int
 pwdshadow_op_search(
          Operation *                   op,
          SlapReply *                   rs );
@@ -665,6 +670,23 @@ pwdshadow_get_attr_time(
       return(i);
    };
 
+   return(0);
+}
+
+
+int
+pwdshadow_get_mods(
+      Modifications *                  mods )
+{
+   switch(mods->sml_op)
+   {
+      case LDAP_MOD_DELETE:  return(-1);
+      case LDAP_MOD_ADD:     return(0);
+      case LDAP_MOD_REPLACE: break;
+      default:               return(-2);
+   };
+   if (mods->sml_numvals < 1)
+      return(-1);
    return(0);
 }
 
