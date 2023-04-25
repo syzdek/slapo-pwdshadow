@@ -123,6 +123,11 @@ pwdshadow_eval_gen(
 
 
 static int
+pwdshadow_eval_init(
+      pwdshadow_state_t *              st );
+
+
+static int
 pwdshadow_get_attr_bool(
       Entry *                          entry,
       AttributeDescription *           ad );
@@ -650,6 +655,18 @@ pwdshadow_eval_gen(
    if (st->st_pwdShadowGenerate.op == PWDSHADOW_OP_ADD)
       return(((st->st_pwdShadowGenerate.new)) ? 1 : 0);
    return(((st->st_pwdShadowGenerate.cur)) ? 1 : 0);
+}
+
+
+int
+pwdshadow_eval_init(
+      pwdshadow_state_t *              st )
+{
+   if ((st->st_pwdShadowGenerate.cur))
+      return(0);
+   if (st->st_pwdShadowGenerate.op != PWDSHADOW_OP_ADD)
+      return(0);
+   return(((st->st_pwdShadowGenerate.new)) ? 1 : 0);
 }
 
 
