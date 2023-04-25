@@ -68,6 +68,14 @@ typedef struct pwdshadow_t
 } pwdshadow_t;
 
 
+typedef struct pwdshadow_mod_t
+{
+   int                        cur;
+   int                        op;
+   int                        new;
+} pwdshadow_mod_t;
+
+
 //////////////////
 //              //
 //  Prototypes  //
