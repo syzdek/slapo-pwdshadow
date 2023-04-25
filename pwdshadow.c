@@ -128,6 +128,12 @@ pwdshadow_eval_init(
 
 
 static int
+pwdshadow_gen_lastchange(
+         pwdshadow_t *                 ps,
+         pwdshadow_state_t *           st );
+
+
+static int
 pwdshadow_get_attr_bool(
       Entry *                          entry,
       AttributeDescription *           ad );
@@ -667,6 +673,40 @@ pwdshadow_eval_init(
    if (st->st_pwdShadowGenerate.op != PWDSHADOW_OP_ADD)
       return(0);
    return(((st->st_pwdShadowGenerate.new)) ? 1 : 0);
+}
+
+
+int
+pwdshadow_gen_lastchange(
+         pwdshadow_t *                 ps,
+         pwdshadow_state_t *           st )
+{
+   // don't set pwdShadowLastChange if password will be deleted
+   if (st->st_userPassword.op == PWDSHADOW_OP_DELETE)
+      return(0);
+
+   // don't set pwdShadowLastChange if password is not and will not be set
+   if ( (st->st_userPassword.op != PWDSHADOW_OP_ADD) &&  (!(st->st_userPassword.cur)) )
+      return(0);
+
+   // check for override values
+   if ((ps->ps_cfg_override))
+   {
+      if (st->st_shadowLastChange.op == PWDSHADOW_OP_ADD)
+         return(st->st_shadowLastChange.new);
+      if ((st->st_shadowLastChange.cur))
+         return(st->st_shadowLastChange.cur);
+   };
+
+   // check for pwdChangedTime
+   if ((st->st_pwdChangedTime.cur))
+      return(st->st_pwdChangedTime.cur);
+
+   // use current time if setting new password
+   if (st->st_userPassword.op == PWDSHADOW_OP_ADD)
+      return(((int)time(NULL)) / 60 / 60 / 24);
+
+   return(0);
 }
 
 
