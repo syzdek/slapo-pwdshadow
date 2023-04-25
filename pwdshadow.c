@@ -205,6 +205,12 @@ pwdshadow_op_add(
 
 
 static int
+pwdshadow_op_modify(
+         Operation *                   op,
+         SlapReply *                   rs );
+
+
+static int
 pwdshadow_op_modify_init(
          Operation *                   op,
          pwdshadow_state_t *           st,
@@ -1015,7 +1021,7 @@ pwdshadow_initialize( void )
    pwdshadow.on_bi.bi_db_destroy       = pwdshadow_db_destroy;
 
    pwdshadow.on_bi.bi_op_add          = pwdshadow_op_add;
-   //pwdshadow.on_bi.bi_op_modify       = pwdshadow_op_modify;
+   pwdshadow.on_bi.bi_op_modify       = pwdshadow_op_modify;
    pwdshadow.on_bi.bi_op_search       = pwdshadow_op_search;
 
    pwdshadow.on_bi.bi_cf_ocs           = pwdshadow_cfg_ocs;
@@ -1039,6 +1045,102 @@ pwdshadow_op_add(
    if (!(rs))
       return(SLAP_CB_CONTINUE);
    if (!(ps->ps_cfg_realtime))
+      return(SLAP_CB_CONTINUE);
+
+   return(SLAP_CB_CONTINUE);
+}
+
+
+int
+pwdshadow_op_modify(
+         Operation *                   op,
+         SlapReply *                   rs )
+{
+   int                     rc;
+   slap_overinst *         on;
+   pwdshadow_t *           ps;
+   Modifications *         mods;
+   Modifications **        next;
+   Entry *                 entry;
+   BackendInfo *           bd_info;
+   pwdshadow_state_t       st;
+
+   // initialize state
+   on                = (slap_overinst *)op->o_bd->bd_info;
+   ps                = on->on_bi.bi_private;
+   memset(&st, 0, sizeof(st));
+
+   // retrieve entry from backend
+   bd_info           = op->o_bd->bd_info;
+   op->o_bd->bd_info = (BackendInfo *)on->on_info;
+   rc                = be_entry_get_rw( op, &op->o_req_ndn, NULL, NULL, 0, &entry );
+   op->o_bd->bd_info = (BackendInfo *)bd_info;
+   st.st_entry       = entry;
+   if ( rc != LDAP_SUCCESS )
+      return(SLAP_CB_CONTINUE);
+
+   // determines existing attribtues
+   st.st_pwdChangedTime.cur      = pwdshadow_get_attr_time(entry,     ad_pwdChangedTime);
+   st.st_pwdEndTime.cur          = pwdshadow_get_attr_time(entry,     ad_pwdEndTime);
+   st.st_pwdShadowExpire.cur     = pwdshadow_get_attr_integer(entry,  ad_pwdShadowExpire);
+   st.st_pwdShadowGenerate.cur   = pwdshadow_get_attr_bool(entry,     ad_pwdShadowGenerate);
+   st.st_pwdShadowLastChange.cur = pwdshadow_get_attr_integer(entry,  ad_pwdShadowLastChange);
+   st.st_shadowExpire.cur        = pwdshadow_get_attr_integer(entry,  ad_shadowExpire);
+   st.st_shadowLastChange.cur    = pwdshadow_get_attr_integer(entry,  ad_shadowLastChange);
+   st.st_userPassword.cur        = pwdshadow_get_attr_exists(entry,   ad_userPassword);
+
+   // scan modifications for attributes of interest
+   for(next = &op->orm_modlist; ((*next)); next = &(*next)->sml_next)
+   {
+      mods = *next;
+
+      if (mods->sml_desc == ad_pwdEndTime)
+         pwdshadow_get_mods_time(mods, &st.st_pwdEndTime);
+
+      if (mods->sml_desc == ad_pwdShadowGenerate)
+         pwdshadow_get_mods_bool(mods, &st.st_pwdShadowGenerate);
+
+      if (mods->sml_desc == ad_userPassword)
+         pwdshadow_get_mods_exists(mods, &st.st_userPassword);
+
+      // skip remaining attributes if override is disabled
+      if (!(ps->ps_cfg_override))
+         continue;
+
+      if (mods->sml_desc == ad_shadowExpire)
+         pwdshadow_get_mods_integer(mods, &st.st_shadowExpire);
+
+      if (mods->sml_desc == ad_shadowLastChange)
+         pwdshadow_get_mods_integer(mods, &st.st_shadowLastChange);
+   };
+
+   // purge and return if generation is disabled for entry
+   if (!(pwdshadow_eval_gen(&st)))
+   {
+      pwdshadow_op_modify_purge(op, entry, next);
+      op->o_bd->bd_info = (BackendInfo *)on->on_info;
+      be_entry_release_r(op, entry);
+      return(SLAP_CB_CONTINUE);
+   };
+
+   // if needed, initialize entry and return
+   if ((pwdshadow_eval_init(&st)))
+   {
+      pwdshadow_op_modify_init(op, &st, next);
+      op->o_bd->bd_info = (BackendInfo *)on->on_info;
+      be_entry_release_r(op, entry);
+      return(SLAP_CB_CONTINUE);
+   };
+
+   // check for changes to password
+   if ( ((st.st_userPassword.op)) || ((st.st_shadowLastChange.op)) )
+   {
+   };
+
+   op->o_bd->bd_info = (BackendInfo *)on->on_info;
+   be_entry_release_r( op, entry );
+
+   if (!(rs))
       return(SLAP_CB_CONTINUE);
 
    return(SLAP_CB_CONTINUE);
