@@ -117,6 +117,11 @@ pwdshadow_get_mods_bool(
 
 
 static int
+pwdshadow_get_mods_time(
+      Modifications *                  mods );
+
+
+static int
 pwdshadow_op_search(
          Operation *                   op,
          SlapReply *                   rs );
@@ -708,6 +713,40 @@ pwdshadow_get_mods_bool(
    if ((pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.7")))
       return(pwdshadow_parse_bool(&mods->sml_values[0]));
    return(1);
+}
+
+
+int
+pwdshadow_get_mods_time(
+      Modifications *                  mods )
+{
+   int      rc;
+   time_t   t;
+   int      i;
+
+   if ((rc = pwdshadow_get_mods(mods)) != 0)
+      return(rc);
+
+   // process attribute as Generalized Time
+   if ((pwdshadow_verify_attr_syntax(mods->sml_desc, "1.3.6.1.4.1.1466.115.121.1.24")))
+   {
+      if ((t = pwdshadow_parse_time(mods->sml_values[0].bv_val)) == ((time_t)-1))
+         return(0);
+      t /= 60; // convert to minutes
+      t /= 60; // convert to hours
+      t /= 24; // convert to days
+      return((int)t);
+   };
+
+   // process attribute as Integer
+   if ((pwdshadow_verify_attr_syntax(mods->sml_desc, "1.3.6.1.4.1.1466.115.121.1.27")))
+   {
+      i = 0;
+      lutil_atoi(&i, mods->sml_values[0].bv_val);
+      return(i);
+   };
+
+   return(0);
 }
 
 
