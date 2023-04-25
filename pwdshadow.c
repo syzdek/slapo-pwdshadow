@@ -81,6 +81,18 @@ typedef struct pwdshadow_mod_t
 } pwdshadow_mod_t;
 
 
+typedef struct pwdshadow_state_t
+{
+   Entry *                    st_entry;
+   pwdshadow_mod_t            st_pwdChangedTime;
+   pwdshadow_mod_t            st_pwdEndTime;
+   pwdshadow_mod_t            st_pwdShadowGenerate;
+   pwdshadow_mod_t            st_shadowExpire;
+   pwdshadow_mod_t            st_shadowLastChange;
+   pwdshadow_mod_t            st_userPassword;
+} pwdshadow_state_t;
+
+
 //////////////////
 //              //
 //  Prototypes  //
