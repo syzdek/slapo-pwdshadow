@@ -118,6 +118,11 @@ pwdshadow_db_init(
 
 
 static int
+pwdshadow_eval_gen(
+      pwdshadow_state_t *              st );
+
+
+static int
 pwdshadow_get_attr_bool(
       Entry *                          entry,
       AttributeDescription *           ad );
@@ -633,6 +638,18 @@ pwdshadow_db_init(
       slap_str2ad("userPassword", &ps->ps_ad_userPassword, &text);
 
    return(0);
+}
+
+
+int
+pwdshadow_eval_gen(
+      pwdshadow_state_t *              st )
+{
+   if (st->st_pwdShadowGenerate.op == PWDSHADOW_OP_DELETE)
+      return(0);
+   if (st->st_pwdShadowGenerate.op == PWDSHADOW_OP_ADD)
+      return(((st->st_pwdShadowGenerate.new)) ? 1 : 0);
+   return(((st->st_pwdShadowGenerate.cur)) ? 1 : 0);
 }
 
 
