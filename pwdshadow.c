@@ -116,6 +116,11 @@ pwdshadow_get_mods_bool(
 
 
 static int
+pwdshadow_get_mods_exists(
+      Modifications *                  mods );
+
+
+static int
 pwdshadow_get_mods_time(
       Modifications *                  mods );
 
@@ -710,6 +715,17 @@ pwdshadow_get_mods_bool(
       return(rc);
    if ((pwdshadow_verify_attr_syntax(mods->sml_desc, "1.3.6.1.4.1.1466.115.121.1.7")))
       return(pwdshadow_parse_bool(&mods->sml_values[0]));
+   return(1);
+}
+
+
+int
+pwdshadow_get_mods_exists(
+      Modifications *                  mods )
+{
+   int rc;
+   if ((rc = pwdshadow_get_mods(mods)) != 0)
+      return(rc);
    return(1);
 }
 
