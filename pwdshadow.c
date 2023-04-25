@@ -67,7 +67,6 @@ typedef struct pwdshadow_t
    AttributeDescription *     ps_ad_pwdEndTime;
    AttributeDescription *     ps_ad_shadowExpire;
    AttributeDescription *     ps_ad_shadowLastChange;
-   AttributeDescription *     ps_ad_shadowMax;
    AttributeDescription *     ps_ad_userPassword;
    int                        ps_cfg_override;
    int                        ps_cfg_realtime;
