@@ -47,6 +47,13 @@
 /////////////////
 #pragma mark - Datatypes
 
+typedef struct pwdshadow_at_t
+{
+   char *                    def;
+   AttributeDescription **   ad;
+} pwdshadow_at_t;
+
+
 typedef struct pwdshadow_t
 {
    struct berval              ps_def_policy;
@@ -198,11 +205,7 @@ static AttributeDescription *       ad_pwdShadowGenerate    = NULL;
 
 // overlay's LDAP operational and user attributes
 #pragma mark pwdshadow_ats
-static struct
-{
-   char *                    def;
-   AttributeDescription **   ad;
-} pwdshadow_ats[] =
+static pwdshadow_at_t pwdshadow_ats[] =
 {
    {  // pwdShadowLastChange: The number of days since January 1, 1970 on which
       // the password was last changed.  This attribute is the equivalent of
