@@ -121,6 +121,11 @@ pwdshadow_get_mods_exists(
 
 
 static int
+pwdshadow_get_mods_integer(
+      Modifications *                  mods );
+
+
+static int
 pwdshadow_get_mods_time(
       Modifications *                  mods );
 
@@ -728,6 +733,29 @@ pwdshadow_get_mods_exists(
       return(rc);
    return(1);
 }
+
+
+int
+pwdshadow_get_mods_integer(
+      Modifications *                  mods )
+{
+   int rc;
+   int i;
+
+   if ((rc = pwdshadow_get_mods(mods)) != 0)
+      return(rc);
+
+   // process attribute as Integer
+   if ((pwdshadow_verify_attr_syntax(mods->sml_desc, "1.3.6.1.4.1.1466.115.121.1.27")))
+   {
+      i = 0;
+      lutil_atoi(&i, mods->sml_values[0].bv_val);
+      return(i);
+   };
+
+   return(0);
+}
+
 
 
 int
