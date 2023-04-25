@@ -44,6 +44,9 @@
 #define PWDSHADOW_OP_NONE        0
 #define PWDSHADOW_OP_ADD         1
 
+#define PWDSHADOW_GENVAL(old, new) ((old == new) ? 0 : new)
+
+
 
 
 /////////////////
@@ -702,6 +705,10 @@ pwdshadow_gen_lastchange(
          pwdshadow_t *                 ps,
          pwdshadow_state_t *           st )
 {
+   int   old;
+
+   old = st->st_pwdShadowLastChange.cur;
+
    // don't set pwdShadowLastChange if password will be deleted
    if (st->st_userPassword.op == PWDSHADOW_OP_DELETE)
       return(0);
@@ -714,18 +721,18 @@ pwdshadow_gen_lastchange(
    if ((ps->ps_cfg_override))
    {
       if (st->st_shadowLastChange.op == PWDSHADOW_OP_ADD)
-         return(st->st_shadowLastChange.new);
+         return(PWDSHADOW_GENVAL(old, st->st_shadowLastChange.new));
       if ((st->st_shadowLastChange.cur))
-         return(st->st_shadowLastChange.cur);
+         return(PWDSHADOW_GENVAL(old, st->st_shadowLastChange.cur));
    };
 
    // check for pwdChangedTime
    if ((st->st_pwdChangedTime.cur))
-      return(st->st_pwdChangedTime.cur);
+      return(PWDSHADOW_GENVAL(old, st->st_pwdChangedTime.cur));
 
    // use current time if setting new password
    if (st->st_userPassword.op == PWDSHADOW_OP_ADD)
-      return(((int)time(NULL)) / 60 / 60 / 24);
+      return(PWDSHADOW_GENVAL(old, (((int)time(NULL)) / 60 / 60 / 24)));
 
    return(0);
 }
