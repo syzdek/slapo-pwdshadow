@@ -71,7 +71,7 @@ pwdshadow_get_attr_bool(
 
 
 static int
-pwdshadow_attr_exists(
+pwdshadow_get_attr_exists(
       Entry *                          entry,
       AttributeDescription *           ad );
 
@@ -433,7 +433,7 @@ pwdshadow_get_attr_bool(
 
 
 int
-pwdshadow_attr_exists(
+pwdshadow_get_attr_exists(
       Entry *                          entry,
       AttributeDescription *           ad )
 {
