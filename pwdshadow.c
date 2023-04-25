@@ -65,7 +65,7 @@ typedef struct pwdshadow_t
 //////////////////
 
 static int
-pwdshadow_attr_bool(
+pwdshadow_get_attr_bool(
       Entry *                          entry,
       AttributeDescription *           ad );
 
@@ -411,7 +411,7 @@ init_module(
 
 
 int
-pwdshadow_attr_bool(
+pwdshadow_get_attr_bool(
       Entry *                          entry,
       AttributeDescription *           ad )
 {
