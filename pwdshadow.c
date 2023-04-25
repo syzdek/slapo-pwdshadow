@@ -65,12 +65,6 @@ typedef struct pwdshadow_t
 //////////////////
 
 static int
-pwdshadow_get_attr_bool(
-      Entry *                          entry,
-      AttributeDescription *           ad );
-
-
-static int
 pwdshadow_get_attr_exists(
       Entry *                          entry,
       AttributeDescription *           ad );
@@ -97,6 +91,12 @@ static int
 pwdshadow_db_init(
         BackendDB *                     be,
         ConfigReply *                   cr );
+
+
+static int
+pwdshadow_get_attr_bool(
+      Entry *                          entry,
+      AttributeDescription *           ad );
 
 
 static int
@@ -411,28 +411,6 @@ init_module(
 
 
 int
-pwdshadow_get_attr_bool(
-      Entry *                          entry,
-      AttributeDescription *           ad )
-{
-   Attribute *       a;
-
-   if (!(ad))
-      return(0);
-   if ((a = attr_find(entry->e_attrs, ad)) == NULL)
-      return(0);
-   if (a->a_numvals == 0)
-      return(0);
-
-   // process attribute as Boolean
-   if ((pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.7")))
-      return(pwdshadow_parse_bool(&a->a_nvals[0]));
-
-   return(1);
-}
-
-
-int
 pwdshadow_get_attr_exists(
       Entry *                          entry,
       AttributeDescription *           ad )
@@ -627,6 +605,28 @@ pwdshadow_db_init(
       slap_str2ad("userPassword", &ps->ps_ad_userPassword, &text);
 
    return(0);
+}
+
+
+int
+pwdshadow_get_attr_bool(
+      Entry *                          entry,
+      AttributeDescription *           ad )
+{
+   Attribute *       a;
+
+   if (!(ad))
+      return(0);
+   if ((a = attr_find(entry->e_attrs, ad)) == NULL)
+      return(0);
+   if (a->a_numvals == 0)
+      return(0);
+
+   // process attribute as Boolean
+   if ((pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.7")))
+      return(pwdshadow_parse_bool(&a->a_nvals[0]));
+
+   return(1);
 }
 
 
