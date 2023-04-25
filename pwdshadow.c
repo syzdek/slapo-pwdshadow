@@ -864,18 +864,11 @@ pwdshadow_initialize( void )
    pwdshadow.on_bi.bi_flags            = SLAPO_BFLAG_SINGLE;
 
    pwdshadow.on_bi.bi_db_init          = pwdshadow_db_init;
-   //pwdshadow.on_bi.bi_db_open         = pwdshadow_db_open;
-   //pwdshadow.on_bi.bi_db_close        = pwdshadow_db_close;
    pwdshadow.on_bi.bi_db_destroy       = pwdshadow_db_destroy;
 
    pwdshadow.on_bi.bi_op_add          = pwdshadow_op_add;
-   //pwdshadow.on_bi.bi_op_bind         = pwdshadow_bind;
-   //pwdshadow.on_bi.bi_op_compare      = pwdshadow_compare;
-   //pwdshadow.on_bi.bi_op_delete       = pwdshadow_restrict;
-   //pwdshadow.on_bi.bi_op_modify       = pwdshadow_modify;
+   //pwdshadow.on_bi.bi_op_modify       = pwdshadow_op_modify;
    pwdshadow.on_bi.bi_op_search       = pwdshadow_op_search;
-
-   //pwdshadow.on_bi.bi_connection_destroy = pwdshadow_connection_destroy;
 
    pwdshadow.on_bi.bi_cf_ocs           = pwdshadow_cfg_ocs;
 
