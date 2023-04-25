@@ -65,12 +65,6 @@ typedef struct pwdshadow_t
 //////////////////
 
 static int
-pwdshadow_get_attr_integer(
-      Entry *                          entry,
-      AttributeDescription *           ad );
-
-
-static int
 pwdshadow_cfg_gen(
         ConfigArgs *                    c );
 
@@ -95,6 +89,12 @@ pwdshadow_get_attr_bool(
 
 static int
 pwdshadow_get_attr_exists(
+      Entry *                          entry,
+      AttributeDescription *           ad );
+
+
+static int
+pwdshadow_get_attr_integer(
       Entry *                          entry,
       AttributeDescription *           ad );
 
@@ -411,32 +411,6 @@ init_module(
 
 
 int
-pwdshadow_get_attr_integer(
-      Entry *                          entry,
-      AttributeDescription *           ad )
-{
-   Attribute *       a;
-   int               i;
-
-   if (!(ad))
-      return(0);
-   if ((a = attr_find(entry->e_attrs, ad)) == NULL)
-      return(0);
-   if (a->a_numvals == 0)
-      return(0);
-
-   // process attribute as Integer
-   if ((pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
-   {
-      lutil_atoi(&i, a->a_nvals[0].bv_val);
-      return(i);
-   };
-
-   return(0);
-}
-
-
-int
 pwdshadow_cfg_gen(
         ConfigArgs *                    c )
 {
@@ -627,6 +601,32 @@ pwdshadow_get_attr_exists(
       return(0);
 
    return(1);
+}
+
+
+int
+pwdshadow_get_attr_integer(
+      Entry *                          entry,
+      AttributeDescription *           ad )
+{
+   Attribute *       a;
+   int               i;
+
+   if (!(ad))
+      return(0);
+   if ((a = attr_find(entry->e_attrs, ad)) == NULL)
+      return(0);
+   if (a->a_numvals == 0)
+      return(0);
+
+   // process attribute as Integer
+   if ((pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
+   {
+      lutil_atoi(&i, a->a_nvals[0].bv_val);
+      return(i);
+   };
+
+   return(0);
 }
 
 
