@@ -83,7 +83,7 @@ pwdshadow_get_attr_integer(
 
 
 static int
-pwdshadow_attr_time(
+pwdshadow_get_attr_time(
       Entry *                          entry,
       AttributeDescription *           ad );
 
@@ -479,7 +479,7 @@ pwdshadow_get_attr_integer(
 
 
 int
-pwdshadow_attr_time(
+pwdshadow_get_attr_time(
       Entry *                          entry,
       AttributeDescription *           ad )
 {
