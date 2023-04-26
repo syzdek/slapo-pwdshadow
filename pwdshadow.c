@@ -178,6 +178,14 @@ pwdshadow_gen_lastchange(
 
 
 static int
+pwdshadow_get_attr(
+      pwdshadow_data_t *               dat,
+      Entry *                          entry,
+      AttributeDescription *           ad,
+      int                              flags );
+
+
+static int
 pwdshadow_get_attr_bool(
       Entry *                          entry,
       AttributeDescription *           ad );
@@ -847,6 +855,39 @@ pwdshadow_gen_lastchange(
       return(PWDSHADOW_GENVAL(old, (((int)time(NULL)) / 60 / 60 / 24)));
 
    return(0);
+}
+
+
+int
+pwdshadow_get_attr(
+      pwdshadow_data_t *               dat,
+      Entry *                          entry,
+      AttributeDescription *           ad,
+      int                              flags )
+{
+   Attribute *       a;
+
+   if (!(ad))
+      return(0);
+
+   // retrieve attribute from entry
+   if ((a = attr_find(entry->e_attrs, ad)) != NULL)
+      if (a->a_numvals == 0)
+         a = NULL;
+
+   switch(pwdshadow_type(flags))
+   {
+      case PWDSHADOW_TYPE_BOOL:
+      if (!(a))
+         return(0);
+      return(pwdshadow_dat_set(dat, &a->a_nvals[0], ad, flags));
+
+      default:
+      Debug( LDAP_DEBUG_ANY, "pwdshadow: pwdshadow_get_attr(): unknown data type\n" );
+      break;
+   };
+
+   return(-1);
 }
 
 
