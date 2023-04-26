@@ -686,6 +686,12 @@ pwdshadow_dat_set(
          return(-1);
       return(pwdshadow_dat_value(dat, pwdshadow_parse_bool(bv), ad, flags));
 
+      case PWDSHADOW_TYPE_DAYS:
+      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
+         return(-1);
+      lutil_atoi(&ival, bv->bv_val);
+      return(pwdshadow_dat_value(dat, ival, ad, flags));
+
       case PWDSHADOW_TYPE_SECS:
       if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
          return(-1);
