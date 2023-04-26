@@ -186,12 +186,6 @@ pwdshadow_get_attr(
 
 
 static int
-pwdshadow_get_attr_exists(
-         Entry *                       entry,
-         AttributeDescription *        ad );
-
-
-static int
 pwdshadow_get_attr_integer(
          Entry *                       entry,
          AttributeDescription *        ad );
@@ -895,26 +889,6 @@ pwdshadow_get_attr(
 
 
 int
-pwdshadow_get_attr_exists(
-         Entry *                       entry,
-         AttributeDescription *        ad )
-{
-   Attribute *       a;
-
-   if (!(ad))
-      return(0);
-   if ((a = attr_find(entry->e_attrs, ad)) == NULL)
-      return(0);
-   if (a->a_numvals == 0)
-      return(0);
-   if (a->a_nvals[0].bv_len == 0)
-      return(0);
-
-   return(1);
-}
-
-
-int
 pwdshadow_get_attr_integer(
          Entry *                       entry,
          AttributeDescription *        ad )
@@ -1157,13 +1131,13 @@ pwdshadow_op_modify(
    pwdshadow_get_attr(&st.st_pwdChangedTime,    entry, ad_pwdChangedTime,     PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_TIME);
    pwdshadow_get_attr(&st.st_pwdEndTime,        entry, ad_pwdEndTime,         PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_TIME);
    pwdshadow_get_attr(&st.st_pwdShadowGenerate, entry, ad_pwdShadowGenerate,  PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_BOOL);
+   pwdshadow_get_attr(&st.st_userPassword,      entry, ad_userPassword,       PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_EXISTS);
 
 
    st.st_pwdShadowExpire.cur     = pwdshadow_get_attr_integer(entry,  ad_pwdShadowExpire);
    st.st_pwdShadowLastChange.cur = pwdshadow_get_attr_integer(entry,  ad_pwdShadowLastChange);
    st.st_shadowExpire.cur        = pwdshadow_get_attr_integer(entry,  ad_shadowExpire);
    st.st_shadowLastChange.cur    = pwdshadow_get_attr_integer(entry,  ad_shadowLastChange);
-   st.st_userPassword.cur        = pwdshadow_get_attr_exists(entry,   ad_userPassword);
 
    // scan modifications for attributes of interest
    for(next = &op->orm_modlist; ((*next)); next = &(*next)->sml_next)
