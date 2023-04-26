@@ -64,8 +64,6 @@
 #define PWDSHADOW_GENVAL(old, new) ((old == new) ? 0 : new)
 
 
-
-
 /////////////////
 //             //
 //  Datatypes  //
