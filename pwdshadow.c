@@ -686,6 +686,10 @@ pwdshadow_dat_set(
       lutil_atoi(&ival, bv->bv_val);
       return(pwdshadow_dat_value(dat, ival, ad, flags));
 
+      case PWDSHADOW_TYPE_EXISTS:
+      ival = ( ((bv)) && ((bv->bv_len)) ) ? 1 : 0;
+      return(pwdshadow_dat_value(dat, ival, ad, flags));
+
       case PWDSHADOW_TYPE_SECS:
       if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
          return(-1);
