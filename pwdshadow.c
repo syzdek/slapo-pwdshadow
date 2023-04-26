@@ -204,12 +204,6 @@ pwdshadow_get_mods(
 
 
 static int
-pwdshadow_get_mods_integer(
-         Modifications *               mods,
-         pwdshadow_data_t *            dat );
-
-
-static int
 pwdshadow_op_add(
          Operation *                   op,
          SlapReply *                   rs );
@@ -952,30 +946,6 @@ pwdshadow_get_mods(
 
 
 int
-pwdshadow_get_mods_integer(
-         Modifications *               mods,
-         pwdshadow_data_t *            dat )
-{
-   int rc;
-   int i;
-
-   if ((rc = pwdshadow_get_mods(mods, dat)) != PWDSHADOW_OP_ADD)
-      return(rc);
-
-   // process attribute as Integer
-   dat->cur = 0;
-   if ((pwdshadow_verify_attr_syntax(mods->sml_desc, "1.3.6.1.4.1.1466.115.121.1.27")))
-   {
-      i = 0;
-      lutil_atoi(&i, mods->sml_values[0].bv_val);
-      dat->new = i;
-   };
-
-   return(dat->op);
-}
-
-
-int
 pwdshadow_initialize( void )
 {
    int               i;
@@ -1102,10 +1072,10 @@ pwdshadow_op_modify(
          continue;
 
       if (mods->sml_desc == ad_shadowExpire)
-         pwdshadow_get_mods_integer(mods, &st.st_shadowExpire);
+         pwdshadow_get_mod(mods, &st.st_shadowExpire, PWDSHADOW_TYPE_DAYS);
 
       if (mods->sml_desc == ad_shadowLastChange)
-         pwdshadow_get_mods_integer(mods, &st.st_shadowLastChange);
+         pwdshadow_get_mod(mods, &st.st_shadowLastChange, PWDSHADOW_TYPE_DAYS);
    };
 
    // purge and return if generation is disabled for entry
