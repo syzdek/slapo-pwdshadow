@@ -210,12 +210,6 @@ pwdshadow_get_mods_bool(
 
 
 static int
-pwdshadow_get_mods_exists(
-         Modifications *               mods,
-         pwdshadow_data_t *            dat );
-
-
-static int
 pwdshadow_get_mods_integer(
          Modifications *               mods,
          pwdshadow_data_t *            dat );
@@ -985,19 +979,6 @@ pwdshadow_get_mods_bool(
 
 
 int
-pwdshadow_get_mods_exists(
-         Modifications *               mods,
-         pwdshadow_data_t *            dat )
-{
-   int rc;
-   if ((rc = pwdshadow_get_mods(mods, dat)) != PWDSHADOW_OP_ADD)
-      return(rc);
-   dat->new = 1;
-   return(dat->op);
-}
-
-
-int
 pwdshadow_get_mods_integer(
          Modifications *               mods,
          pwdshadow_data_t *            dat )
@@ -1180,7 +1161,7 @@ pwdshadow_op_modify(
          pwdshadow_get_mods_bool(mods, &st.st_pwdShadowGenerate);
 
       if (mods->sml_desc == ad_userPassword)
-         pwdshadow_get_mods_exists(mods, &st.st_userPassword);
+         pwdshadow_get_mod(mods, &st.st_userPassword, PWDSHADOW_TYPE_EXISTS);
 
       // skip remaining attributes if override is disabled
       if (!(ps->ps_cfg_override))
