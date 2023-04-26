@@ -667,24 +667,24 @@ pwdshadow_dat_set(
       case PWDSHADOW_TYPE_BOOL:
       if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.7")))
          return(-1);
-      return(pwdshadow_dat_value(dat, pwdshadow_parse_bool(bv), ad, flags));
+      return(pwdshadow_dat_value(dat, pwdshadow_parse_bool(bv), flags));
 
       case PWDSHADOW_TYPE_DAYS:
       if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
          return(-1);
       lutil_atoi(&ival, bv->bv_val);
-      return(pwdshadow_dat_value(dat, ival, ad, flags));
+      return(pwdshadow_dat_value(dat, ival, flags));
 
       case PWDSHADOW_TYPE_EXISTS:
       ival = ( ((bv)) && ((bv->bv_len)) ) ? 1 : 0;
-      return(pwdshadow_dat_value(dat, ival, ad, flags));
+      return(pwdshadow_dat_value(dat, ival, flags));
 
       case PWDSHADOW_TYPE_SECS:
       if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
          return(-1);
       lutil_atoi(&ival, bv->bv_val);
       ival /= 60 * 60 * 24;
-      return(pwdshadow_dat_value(dat, ival, ad, flags));
+      return(pwdshadow_dat_value(dat, ival, flags));
 
       case PWDSHADOW_TYPE_TIME:
       if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.24")))
@@ -692,7 +692,7 @@ pwdshadow_dat_set(
       if ((ival = (int)pwdshadow_parse_time(bv->bv_val)) == ((time_t)-1))
          return(-1);
       ival /= 60 * 60 * 24; // convert from seconds to days
-      return(pwdshadow_dat_value(dat, ival, ad, flags));
+      return(pwdshadow_dat_value(dat, ival, flags));
 
       default:
       Debug( LDAP_DEBUG_ANY, "pwdshadow: pwdshadow_dat_set(): unknown data type\n" );
@@ -707,10 +707,8 @@ int
 pwdshadow_dat_value(
          pwdshadow_data_t *            dat,
          int                           val,
-         AttributeDescription *        ad,
          int                           flags )
 {
-   dat->dat_ad    = ad;
    dat->dat_flag  |= flags;
 
    if ((flags & PWDSHADOW_FLG_SET))
