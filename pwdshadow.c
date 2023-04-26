@@ -1089,14 +1089,14 @@ pwdshadow_op_modify(
       return(SLAP_CB_CONTINUE);
 
    // determines existing attribtues
-   pwdshadow_get_attr(&st.st_pwdChangedTime,    entry, ad_pwdChangedTime,     PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_TIME);
-   pwdshadow_get_attr(&st.st_pwdEndTime,        entry, ad_pwdEndTime,         PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_TIME);
+   pwdshadow_get_attr(&st.st_pwdChangedTime,       entry, ad_pwdChangedTime,        PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_TIME);
+   pwdshadow_get_attr(&st.st_pwdEndTime,           entry, ad_pwdEndTime,            PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_TIME);
    pwdshadow_get_attr(&st.st_pwdShadowExpire,      entry, ad_pwdShadowExpire,       PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_DAYS);
-   pwdshadow_get_attr(&st.st_pwdShadowGenerate, entry, ad_pwdShadowGenerate,  PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_BOOL);
+   pwdshadow_get_attr(&st.st_pwdShadowGenerate,    entry, ad_pwdShadowGenerate,     PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_BOOL);
    pwdshadow_get_attr(&st.st_pwdShadowLastChange,  entry, ad_pwdShadowLastChange,   PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_DAYS);
    pwdshadow_get_attr(&st.st_shadowExpire,         entry, ad_shadowExpire,          PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_DAYS);
    pwdshadow_get_attr(&st.st_shadowLastChange,     entry, ad_shadowLastChange,      PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_DAYS);
-   pwdshadow_get_attr(&st.st_userPassword,      entry, ad_userPassword,       PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_EXISTS);
+   pwdshadow_get_attr(&st.st_userPassword,         entry, ad_userPassword,          PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_EXISTS);
 
    // scan modifications for attributes of interest
    for(next = &op->orm_modlist; ((*next)); next = &(*next)->sml_next)
