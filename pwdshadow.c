@@ -673,6 +673,7 @@ pwdshadow_dat_set(
          int                           flags )
 {
    int   type;
+   int   ival;
 
    type = ((pwdshadow_type(dat->dat_flag))) ? pwdshadow_type(dat->dat_flag) : pwdshadow_type(flags);
    if (pwdshadow_type(flags) != type)
@@ -684,6 +685,13 @@ pwdshadow_dat_set(
       if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.7")))
          return(-1);
       return(pwdshadow_dat_value(dat, pwdshadow_parse_bool(bv), ad, flags));
+
+      case PWDSHADOW_TYPE_SECS:
+      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
+         return(-1);
+      lutil_atoi(&ival, bv->bv_val);
+      ival /= 60 * 60 * 24;
+      return(pwdshadow_dat_value(dat, ival, ad, flags));
 
       default:
       Debug( LDAP_DEBUG_ANY, "pwdshadow: pwdshadow_dat_set(): unknown data type\n" );
