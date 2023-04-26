@@ -228,11 +228,6 @@ pwdshadow_op_modify_purge(
          Modifications **              next );
 
 
-static time_t
-pwdshadow_parse_time(
-         char *                        atm );
-
-
 static int
 pwdshadow_verify_attr_syntax(
          AttributeDescription *        ad,
@@ -631,6 +626,8 @@ pwdshadow_dat_set(
 {
    int                     type;
    int                     ival;
+   struct lutil_tm         tm;
+   struct lutil_timet      tt;
    AttributeDescription *  ad;
 
    ad   = dat->dat_ad;
@@ -673,8 +670,10 @@ pwdshadow_dat_set(
       case PWDSHADOW_TYPE_TIME:
       if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.24")))
          return(-1);
-      if ((ival = (int)pwdshadow_parse_time(bv->bv_val)) == ((time_t)-1))
+      if (lutil_parsetime(bv->bv_val, &tm) != 0)
          return(-1);
+      lutil_tm2time(&tm, &tt);
+      ival = (int)tt.tt_sec;
       ival /= 60 * 60 * 24; // convert from seconds to days
       return(pwdshadow_dat_value(dat, ival, flags));
 
@@ -1178,25 +1177,6 @@ pwdshadow_op_modify_purge(
    };
 
    return(0);
-}
-
-
-time_t
-pwdshadow_parse_time(
-         char *                        atm )
-{
-   struct lutil_tm         tm;
-   struct lutil_timet      tt;
-   time_t                  ret;
-
-   ret = (time_t)-1;
-
-   if ( lutil_parsetime( atm, &tm ) == 0)
-   {
-      lutil_tm2time( &tm, &tt );
-      ret = tt.tt_sec;
-   };
-   return(ret);
 }
 
 
