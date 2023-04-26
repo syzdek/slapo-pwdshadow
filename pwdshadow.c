@@ -228,11 +228,6 @@ pwdshadow_op_modify_purge(
          Modifications **              next );
 
 
-static int
-pwdshadow_parse_bool(
-         BerValue *                    bv );
-
-
 static time_t
 pwdshadow_parse_time(
          char *                        atm );
@@ -653,7 +648,10 @@ pwdshadow_dat_set(
       case PWDSHADOW_TYPE_BOOL:
       if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.7")))
          return(-1);
-      return(pwdshadow_dat_value(dat, pwdshadow_parse_bool(bv), flags));
+      ival = 0;
+      if ( ((bv)) && ((bv->bv_val)) && (!(strcasecmp(bv->bv_val, "TRUE"))) )
+         ival = 1;
+      return(pwdshadow_dat_value(dat, ival, flags));
 
       case PWDSHADOW_TYPE_DAYS:
       if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
@@ -1179,18 +1177,6 @@ pwdshadow_op_modify_purge(
       next                       = &mod->sml_next;
    };
 
-   return(0);
-}
-
-
-int
-pwdshadow_parse_bool(
-         BerValue *                    bv )
-{
-   if ( (!(bv)) || (!(bv->bv_val)) )
-      return(0);
-   if (!(strcasecmp(bv->bv_val, "TRUE")))
-      return(1);
    return(0);
 }
 
