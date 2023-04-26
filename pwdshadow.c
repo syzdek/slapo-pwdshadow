@@ -60,7 +60,7 @@
 #define PWDSHADOW_TYPE           0xff00
 #define PWDSHADOW_HAS_MODS       ( PWDSHADOW_DAT_ADD | PWDSHADOW_DAT_DEL )
 
-#define pwdshadow_type(flags) (flags & PWDSHADOW_TYPE)
+#define pwdshadow_type(flags)       (flags & PWDSHADOW_TYPE)
 #define PWDSHADOW_GENVAL(old, new) ((old == new) ? 0 : new)
 
 
