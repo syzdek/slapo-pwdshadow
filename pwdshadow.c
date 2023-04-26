@@ -204,12 +204,6 @@ pwdshadow_get_mods(
 
 
 static int
-pwdshadow_get_mods_bool(
-         Modifications *               mods,
-         pwdshadow_data_t *            dat );
-
-
-static int
 pwdshadow_get_mods_integer(
          Modifications *               mods,
          pwdshadow_data_t *            dat );
@@ -964,21 +958,6 @@ pwdshadow_get_mods(
 
 
 int
-pwdshadow_get_mods_bool(
-         Modifications *               mods,
-         pwdshadow_data_t *            dat )
-{
-   int rc;
-   if ((rc = pwdshadow_get_mods(mods, dat)) != PWDSHADOW_OP_ADD)
-      return(rc);
-   dat->new = 1;
-   if ((pwdshadow_verify_attr_syntax(mods->sml_desc, "1.3.6.1.4.1.1466.115.121.1.7")))
-      dat->new = pwdshadow_parse_bool(&mods->sml_values[0]);
-   return(dat->op);
-}
-
-
-int
 pwdshadow_get_mods_integer(
          Modifications *               mods,
          pwdshadow_data_t *            dat )
@@ -1158,7 +1137,7 @@ pwdshadow_op_modify(
          pwdshadow_get_mods_time(mods, &st.st_pwdEndTime);
 
       if (mods->sml_desc == ad_pwdShadowGenerate)
-         pwdshadow_get_mods_bool(mods, &st.st_pwdShadowGenerate);
+         pwdshadow_get_mod(mods, &st.st_pwdShadowGenerate, PWDSHADOW_TYPE_BOOL);
 
       if (mods->sml_desc == ad_userPassword)
          pwdshadow_get_mod(mods, &st.st_userPassword, PWDSHADOW_TYPE_EXISTS);
