@@ -242,12 +242,6 @@ pwdshadow_op_modify_purge(
 
 
 static int
-pwdshadow_op_search(
-         Operation *                   op,
-         SlapReply *                   rs );
-
-
-static int
 pwdshadow_parse_bool(
          BerValue *                    bv );
 
@@ -1038,7 +1032,6 @@ pwdshadow_initialize( void )
 
    pwdshadow.on_bi.bi_op_add          = pwdshadow_op_add;
    pwdshadow.on_bi.bi_op_modify       = pwdshadow_op_modify;
-   pwdshadow.on_bi.bi_op_search       = pwdshadow_op_search;
 
    pwdshadow.on_bi.bi_cf_ocs           = pwdshadow_cfg_ocs;
 
@@ -1251,27 +1244,6 @@ pwdshadow_op_modify_purge(
    };
 
    return(0);
-}
-
-
-int
-pwdshadow_op_search(
-         Operation *                   op,
-         SlapReply *                   rs )
-{
-   slap_overinst *         on;
-   pwdshadow_t *           ps;
-
-   // initialize state
-   on                = (slap_overinst *)op->o_bd->bd_info;
-   ps                = on->on_bi.bi_private;
-
-   if (!(rs))
-      return(SLAP_CB_CONTINUE);
-   if (!(ps->ps_cfg_realtime))
-      return(SLAP_CB_CONTINUE);
-
-   return(SLAP_CB_CONTINUE);
 }
 
 
