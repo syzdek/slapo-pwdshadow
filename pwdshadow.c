@@ -715,23 +715,28 @@ pwdshadow_dat_value(
          int                           val,
          int                           flags )
 {
-   dat->dat_flag  |= flags;
-
-   if ((flags & PWDSHADOW_FLG_SET))
+   switch(flags & (PWDSHADOW_FLG_SET|PWDSHADOW_FLG_ADD|PWDSHADOW_FLG_DEL))
    {
+      case PWDSHADOW_FLG_SET:
       dat->dat_prev = val;
       dat->dat_post = val;
-   }
-   else if ((flags & PWDSHADOW_FLG_ADD))
-   {
+      break;
+
+      case PWDSHADOW_FLG_ADD:
       dat->dat_mod  = val;
       dat->dat_post = val;
-   }
-   else if ((flags & PWDSHADOW_FLG_DEL))
-   {
+      break;
+
+      case PWDSHADOW_FLG_DEL:
       dat->dat_mod  = 0;
       dat->dat_post = 0;
+      break;
+
+      default:
+      return(-1);
    };
+
+   dat->dat_flag  |= flags;
 
    return(0);
 }
