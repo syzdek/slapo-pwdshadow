@@ -191,7 +191,7 @@ pwdshadow_get_attrs(
 
 
 static int
-pwdshadow_get_mod(
+pwdshadow_get_mods(
          Modifications *               mod,
          pwdshadow_data_t *            dat,
          int                           flags );
@@ -890,7 +890,7 @@ pwdshadow_get_attrs(
 
 
 int
-pwdshadow_get_mod(
+pwdshadow_get_mods(
          Modifications *               mod,
          pwdshadow_data_t *            dat,
          int                           flags )
@@ -1037,23 +1037,23 @@ pwdshadow_op_modify(
       mods = *next;
 
       if (mods->sml_desc == ad_pwdEndTime)
-         pwdshadow_get_mod(mods, &st.st_pwdEndTime, PWDSHADOW_TYPE_TIME);
+         pwdshadow_get_mods(mods, &st.st_pwdEndTime, PWDSHADOW_TYPE_TIME);
 
       if (mods->sml_desc == ad_pwdShadowGenerate)
-         pwdshadow_get_mod(mods, &st.st_pwdShadowGenerate, PWDSHADOW_TYPE_BOOL);
+         pwdshadow_get_mods(mods, &st.st_pwdShadowGenerate, PWDSHADOW_TYPE_BOOL);
 
       if (mods->sml_desc == ad_userPassword)
-         pwdshadow_get_mod(mods, &st.st_userPassword, PWDSHADOW_TYPE_EXISTS);
+         pwdshadow_get_mods(mods, &st.st_userPassword, PWDSHADOW_TYPE_EXISTS);
 
       // skip remaining attributes if override is disabled
       if (!(ps->ps_cfg_override))
          continue;
 
       if (mods->sml_desc == ad_shadowExpire)
-         pwdshadow_get_mod(mods, &st.st_shadowExpire, PWDSHADOW_TYPE_DAYS);
+         pwdshadow_get_mods(mods, &st.st_shadowExpire, PWDSHADOW_TYPE_DAYS);
 
       if (mods->sml_desc == ad_shadowLastChange)
-         pwdshadow_get_mod(mods, &st.st_shadowLastChange, PWDSHADOW_TYPE_DAYS);
+         pwdshadow_get_mods(mods, &st.st_shadowLastChange, PWDSHADOW_TYPE_DAYS);
    };
 
    // purge and return if generation is disabled for entry
