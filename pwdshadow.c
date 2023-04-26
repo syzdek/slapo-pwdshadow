@@ -882,28 +882,17 @@ pwdshadow_get_attr(
          int                           flags )
 {
    Attribute *       a;
+   BerValue *        bv;
 
    if (!(ad))
       return(0);
 
-   // retrieve attribute from entry
    if ((a = attr_find(entry->e_attrs, ad)) != NULL)
-      if (a->a_numvals == 0)
-         a = NULL;
+      a = (a->a_numvals > 0) ? a : NULL;
 
-   switch(pwdshadow_type(flags))
-   {
-      case PWDSHADOW_TYPE_BOOL:
-      if (!(a))
-         return(0);
-      return(pwdshadow_dat_set(dat, &a->a_nvals[0], ad, flags));
+   bv = ((a)) ? &a->a_nvals[0] : NULL;
 
-      default:
-      Debug( LDAP_DEBUG_ANY, "pwdshadow: pwdshadow_get_attr(): unknown data type\n" );
-      break;
-   };
-
-   return(-1);
+   return(pwdshadow_dat_set(dat, bv, ad, flags));
 }
 
 
