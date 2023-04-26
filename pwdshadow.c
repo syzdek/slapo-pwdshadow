@@ -699,6 +699,14 @@ pwdshadow_dat_set(
       ival /= 60 * 60 * 24;
       return(pwdshadow_dat_value(dat, ival, ad, flags));
 
+      case PWDSHADOW_TYPE_TIME:
+      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.24")))
+         return(-1);
+      if ((ival = (int)pwdshadow_parse_time(bv->bv_val)) == ((time_t)-1))
+         return(-1);
+      ival /= 60 * 60 * 24; // convert from seconds to days
+      return(pwdshadow_dat_value(dat, ival, ad, flags));
+
       default:
       Debug( LDAP_DEBUG_ANY, "pwdshadow: pwdshadow_dat_set(): unknown data type\n" );
       return(-1);
