@@ -192,7 +192,7 @@ pwdshadow_get_attrs(
 
 static int
 pwdshadow_get_mods(
-         Modifications *               mod,
+         Modifications *               mods,
          pwdshadow_data_t *            dat,
          int                           flags );
 
@@ -891,15 +891,13 @@ pwdshadow_get_attrs(
 
 int
 pwdshadow_get_mods(
-         Modifications *               mod,
+         Modifications *               mods,
          pwdshadow_data_t *            dat,
          int                           flags )
 {
    int                     op;
-   Modifications *         mods;
    BerValue *              bv;
 
-   mods  = mod;
    op    = 0;
 
    // set attribute description
