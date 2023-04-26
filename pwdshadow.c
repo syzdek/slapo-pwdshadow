@@ -874,6 +874,10 @@ pwdshadow_get_attr(
    if (!(ad))
       return(0);
 
+   dat->dat_ad = ((dat->dat_ad)) ? dat->dat_ad : ad;
+   if (dat->dat_ad != ad)
+      return(-1);
+
    if ((a = attr_find(entry->e_attrs, ad)) != NULL)
       a = (a->a_numvals > 0) ? a : NULL;
 
