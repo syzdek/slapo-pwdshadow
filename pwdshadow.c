@@ -146,6 +146,14 @@ pwdshadow_db_init(
 
 
 static int
+pwdshadow_dat_value(
+      pwdshadow_data_t *               dat,
+      int                              val,
+      AttributeDescription *           ad,
+      int                              flags );
+
+
+static int
 pwdshadow_eval_gen(
       pwdshadow_state_t *              st );
 
@@ -644,6 +652,36 @@ pwdshadow_copy_int_bv(
    bv->bv_val = ch_malloc( (size_t)bv->bv_len );
    bv->bv_len = snprintf(bv->bv_val, bv->bv_len, "%i", i);
    return;
+}
+
+
+int
+pwdshadow_dat_value(
+      pwdshadow_data_t *               dat,
+      int                              val,
+      AttributeDescription *           ad,
+      int                              flags )
+{
+   dat->dat_ad    = ad;
+   dat->dat_flag  |= flags;
+
+   if ((flags & PWDSHADOW_FLG_SET))
+   {
+      dat->dat_prev = val;
+      dat->dat_post = val;
+   }
+   else if ((flags & PWDSHADOW_FLG_ADD))
+   {
+      dat->dat_mod  = val;
+      dat->dat_post = val;
+   }
+   else if ((flags & PWDSHADOW_FLG_DEL))
+   {
+      dat->dat_mod  = 0;
+      dat->dat_post = 0;
+   };
+
+   return(0);
 }
 
 
