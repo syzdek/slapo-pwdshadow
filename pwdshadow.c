@@ -90,6 +90,11 @@ typedef struct pwdshadow_t
 
 typedef struct pwdshadow_data_t
 {
+   AttributeDescription *     dat_ad;
+   int                        dat_flag;
+   int                        dat_prev;
+   int                        dat_mod;
+   int                        dat_post;
    int                        cur;
    int                        op;
    int                        new;
