@@ -652,8 +652,8 @@ pwdshadow_dat_set(
          BerValue *                    bv,
          int                           flags )
 {
-   int   type;
-   int   ival;
+   int                     type;
+   int                     ival;
    AttributeDescription *  ad;
 
    ad   = dat->dat_ad;
