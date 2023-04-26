@@ -927,10 +927,10 @@ pwdshadow_get_mod(
 {
    int                     op;
    Modifications *         mods;
+   BerValue *              bv;
 
    mods  = mod;
    op    = 0;
-   flags &= ~(PWDSHADOW_FLG_ADD | PWDSHADOW_FLG_DEL);
 
    // set attribute description
    dat->dat_ad = ((dat->dat_ad)) ? dat->dat_ad : mods->sml_desc;
@@ -944,21 +944,12 @@ pwdshadow_get_mod(
       op = (mods->sml_numvals < 1) ? PWDSHADOW_FLG_DEL : PWDSHADOW_FLG_ADD;
    if (op == 0)
       return(-1);
-   dat->dat_flag |= op;
+   flags &= ~(PWDSHADOW_FLG_ADD | PWDSHADOW_FLG_DEL | PWDSHADOW_FLG_SET);
+   flags |= op;
 
-   // handles deletion
-   if (op == PWDSHADOW_FLG_DEL)
-   {
-      dat->dat_mod   = 0;
-      dat->dat_post  = 0;
-      return(0);
-   };
+   bv = (mods->sml_numvals > 0) ? &mods->sml_values[0]: NULL;
 
-   // exit if no modifications
-   if (mods->sml_numvals < 1)
-      return(0);
-
-   return(pwdshadow_dat_set(dat, &mods->sml_values[0], dat->dat_flag));
+   return(pwdshadow_dat_set(dat, bv, flags));
 }
 
 
