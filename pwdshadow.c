@@ -124,7 +124,7 @@ typedef struct pwdshadow_state_t
 
 static int
 pwdshadow_cfg_gen(
-        ConfigArgs *                    c );
+         ConfigArgs *                  c );
 
 
 static void
@@ -135,40 +135,40 @@ pwdshadow_copy_int_bv(
 
 static int
 pwdshadow_db_destroy(
-        BackendDB *                     be,
-        ConfigReply *                   cr );
+         BackendDB *                   be,
+         ConfigReply *                 cr );
 
 
 static int
 pwdshadow_db_init(
-        BackendDB *                     be,
-        ConfigReply *                   cr );
+         BackendDB *                   be,
+         ConfigReply *                 cr );
 
 
 static int
 pwdshadow_dat_set(
-      pwdshadow_data_t *               dat,
-      BerValue *                       bv,
-      AttributeDescription *           ad,
-      int                              flags );
+         pwdshadow_data_t *            dat,
+         BerValue *                    bv,
+         AttributeDescription *        ad,
+         int                           flags );
 
 
 static int
 pwdshadow_dat_value(
-      pwdshadow_data_t *               dat,
-      int                              val,
-      AttributeDescription *           ad,
-      int                              flags );
+         pwdshadow_data_t *            dat,
+         int                           val,
+         AttributeDescription *        ad,
+         int                           flags );
 
 
 static int
 pwdshadow_eval_gen(
-      pwdshadow_state_t *              st );
+         pwdshadow_state_t *           st );
 
 
 static int
 pwdshadow_eval_init(
-      pwdshadow_state_t *              st );
+         pwdshadow_state_t *           st );
 
 
 static int
@@ -179,58 +179,58 @@ pwdshadow_gen_lastchange(
 
 static int
 pwdshadow_get_attr(
-      pwdshadow_data_t *               dat,
-      Entry *                          entry,
-      AttributeDescription *           ad,
-      int                              flags );
+         pwdshadow_data_t *            dat,
+         Entry *                       entry,
+         AttributeDescription *        ad,
+         int                           flags );
 
 
 static int
 pwdshadow_get_attr_exists(
-      Entry *                          entry,
-      AttributeDescription *           ad );
+         Entry *                       entry,
+         AttributeDescription *        ad );
 
 
 static int
 pwdshadow_get_attr_integer(
-      Entry *                          entry,
-      AttributeDescription *           ad );
+         Entry *                       entry,
+         AttributeDescription *        ad );
 
 
 static int
 pwdshadow_get_attr_time(
-      Entry *                          entry,
-      AttributeDescription *           ad );
+         Entry *                       entry,
+         AttributeDescription *        ad );
 
 
 static int
 pwdshadow_get_mods(
-      Modifications *                  mods,
-      pwdshadow_data_t *               dat );
+         Modifications *               mods,
+         pwdshadow_data_t *            dat );
 
 
 static int
 pwdshadow_get_mods_bool(
-      Modifications *                  mods,
-      pwdshadow_data_t *               dat );
+         Modifications *               mods,
+         pwdshadow_data_t *            dat );
 
 
 static int
 pwdshadow_get_mods_exists(
-      Modifications *                  mods,
-      pwdshadow_data_t *               dat );
+         Modifications *               mods,
+         pwdshadow_data_t *            dat );
 
 
 static int
 pwdshadow_get_mods_integer(
-      Modifications *                  mods,
-      pwdshadow_data_t *               dat );
+         Modifications *               mods,
+         pwdshadow_data_t *            dat );
 
 
 static int
 pwdshadow_get_mods_time(
-      Modifications *                  mods,
-      pwdshadow_data_t *               dat );
+         Modifications *               mods,
+         pwdshadow_data_t *            dat );
 
 
 static int
@@ -277,8 +277,8 @@ pwdshadow_parse_time(
 
 static int
 pwdshadow_verify_attr_syntax(
-      AttributeDescription *           ad,
-      const char *                     oid );
+         AttributeDescription *        ad,
+         const char *                  oid );
 
 
 /////////////////
@@ -554,8 +554,8 @@ static ConfigOCs pwdshadow_cfg_ocs[] =
 #if SLAPD_OVER_PWDSHADOW == SLAPD_MOD_DYNAMIC
 int
 init_module(
-	int				argc,
-	char *				argv[] )
+         int				               argc,
+         char *				            argv[] )
 {
    if ((argc))
       return( pwdshadow_initialize() );
@@ -568,7 +568,7 @@ init_module(
 
 int
 pwdshadow_cfg_gen(
-        ConfigArgs *                    c )
+         ConfigArgs *                  c )
 {
    slap_overinst *   on;
    pwdshadow_t *     ps;
@@ -667,10 +667,10 @@ pwdshadow_copy_int_bv(
 
 int
 pwdshadow_dat_set(
-      pwdshadow_data_t *               dat,
-      BerValue *                       bv,
-      AttributeDescription *           ad,
-      int                              flags )
+         pwdshadow_data_t *            dat,
+         BerValue *                    bv,
+         AttributeDescription *        ad,
+         int                           flags )
 {
    int   type;
 
@@ -696,10 +696,10 @@ pwdshadow_dat_set(
 
 int
 pwdshadow_dat_value(
-      pwdshadow_data_t *               dat,
-      int                              val,
-      AttributeDescription *           ad,
-      int                              flags )
+         pwdshadow_data_t *            dat,
+         int                           val,
+         AttributeDescription *        ad,
+         int                           flags )
 {
    dat->dat_ad    = ad;
    dat->dat_flag  |= flags;
@@ -726,8 +726,8 @@ pwdshadow_dat_value(
 
 int
 pwdshadow_db_destroy(
-        BackendDB *                     be,
-        ConfigReply *                   cr )
+         BackendDB *                   be,
+         ConfigReply *                 cr )
 {
    slap_overinst *   on;
    pwdshadow_t *     ps;
@@ -748,8 +748,8 @@ pwdshadow_db_destroy(
 
 int
 pwdshadow_db_init(
-        BackendDB *                     be,
-        ConfigReply *                   cr )
+         BackendDB *                   be,
+         ConfigReply *                 cr )
 {
    slap_overinst *   on;
    pwdshadow_t *     ps;
@@ -792,7 +792,7 @@ pwdshadow_db_init(
 
 int
 pwdshadow_eval_gen(
-      pwdshadow_state_t *              st )
+         pwdshadow_state_t *           st )
 {
    if (st->st_pwdShadowGenerate.op == PWDSHADOW_OP_DELETE)
       return(0);
@@ -804,7 +804,7 @@ pwdshadow_eval_gen(
 
 int
 pwdshadow_eval_init(
-      pwdshadow_state_t *              st )
+         pwdshadow_state_t *           st )
 {
    if ((st->st_pwdShadowGenerate.cur))
       return(0);
@@ -854,10 +854,10 @@ pwdshadow_gen_lastchange(
 
 int
 pwdshadow_get_attr(
-      pwdshadow_data_t *               dat,
-      Entry *                          entry,
-      AttributeDescription *           ad,
-      int                              flags )
+         pwdshadow_data_t *            dat,
+         Entry *                       entry,
+         AttributeDescription *        ad,
+         int                           flags )
 {
    Attribute *       a;
 
@@ -887,8 +887,8 @@ pwdshadow_get_attr(
 
 int
 pwdshadow_get_attr_exists(
-      Entry *                          entry,
-      AttributeDescription *           ad )
+         Entry *                       entry,
+         AttributeDescription *        ad )
 {
    Attribute *       a;
 
@@ -907,8 +907,8 @@ pwdshadow_get_attr_exists(
 
 int
 pwdshadow_get_attr_integer(
-      Entry *                          entry,
-      AttributeDescription *           ad )
+         Entry *                       entry,
+         AttributeDescription *        ad )
 {
    Attribute *       a;
    int               i;
@@ -933,8 +933,8 @@ pwdshadow_get_attr_integer(
 
 int
 pwdshadow_get_attr_time(
-      Entry *                          entry,
-      AttributeDescription *           ad )
+         Entry *                       entry,
+         AttributeDescription *        ad )
 {
    Attribute *       a;
    time_t            t;
@@ -972,8 +972,8 @@ pwdshadow_get_attr_time(
 
 int
 pwdshadow_get_mods(
-      Modifications *                  mods,
-      pwdshadow_data_t *               dat )
+         Modifications *               mods,
+         pwdshadow_data_t *            dat )
 {
    switch(mods->sml_op)
    {
@@ -988,8 +988,8 @@ pwdshadow_get_mods(
 
 int
 pwdshadow_get_mods_bool(
-      Modifications *                  mods,
-      pwdshadow_data_t *               dat )
+         Modifications *               mods,
+         pwdshadow_data_t *            dat )
 {
    int rc;
    if ((rc = pwdshadow_get_mods(mods, dat)) != PWDSHADOW_OP_ADD)
@@ -1003,8 +1003,8 @@ pwdshadow_get_mods_bool(
 
 int
 pwdshadow_get_mods_exists(
-      Modifications *                  mods,
-      pwdshadow_data_t *               dat )
+         Modifications *               mods,
+         pwdshadow_data_t *            dat )
 {
    int rc;
    if ((rc = pwdshadow_get_mods(mods, dat)) != PWDSHADOW_OP_ADD)
@@ -1016,8 +1016,8 @@ pwdshadow_get_mods_exists(
 
 int
 pwdshadow_get_mods_integer(
-      Modifications *                  mods,
-      pwdshadow_data_t *               dat )
+         Modifications *               mods,
+         pwdshadow_data_t *            dat )
 {
    int rc;
    int i;
@@ -1038,11 +1038,10 @@ pwdshadow_get_mods_integer(
 }
 
 
-
 int
 pwdshadow_get_mods_time(
-      Modifications *                  mods,
-      pwdshadow_data_t *               dat )
+         Modifications *               mods,
+         pwdshadow_data_t *            dat )
 {
    int      rc;
    time_t   t;
@@ -1397,8 +1396,8 @@ pwdshadow_parse_time(
 
 int
 pwdshadow_verify_attr_syntax(
-      AttributeDescription *           ad,
-      const char *                     oid )
+         AttributeDescription *        ad,
+         const char *                  oid )
 {
    const char * syn_oid;
 
