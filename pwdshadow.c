@@ -191,6 +191,13 @@ pwdshadow_get_attrs(
 
 
 static int
+pwdshadow_get_mod(
+         Modifications *               mod,
+         pwdshadow_data_t *            dat,
+         int                           flags );
+
+
+static int
 pwdshadow_get_mods(
          Modifications *               mods,
          pwdshadow_data_t *            dat );
@@ -899,6 +906,49 @@ pwdshadow_get_attrs(
    pwdshadow_get_attr(entry, ad_shadowLastChange,     &st->st_shadowLastChange,     flags|PWDSHADOW_TYPE_DAYS);
    pwdshadow_get_attr(entry, ad_userPassword,         &st->st_userPassword,         flags|PWDSHADOW_TYPE_EXISTS);
    return(0);
+}
+
+
+int
+pwdshadow_get_mod(
+         Modifications *               mod,
+         pwdshadow_data_t *            dat,
+         int                           flags )
+{
+   int                     op;
+   Modifications *         mods;
+
+   mods  = mod;
+   op    = 0;
+   flags &= ~(PWDSHADOW_FLG_ADD | PWDSHADOW_FLG_DEL);
+
+   // set attribute description
+   dat->dat_ad = ((dat->dat_ad)) ? dat->dat_ad : mods->sml_desc;
+   if (dat->dat_ad != mods->sml_desc)
+      return(-1);
+
+   // determines and sets operation type
+   op = (mods->sml_op == LDAP_MOD_ADD)    ? PWDSHADOW_FLG_ADD : op;
+   op = (mods->sml_op == LDAP_MOD_DELETE) ? PWDSHADOW_FLG_DEL : op;
+   if (mods->sml_op == LDAP_MOD_REPLACE)
+      op = (mods->sml_numvals < 1) ? PWDSHADOW_FLG_DEL : PWDSHADOW_FLG_ADD;
+   if (op == 0)
+      return(-1);
+   dat->dat_flag |= op;
+
+   // handles deletion
+   if (op == PWDSHADOW_FLG_DEL)
+   {
+      dat->dat_mod   = 0;
+      dat->dat_post  = 0;
+      return(0);
+   };
+
+   // exit if no modifications
+   if (mods->sml_numvals < 1)
+      return(0);
+
+   return(pwdshadow_dat_set(dat, &mods->sml_values[0], dat->dat_flag));
 }
 
 
