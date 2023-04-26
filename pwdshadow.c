@@ -198,12 +198,6 @@ pwdshadow_get_attr_integer(
 
 
 static int
-pwdshadow_get_attr_time(
-         Entry *                       entry,
-         AttributeDescription *        ad );
-
-
-static int
 pwdshadow_get_mods(
          Modifications *               mods,
          pwdshadow_data_t *            dat );
@@ -943,45 +937,6 @@ pwdshadow_get_attr_integer(
 
 
 int
-pwdshadow_get_attr_time(
-         Entry *                       entry,
-         AttributeDescription *        ad )
-{
-   Attribute *       a;
-   time_t            t;
-   int               i;
-
-   if (!(ad))
-      return(0);
-   if ((a = attr_find(entry->e_attrs, ad)) == NULL)
-      return(0);
-   if (a->a_numvals == 0)
-      return(0);
-
-   // process attribute as Generalized Time
-   if ((pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.24")))
-   {
-      if ((t = pwdshadow_parse_time(a->a_nvals[0].bv_val)) == ((time_t)-1))
-         return(0);
-      t /= 60; // convert to minutes
-      t /= 60; // convert to hours
-      t /= 24; // convert to days
-      return((int)t);
-   };
-
-   // process attribute as Integer
-   if ((pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
-   {
-      i = 0;
-      lutil_atoi(&i, a->a_nvals[0].bv_val);
-      return(i);
-   };
-
-   return(0);
-}
-
-
-int
 pwdshadow_get_mods(
          Modifications *               mods,
          pwdshadow_data_t *            dat )
@@ -1195,9 +1150,11 @@ pwdshadow_op_modify(
       return(SLAP_CB_CONTINUE);
 
    // determines existing attribtues
-   pwdshadow_get_attr(&st.st_pwdShadowGenerate, entry, ad_pwdShadowGenerate, PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_BOOL);
-   st.st_pwdChangedTime.cur      = pwdshadow_get_attr_time(entry,     ad_pwdChangedTime);
-   st.st_pwdEndTime.cur          = pwdshadow_get_attr_time(entry,     ad_pwdEndTime);
+   pwdshadow_get_attr(&st.st_pwdChangedTime,    entry, ad_pwdChangedTime,     PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_TIME);
+   pwdshadow_get_attr(&st.st_pwdEndTime,        entry, ad_pwdEndTime,         PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_TIME);
+   pwdshadow_get_attr(&st.st_pwdShadowGenerate, entry, ad_pwdShadowGenerate,  PWDSHADOW_FLG_SET|PWDSHADOW_TYPE_BOOL);
+
+
    st.st_pwdShadowExpire.cur     = pwdshadow_get_attr_integer(entry,  ad_pwdShadowExpire);
    st.st_pwdShadowLastChange.cur = pwdshadow_get_attr_integer(entry,  ad_pwdShadowLastChange);
    st.st_shadowExpire.cur        = pwdshadow_get_attr_integer(entry,  ad_shadowExpire);
