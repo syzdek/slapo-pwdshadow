@@ -198,12 +198,6 @@ pwdshadow_get_mod(
 
 
 static int
-pwdshadow_get_mods(
-         Modifications *               mods,
-         pwdshadow_data_t *            dat );
-
-
-static int
 pwdshadow_op_add(
          Operation *                   op,
          SlapReply *                   rs );
@@ -926,22 +920,6 @@ pwdshadow_get_mod(
    bv = (mods->sml_numvals > 0) ? &mods->sml_values[0]: NULL;
 
    return(pwdshadow_dat_set(dat, bv, flags));
-}
-
-
-int
-pwdshadow_get_mods(
-         Modifications *               mods,
-         pwdshadow_data_t *            dat )
-{
-   switch(mods->sml_op)
-   {
-      case LDAP_MOD_DELETE:  return(dat->op = PWDSHADOW_OP_DELETE);
-      case LDAP_MOD_ADD:     return(dat->op = PWDSHADOW_OP_ADD);
-      case LDAP_MOD_REPLACE: break;
-      default:               return(dat->op = PWDSHADOW_OP_UNKNOWN);
-   };
-   return(dat->op = ((mods->sml_numvals < 1) ? PWDSHADOW_OP_DELETE : PWDSHADOW_OP_ADD));
 }
 
 
