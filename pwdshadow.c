@@ -146,6 +146,14 @@ pwdshadow_db_init(
 
 
 static int
+pwdshadow_dat_set(
+      pwdshadow_data_t *               dat,
+      BerValue *                       bv,
+      AttributeDescription *           ad,
+      int                              flags );
+
+
+static int
 pwdshadow_dat_value(
       pwdshadow_data_t *               dat,
       int                              val,
@@ -652,6 +660,35 @@ pwdshadow_copy_int_bv(
    bv->bv_val = ch_malloc( (size_t)bv->bv_len );
    bv->bv_len = snprintf(bv->bv_val, bv->bv_len, "%i", i);
    return;
+}
+
+
+int
+pwdshadow_dat_set(
+      pwdshadow_data_t *               dat,
+      BerValue *                       bv,
+      AttributeDescription *           ad,
+      int                              flags )
+{
+   int   type;
+
+   type = ((pwdshadow_type(dat->dat_flag))) ? pwdshadow_type(dat->dat_flag) : pwdshadow_type(flags);
+   if (pwdshadow_type(flags) != type)
+      return(-1);
+
+   switch(type)
+   {
+      case PWDSHADOW_TYPE_BOOL:
+      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.7")))
+         return(-1);
+      return(pwdshadow_dat_value(dat, pwdshadow_parse_bool(bv), ad, flags));
+
+      default:
+      Debug( LDAP_DEBUG_ANY, "pwdshadow: pwdshadow_dat_set(): unknown data type\n" );
+      return(-1);
+   };
+
+   return(0);
 }
 
 
