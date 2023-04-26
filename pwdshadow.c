@@ -668,6 +668,9 @@ pwdshadow_dat_set(
    if (pwdshadow_type(flags) != type)
       return(-1);
 
+   if ((flags & PWDSHADOW_FLG_DEL))
+      return(pwdshadow_dat_value(dat, 0, flags));
+
    switch(type)
    {
       case PWDSHADOW_TYPE_BOOL:
