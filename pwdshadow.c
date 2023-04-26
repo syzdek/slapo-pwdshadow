@@ -670,6 +670,8 @@ pwdshadow_dat_set(
 
    if ((flags & PWDSHADOW_FLG_DEL))
       return(pwdshadow_dat_value(dat, 0, flags));
+   if (!(bv))
+      return(-1);
 
    switch(type)
    {
