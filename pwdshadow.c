@@ -149,7 +149,6 @@ static int
 pwdshadow_dat_set(
          pwdshadow_data_t *            dat,
          BerValue *                    bv,
-         AttributeDescription *        ad,
          int                           flags );
 
 
@@ -157,7 +156,6 @@ static int
 pwdshadow_dat_value(
          pwdshadow_data_t *            dat,
          int                           val,
-         AttributeDescription *        ad,
          int                           flags );
 
 
@@ -652,12 +650,13 @@ int
 pwdshadow_dat_set(
          pwdshadow_data_t *            dat,
          BerValue *                    bv,
-         AttributeDescription *        ad,
          int                           flags )
 {
    int   type;
    int   ival;
+   AttributeDescription *  ad;
 
+   ad   = dat->dat_ad;
    type = ((pwdshadow_type(dat->dat_flag))) ? pwdshadow_type(dat->dat_flag) : pwdshadow_type(flags);
    if (pwdshadow_type(flags) != type)
       return(-1);
@@ -881,7 +880,7 @@ pwdshadow_get_attr(
 
    bv = ((a)) ? &a->a_nvals[0] : NULL;
 
-   return(pwdshadow_dat_set(dat, bv, ad, flags));
+   return(pwdshadow_dat_set(dat, bv, flags));
 }
 
 
