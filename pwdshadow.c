@@ -44,6 +44,18 @@
 #define PWDSHADOW_OP_NONE        0
 #define PWDSHADOW_OP_ADD         1
 
+#define PWDSHADOW_FLG_SET        0x0001
+#define PWDSHADOW_FLG_ADD        0x0002
+#define PWDSHADOW_FLG_DEL        0x0004
+#define PWDSHADOW_TYPE_EXISTS    0x0100
+#define PWDSHADOW_TYPE_BOOL      0x0200
+#define PWDSHADOW_TYPE_TIME      0x0400
+#define PWDSHADOW_TYPE_SECS      0x0800
+#define PWDSHADOW_TYPE_DAYS      0x1000
+#define PWDSHADOW_TYPE           0xff00
+#define PWDSHADOW_HAS_MODS       ( PWDSHADOW_DAT_ADD | PWDSHADOW_DAT_DEL )
+
+#define pwdshadow_type(flags) (flags & PWDSHADOW_TYPE)
 #define PWDSHADOW_GENVAL(old, new) ((old == new) ? 0 : new)
 
 
