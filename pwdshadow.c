@@ -427,9 +427,7 @@ static ConfigTable pwdshadow_cfg_ats[] =
                         " DESC 'DN of a pwdPolicy object for uncustomized objects'"
                         " EQUALITY distinguishedNameMatch"
                         " SYNTAX OMsDN"
-                        " SINGLE-VALUE )",
-      .ad            = NULL,
-      .arg_default   = NULL
+                        " SINGLE-VALUE )"
    },
    {
       .name          = "pwdshadow_override",
@@ -444,9 +442,7 @@ static ConfigTable pwdshadow_cfg_ats[] =
                         " DESC 'Attribute which indicates shadow attributes should be generated'"
                         " EQUALITY booleanMatch"
                         " SYNTAX OMsBoolean"
-                        " SINGLE-VALUE )",
-      .ad            = NULL,
-      .arg_default   = NULL
+                        " SINGLE-VALUE )"
    },
    {
       .name          = "pwdshadow_realtime",
@@ -461,9 +457,7 @@ static ConfigTable pwdshadow_cfg_ats[] =
                         " DESC 'Attribute which indicates shadow attributes should be generated in realtime'"
                         " EQUALITY booleanMatch"
                         " SYNTAX OMsBoolean"
-                        " SINGLE-VALUE )",
-      .ad            = NULL,
-      .arg_default   = NULL
+                        " SINGLE-VALUE )"
    },
    {
       .name          = NULL,
@@ -471,7 +465,9 @@ static ConfigTable pwdshadow_cfg_ats[] =
       .min_args      = 0,
       .max_args      = 0,
       .length        = 0,
-      .arg_type      = ARG_IGNORED
+      .arg_type      = ARG_IGNORED,
+      .arg_item      = NULL,
+      .attribute     = NULL
    }
 };
 
