@@ -182,6 +182,11 @@ pwdshadow_dat_value(
 
 
 static int
+pwdshadow_eval_postcheck(
+         pwdshadow_data_t *            dat );
+
+
+static int
 pwdshadow_eval_gen(
          pwdshadow_state_t *           st );
 
@@ -793,6 +798,25 @@ pwdshadow_db_init(
       slap_str2ad("shadowLastChange", &ps->ps_ad_shadowLastChange, &text);
    if ((ps->ps_ad_userPassword = ad_userPassword) == NULL)
       slap_str2ad("userPassword", &ps->ps_ad_userPassword, &text);
+
+   return(0);
+}
+
+
+int
+pwdshadow_eval_postcheck(
+         pwdshadow_data_t *            dat )
+{
+   if (!(pwdshadow_flg_mustadd(dat)))
+      return(0);
+   if (!(pwdshadow_flg_set(dat)))
+      return(0);
+
+   if (dat->dat_prev == dat->dat_post)
+   {
+      dat->dat_flag &= ~PWDSHADOW_FLG_MUSTADD;
+      return(0);
+   };
 
    return(0);
 }
