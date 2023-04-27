@@ -202,11 +202,6 @@ pwdshadow_eval_precheck(
 
 
 static int
-pwdshadow_eval_gen(
-         pwdshadow_state_t *           st );
-
-
-static int
 pwdshadow_gen_lastchange(
          pwdshadow_t *                 ps,
          pwdshadow_state_t *           st );
@@ -938,18 +933,6 @@ pwdshadow_eval_precheck(
    };
 
    return(0);
-}
-
-
-int
-pwdshadow_eval_gen(
-         pwdshadow_state_t *           st )
-{
-   if (st->st_pwdShadowGenerate.op == PWDSHADOW_OP_DELETE)
-      return(0);
-   if (st->st_pwdShadowGenerate.op == PWDSHADOW_OP_ADD)
-      return(((st->st_pwdShadowGenerate.new)) ? 1 : 0);
-   return(((st->st_pwdShadowGenerate.cur)) ? 1 : 0);
 }
 
 
