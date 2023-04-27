@@ -252,6 +252,13 @@ pwdshadow_op_modify(
 
 
 static int
+pwdshadow_op_modify_mods(
+         AttributeDescription *        ad,
+         pwdshadow_data_t *            dat,
+         Modifications ***             nextp );
+
+
+static int
 pwdshadow_op_modify_init(
          Operation *                   op,
          pwdshadow_state_t *           st,
@@ -1240,6 +1247,46 @@ pwdshadow_op_modify(
       return(SLAP_CB_CONTINUE);
 
    return(SLAP_CB_CONTINUE);
+}
+
+
+int
+pwdshadow_op_modify_mods(
+         AttributeDescription *        ad,
+         pwdshadow_data_t *            dat,
+         Modifications ***             nextp )
+{
+   Modifications *         mods;
+
+   if (!(pwdshadow_ops(dat->dat_flag)))
+      return(0);
+
+   // create initial modification
+   mods  = (Modifications *) ch_malloc( sizeof( Modifications ) );
+   mods->sml_op               = LDAP_MOD_DELETE;
+   mods->sml_flags            = SLAP_MOD_INTERNAL;
+   mods->sml_type.bv_val      = NULL;
+   mods->sml_desc             = ad;
+   mods->sml_numvals          = 0;
+   mods->sml_values           = NULL;
+   mods->sml_nvalues          = NULL;
+   mods->sml_next             = NULL;
+   **nextp                    = mods;
+   (*nextp)                   = &mods->sml_next;
+
+   // exit if deleting entry
+   if (!(pwdshadow_flg_mustdel(dat)))
+      return(0);
+
+   // complete modifications for adding/updating value
+   mods->sml_op               = LDAP_MOD_REPLACE;
+   mods->sml_numvals          = 1;
+   mods->sml_values           = ch_calloc( sizeof( struct berval ), 2 );
+   pwdshadow_copy_int_bv(dat->dat_post, &mods->sml_values[0]);
+   mods->sml_values[1].bv_val = NULL;
+   mods->sml_values[1].bv_len = 0;
+
+   return(0);
 }
 
 
