@@ -182,6 +182,12 @@ pwdshadow_dat_value(
 
 
 static int
+pwdshadow_eval(
+         Operation *                   op,
+         pwdshadow_state_t *           st );
+
+
+static int
 pwdshadow_eval_postcheck(
          pwdshadow_data_t *            dat );
 
@@ -807,6 +813,50 @@ pwdshadow_db_init(
       slap_str2ad("shadowLastChange", &ps->ps_ad_shadowLastChange, &text);
    if ((ps->ps_ad_userPassword = ad_userPassword) == NULL)
       slap_str2ad("userPassword", &ps->ps_ad_userPassword, &text);
+
+   return(0);
+}
+
+
+int
+pwdshadow_eval(
+         Operation *                   op,
+         pwdshadow_state_t *           st )
+{
+   pwdshadow_data_t *   dat;
+
+   st->st_purge      = ((pwdshadow_flg_del(&st->st_pwdShadowGenerate))) ? 1 : 0;
+   st->st_generate   = st->st_pwdShadowGenerate.dat_post;
+
+   // process pwdShadowExpire
+   dat = &st->st_pwdShadowExpire;
+   pwdshadow_eval_precheck(
+      op,
+      st,
+      dat,                          // data
+      &st->st_shadowExpire,         // override attribute
+      (pwdshadow_data_t *[])        // triggering attributes
+      {  &st->st_pwdEndTime,
+         NULL
+      }
+   );
+   pwdshadow_eval_postcheck(dat);
+
+   // process pwdShadowLastChange
+   dat = &st->st_pwdShadowLastChange;
+   pwdshadow_eval_precheck(
+      op,
+      st,
+      dat,                          // data
+      &st->st_shadowLastChange,     // override attribute
+      (pwdshadow_data_t *[])        // triggering attributes
+      {  &st->st_userPassword,
+         NULL
+      }
+   );
+   if ( ((pwdshadow_flg_mustadd(dat))) && (!(pwdshadow_flg_override(dat))) )
+      dat->dat_post = ((int)time(NULL)) / 60 / 60 /24;
+   pwdshadow_eval_postcheck(dat);
 
    return(0);
 }
