@@ -187,6 +187,15 @@ pwdshadow_eval_postcheck(
 
 
 static int
+pwdshadow_eval_precheck(
+         Operation *                   op,
+         pwdshadow_state_t *           st,
+         pwdshadow_data_t *            dat,
+         pwdshadow_data_t *            override,
+         pwdshadow_data_t *            triggers[] );
+
+
+static int
 pwdshadow_eval_gen(
          pwdshadow_state_t *           st );
 
@@ -816,6 +825,64 @@ pwdshadow_eval_postcheck(
    {
       dat->dat_flag &= ~PWDSHADOW_FLG_MUSTADD;
       return(0);
+   };
+
+   return(0);
+}
+
+
+int
+pwdshadow_eval_precheck(
+         Operation *                   op,
+         pwdshadow_state_t *           st,
+         pwdshadow_data_t *            dat,
+         pwdshadow_data_t *            override,
+         pwdshadow_data_t *            triggers[] )
+{
+   int                     idx;
+   slap_overinst *         on;
+   pwdshadow_t *           ps;
+
+   on                = (slap_overinst *)op->o_bd->bd_info;
+   ps                = on->on_bi.bi_private;
+
+   // determine if overlay is disabled for entry
+   if ((st->st_purge))
+   {
+      pwdshadow_purge(dat);
+      return(0);
+   };
+
+   // determine if override value is set for attribute
+   if ( ((ps->ps_cfg_override)) && ((override)) )
+   {
+      if ((pwdshadow_flg_add(override)))
+      {
+         dat->dat_flag |= (PWDSHADOW_FLG_MUSTADD | PWDSHADOW_FLG_OVERRIDE);
+         dat->dat_post = override->dat_post;
+         return(0);
+      };
+      if ( ((pwdshadow_flg_set(override))) && (!(pwdshadow_flg_set(dat))) )
+      {
+         dat->dat_flag |= (PWDSHADOW_FLG_MUSTADD | PWDSHADOW_FLG_OVERRIDE);
+         dat->dat_post = override->dat_post;
+         return(0);
+      };
+   };
+
+   // check triggers
+   for(idx = 0; ( ((triggers)) && ((triggers[idx])) ); idx++)
+   {
+      if ((pwdshadow_flg_add(triggers[idx])))
+      {
+         dat->dat_flag |= PWDSHADOW_FLG_MUSTADD;
+         dat->dat_post = triggers[idx]->dat_post;
+      };
+      if ( ((pwdshadow_flg_set(triggers[idx]))) && (!(pwdshadow_flg_set(dat))) )
+      {
+         dat->dat_flag |= PWDSHADOW_FLG_MUSTADD;
+         dat->dat_post = triggers[idx]->dat_post;
+      };
    };
 
    return(0);
