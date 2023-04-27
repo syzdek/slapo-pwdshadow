@@ -124,6 +124,7 @@ typedef struct pwdshadow_data_t
 typedef struct pwdshadow_state_t
 {
    Entry *                    st_entry;
+   int                        st_generate;
    pwdshadow_data_t           st_pwdChangedTime;
    pwdshadow_data_t           st_pwdEndTime;
    pwdshadow_data_t           st_pwdShadowExpire;
