@@ -71,7 +71,7 @@
 #define pwdshadow_flg_override(dat) ((dat)->dat_flag & PWDSHADOW_FLG_OVERRIDE)
 
 // retrieve class of flags
-#define pwdshadow_ops(flags)        (flags & PWDSHADOW_STATE)
+#define pwdshadow_ops(flags)        (flags & PWDSHADOW_OPS)
 #define pwdshadow_state(flags)      (flags & PWDSHADOW_STATE)
 #define pwdshadow_type(flags)       (flags & PWDSHADOW_TYPE)
 
