@@ -1217,28 +1217,12 @@ pwdshadow_op_modify(
          pwdshadow_get_mods(mods, &st.st_shadowLastChange, PWDSHADOW_TYPE_DAYS);
    };
 
-   // purge and return if generation is disabled for entry
-   if (!(pwdshadow_eval_gen(&st)))
-   {
-      pwdshadow_op_modify_purge(op, entry, next);
-      op->o_bd->bd_info = (BackendInfo *)on->on_info;
-      be_entry_release_r(op, entry);
-      return(SLAP_CB_CONTINUE);
-   };
+   // evaluate attributes for changes
+   pwdshadow_eval(op, &st);
 
-   // if needed, initialize entry and return
-   if ((pwdshadow_eval_init(&st)))
-   {
-      pwdshadow_op_modify_init(op, &st, next);
-      op->o_bd->bd_info = (BackendInfo *)on->on_info;
-      be_entry_release_r(op, entry);
-      return(SLAP_CB_CONTINUE);
-   };
-
-   // check for changes to password
-   if ( ((st.st_userPassword.op)) || ((st.st_shadowLastChange.op)) )
-   {
-   };
+   // processing pwdShadowLastChange
+   pwdshadow_op_modify_mods(ad_pwdShadowExpire,     &st.st_pwdShadowExpire,     &next);
+   pwdshadow_op_modify_mods(ad_pwdShadowLastChange, &st.st_pwdShadowLastChange, &next);
 
    op->o_bd->bd_info = (BackendInfo *)on->on_info;
    be_entry_release_r( op, entry );
