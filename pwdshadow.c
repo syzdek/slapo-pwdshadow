@@ -49,7 +49,7 @@
 #define PWDSHADOW_FLG_DEL        0x0004
 #define PWDSHADOW_FLG_MUSTADD    0x0008
 #define PWDSHADOW_FLG_MUSTDEL    0x0010
-//      PWDSHADOW_FLG_UNUSED     0x0020
+#define PWDSHADOW_FLG_OVERRIDE   0x0020
 //      PWDSHADOW_FLG_UNUSED     0x0040
 //      PWDSHADOW_FLG_UNUSED     0x0080
 #define PWDSHADOW_TYPE_EXISTS    0x0100
@@ -58,9 +58,26 @@
 #define PWDSHADOW_TYPE_SECS      0x0800
 #define PWDSHADOW_TYPE_DAYS      0x1000
 #define PWDSHADOW_TYPE           0xff00
+#define PWDSHADOW_OPS            ( PWDSHADOW_FLG_MUSTADD | PWDSHADOW_FLG_MUSTDEL )
+#define PWDSHADOW_STATE          ( PWDSHADOW_FLG_SET | PWDSHADOW_FLG_ADD | PWDSHADOW_FLG_DEL )
 #define PWDSHADOW_HAS_MODS       ( PWDSHADOW_DAT_ADD | PWDSHADOW_DAT_DEL )
 
+// query individual flags
+#define pwdshadow_flg_add(dat)      ((dat)->dat_flag & PWDSHADOW_FLG_ADD)
+#define pwdshadow_flg_del(dat)      ((dat)->dat_flag & PWDSHADOW_FLG_DEL)
+#define pwdshadow_flg_set(dat)      ((dat)->dat_flag & PWDSHADOW_FLG_SET)
+#define pwdshadow_flg_mustadd(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_MUSTADD)
+#define pwdshadow_flg_mustdel(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_MUSTDEL)
+#define pwdshadow_flg_override(dat) ((dat)->dat_flag & PWDSHADOW_FLG_OVERRIDE)
+
+// retrieve class of flags
+#define pwdshadow_ops(flags)        (flags & PWDSHADOW_STATE)
+#define pwdshadow_state(flags)      (flags & PWDSHADOW_STATE)
 #define pwdshadow_type(flags)       (flags & PWDSHADOW_TYPE)
+
+// set flags
+#define pwdshadow_purge(dat)        (dat)->dat_flag |= ((pwdshadow_flg_set(dat))) ? PWDSHADOW_FLG_MUSTDEL : 0
+
 #define PWDSHADOW_GENVAL(old, new) ((old == new) ? 0 : new)
 
 
