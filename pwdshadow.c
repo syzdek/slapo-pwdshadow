@@ -37,7 +37,7 @@
 ///////////////////
 #pragma mark - Definitions
 
-#define PWDSHADOW_DEF_POLICY     0x01
+#define PWDSHADOW_CFG_DEF_POLICY    0x01
 
 #define PWDSHADOW_OP_UNKNOWN     -2
 #define PWDSHADOW_OP_DELETE      -1
@@ -421,7 +421,7 @@ static ConfigTable pwdshadow_cfg_ats[] =
       .min_args      = 2,
       .max_args      = 2,
       .length        = 0,
-      .arg_type      = ARG_DN|ARG_QUOTE|ARG_MAGIC|PWDSHADOW_DEF_POLICY,
+      .arg_type      = ARG_DN|ARG_QUOTE|ARG_MAGIC|PWDSHADOW_CFG_DEF_POLICY,
       .arg_item      = pwdshadow_cfg_gen,
       .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.1"
                         " NAME 'olcPwdShadowDefault'"
@@ -535,7 +535,7 @@ pwdshadow_cfg_gen(
       case SLAP_CONFIG_EMIT:
       switch( c->type )
       {
-         case PWDSHADOW_DEF_POLICY:
+         case PWDSHADOW_CFG_DEF_POLICY:
          if ( ps->ps_def_policy.bv_val != NULL)
          {
             if ((rc = value_add_one( &c->rvalue_vals, &ps->ps_def_policy )) != 0)
@@ -553,7 +553,7 @@ pwdshadow_cfg_gen(
       case LDAP_MOD_DELETE:
       switch( c->type )
       {
-         case PWDSHADOW_DEF_POLICY:
+         case PWDSHADOW_CFG_DEF_POLICY:
          Debug(LDAP_DEBUG_TRACE, "==> pwdshadow_cfg_gen delete\n" );
          if ( ps->ps_def_policy.bv_val )
          {
@@ -575,7 +575,7 @@ pwdshadow_cfg_gen(
       case LDAP_MOD_ADD:
       switch( c->type )
       {
-         case PWDSHADOW_DEF_POLICY:
+         case PWDSHADOW_CFG_DEF_POLICY:
          Debug(LDAP_DEBUG_TRACE, "==> pwdshadow_cfg_gen add\n" );
          if (( ps->ps_def_policy.bv_val ))
          {
