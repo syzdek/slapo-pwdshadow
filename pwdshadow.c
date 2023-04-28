@@ -1129,7 +1129,7 @@ pwdshadow_op_modify(
       if (!(ps->ps_cfg_override))
          continue;
 
-      if (mods->sml_desc == ad_shadowExpire)
+      if (mods->sml_desc == ps->ps_ad_shadowExpire)
          pwdshadow_get_mods(mods, &st.st_shadowExpire, PWDSHADOW_TYPE_DAYS);
 
       if (mods->sml_desc == ad_shadowLastChange)
