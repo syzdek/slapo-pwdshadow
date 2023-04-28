@@ -255,7 +255,7 @@ pwdshadow_verify_attr_syntax(
 
 static slap_overinst pwdshadow;
 
-// external internal descriptions
+// internal attribute descriptions
 static AttributeDescription *       ad_pwdShadowLastChange  = NULL;
 static AttributeDescription *       ad_pwdShadowMin         = NULL;
 static AttributeDescription *       ad_pwdShadowMax         = NULL;
@@ -769,10 +769,10 @@ pwdshadow_db_init(
    ps->ps_cfg_realtime           = 0;
 
    // retrieve attribute descriptions
-   slap_str2ad("pwdChangedTime", &ps->ps_ad_pwdChangedTime, &text);
-   slap_str2ad("pwdEndTime", &ps->ps_ad_pwdEndTime, &text);
-   slap_str2ad("shadowExpire", &ps->ps_ad_shadowExpire, &text);
-   slap_str2ad("shadowLastChange", &ps->ps_ad_shadowLastChange, &text);
+   slap_str2ad("pwdChangedTime",    &ps->ps_ad_pwdChangedTime,    &text);
+   slap_str2ad("pwdEndTime",        &ps->ps_ad_pwdEndTime,        &text);
+   slap_str2ad("shadowExpire",      &ps->ps_ad_shadowExpire,      &text);
+   slap_str2ad("shadowLastChange",  &ps->ps_ad_shadowLastChange,  &text);
    if ((ps->ps_ad_userPassword = slap_schema.si_ad_userPassword) == NULL)
       slap_str2ad("userPassword", &ps->ps_ad_userPassword, &text);
 
