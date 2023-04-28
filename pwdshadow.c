@@ -78,8 +78,6 @@
 // set flags
 #define pwdshadow_purge(dat)        (dat)->dat_flag |= ((pwdshadow_flg_set(dat))) ? PWDSHADOW_FLG_MUSTDEL : 0
 
-#define PWDSHADOW_GENVAL(old, new) ((old == new) ? 0 : new)
-
 
 /////////////////
 //             //
