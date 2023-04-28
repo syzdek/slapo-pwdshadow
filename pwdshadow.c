@@ -259,7 +259,6 @@ static slap_overinst pwdshadow;
 // external attribute descriptions
 static AttributeDescription *       ad_pwdChangedTime       = NULL;
 static AttributeDescription *       ad_pwdEndTime           = NULL;
-static AttributeDescription *       ad_shadowExpire         = NULL;
 
 
 // external internal descriptions
@@ -780,8 +779,7 @@ pwdshadow_db_init(
       slap_str2ad("pwdChangedTime", &ps->ps_ad_pwdChangedTime, &text);
    if ((ps->ps_ad_pwdEndTime = ad_pwdEndTime) == NULL)
       slap_str2ad("pwdEndTime", &ps->ps_ad_pwdEndTime, &text);
-   if ((ps->ps_ad_shadowExpire = ad_shadowExpire) == NULL)
-      slap_str2ad("shadowExpire", &ps->ps_ad_shadowExpire, &text);
+   slap_str2ad("shadowExpire", &ps->ps_ad_shadowExpire, &text);
    slap_str2ad("shadowLastChange", &ps->ps_ad_shadowLastChange, &text);
    if ((ps->ps_ad_userPassword = slap_schema.si_ad_userPassword) == NULL)
       slap_str2ad("userPassword", &ps->ps_ad_userPassword, &text);
@@ -1037,7 +1035,6 @@ pwdshadow_initialize( void )
 
    slap_str2ad("pwdChangedTime",       &ad_pwdChangedTime,     &text);
    slap_str2ad("pwdEndTime",           &ad_pwdEndTime,         &text);
-   slap_str2ad("shadowExpire",         &ad_shadowExpire,       &text);
 
    pwdshadow.on_bi.bi_type             = "pwdshadow";
    pwdshadow.on_bi.bi_flags            = SLAPO_BFLAG_SINGLE;
