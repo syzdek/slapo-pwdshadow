@@ -249,13 +249,6 @@ pwdshadow_op_modify_mods(
 
 
 static int
-pwdshadow_op_modify_purge(
-         Operation *                   op,
-         Entry *                       entry,
-         Modifications **              next );
-
-
-static int
 pwdshadow_verify_attr_syntax(
          AttributeDescription *        ad,
          const char *                  oid );
@@ -1228,59 +1221,6 @@ pwdshadow_op_modify_mods(
    pwdshadow_copy_int_bv(dat->dat_post, &mods->sml_values[0]);
    mods->sml_values[1].bv_val = NULL;
    mods->sml_values[1].bv_len = 0;
-
-   return(0);
-}
-
-
-int
-pwdshadow_op_modify_purge(
-         Operation *                   op,
-         Entry *                       entry,
-         Modifications **              next )
-{
-   slap_overinst *         on;
-   pwdshadow_t *           ps;
-   Modifications *         mod;
-   Attribute *             attr;
-
-   // initialize state
-   on                = (slap_overinst *)op->o_bd->bd_info;
-   ps                = on->on_bi.bi_private;
-   if (!(ps))
-      return(0);
-
-   // check for pwdShadowExpire
-   if ((attr = attr_find(entry->e_attrs, ad_pwdShadowExpire)) != NULL)
-   {
-      mod = (Modifications *) ch_malloc( sizeof( Modifications ) );
-      mod->sml_op                = LDAP_MOD_DELETE;
-      mod->sml_flags             = SLAP_MOD_INTERNAL;
-      mod->sml_type.bv_val       = NULL;
-      mod->sml_desc              = ad_pwdShadowExpire;
-      mod->sml_numvals           = 0;
-      mod->sml_values            = NULL;
-      mod->sml_nvalues           = NULL;
-      mod->sml_next              = NULL;
-      *next                      = mod;
-      next                       = &mod->sml_next;
-   };
-
-   // check for pwdShadowLastChange
-   if ((attr = attr_find(entry->e_attrs, ad_pwdShadowLastChange)) != NULL)
-   {
-      mod = (Modifications *) ch_malloc( sizeof( Modifications ) );
-      mod->sml_op                = LDAP_MOD_DELETE;
-      mod->sml_flags             = SLAP_MOD_INTERNAL;
-      mod->sml_type.bv_val       = NULL;
-      mod->sml_desc              = ad_pwdShadowLastChange;
-      mod->sml_numvals           = 0;
-      mod->sml_values            = NULL;
-      mod->sml_nvalues           = NULL;
-      mod->sml_next              = NULL;
-      *next                      = mod;
-      next                       = &mod->sml_next;
-   };
 
    return(0);
 }
