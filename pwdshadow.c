@@ -255,11 +255,6 @@ pwdshadow_verify_attr_syntax(
 
 static slap_overinst pwdshadow;
 
-
-// external attribute descriptions
-static AttributeDescription *       ad_pwdChangedTime       = NULL;
-
-
 // external internal descriptions
 static AttributeDescription *       ad_pwdShadowLastChange  = NULL;
 static AttributeDescription *       ad_pwdShadowMin         = NULL;
@@ -774,8 +769,7 @@ pwdshadow_db_init(
    ps->ps_cfg_realtime           = 0;
 
    // retrieve attribute descriptions
-   if ((ps->ps_ad_pwdChangedTime = ad_pwdChangedTime) == NULL)
-      slap_str2ad("pwdChangedTime", &ps->ps_ad_pwdChangedTime, &text);
+   slap_str2ad("pwdChangedTime", &ps->ps_ad_pwdChangedTime, &text);
    slap_str2ad("pwdEndTime", &ps->ps_ad_pwdEndTime, &text);
    slap_str2ad("shadowExpire", &ps->ps_ad_shadowExpire, &text);
    slap_str2ad("shadowLastChange", &ps->ps_ad_shadowLastChange, &text);
@@ -1001,7 +995,6 @@ pwdshadow_initialize( void )
 {
    int               i;
    int               code;
-   const char *      text;
 
    for(i = 0; ((pwdshadow_ats[i].def)); i++)
    {
@@ -1030,8 +1023,6 @@ pwdshadow_initialize( void )
       Debug( LDAP_DEBUG_ANY, "pwdshadow_initialize: config_register_schema failed\n");
       return(code);
    };
-
-   slap_str2ad("pwdChangedTime",       &ad_pwdChangedTime,     &text);
 
    pwdshadow.on_bi.bi_type             = "pwdshadow";
    pwdshadow.on_bi.bi_flags            = SLAPO_BFLAG_SINGLE;
