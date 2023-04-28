@@ -225,6 +225,12 @@ pwdshadow_op_add(
 
 
 static int
+pwdshadow_op_add_attr(
+         Entry *                       entry,
+         pwdshadow_data_t *            dat );
+
+
+static int
 pwdshadow_op_modify(
          Operation *                   op,
          SlapReply *                   rs );
@@ -1035,6 +1041,28 @@ pwdshadow_op_add(
       return(SLAP_CB_CONTINUE);
 
    return(SLAP_CB_CONTINUE);
+}
+
+
+int
+pwdshadow_op_add_attr(
+         Entry *                       entry,
+         pwdshadow_data_t *            dat )
+{
+   struct berval     bv;
+   char              bv_val[128];
+
+   if ( (!(dat->dat_ad)) || (!(dat->dat_flag & PWDSHADOW_FLG_MUSTADD)) )
+      return(0);
+
+   // convert int to BV
+   bv.bv_val = bv_val;
+   bv.bv_len = snprintf(bv_val, sizeof(bv_val), "%i", dat->dat_post);
+
+   // add attribute to entry
+   attr_merge_one(entry, dat->dat_ad, &bv, &bv);
+
+   return(0);
 }
 
 
