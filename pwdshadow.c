@@ -102,7 +102,6 @@ typedef struct pwdshadow_t
    AttributeDescription *     ps_ad_shadowLastChange;
    AttributeDescription *     ps_ad_userPassword;
    int                        ps_cfg_override;
-   int                        ps_cfg_realtime;
 } pwdshadow_t;
 
 
@@ -446,21 +445,6 @@ static ConfigTable pwdshadow_cfg_ats[] =
                         " SINGLE-VALUE )"
    },
    {
-      .name          = "pwdshadow_realtime",
-      .what          = "on|off",
-      .min_args      = 2,
-      .max_args      = 2,
-      .length        = 0,
-      .arg_type      = ARG_ON_OFF|ARG_OFFSET,
-      .arg_item      = (void *)offsetof(pwdshadow_t,ps_cfg_realtime),
-      .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.4"
-                        " NAME 'olcPwdShadowRealTime'"
-                        " DESC 'Attribute which indicates shadow attributes should be generated in realtime'"
-                        " EQUALITY booleanMatch"
-                        " SYNTAX OMsBoolean"
-                        " SINGLE-VALUE )"
-   },
-   {
       .name          = NULL,
       .what          = NULL,
       .min_args      = 0,
@@ -482,8 +466,7 @@ static ConfigOCs pwdshadow_cfg_ocs[] =
                         " DESC 'Password Shadow configuration'"
                         " SUP olcOverlayConfig"
                         " MAY ( olcPwdShadowDefault $"
-                              " olcPwdShadowOverride $"
-                              " olcPwdShadowRealTime ) )",
+                              " olcPwdShadowOverride ) )",
       .co_type       = Cft_Overlay,
       .co_table      = pwdshadow_cfg_ats
    },
@@ -764,7 +747,6 @@ pwdshadow_db_init(
    on->on_bi.bi_private          = ch_calloc( sizeof(pwdshadow_t), 1 );
    ps                            = on->on_bi.bi_private;
    ps->ps_cfg_override           = 1;
-   ps->ps_cfg_realtime           = 0;
 
    // retrieve attribute descriptions
    slap_str2ad("pwdChangedTime",    &ps->ps_ad_pwdChangedTime,    &text);
@@ -1050,8 +1032,6 @@ pwdshadow_op_add(
    ps                = on->on_bi.bi_private;
 
    if (!(rs))
-      return(SLAP_CB_CONTINUE);
-   if (!(ps->ps_cfg_realtime))
       return(SLAP_CB_CONTINUE);
 
    return(SLAP_CB_CONTINUE);
