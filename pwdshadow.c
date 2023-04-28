@@ -1032,10 +1032,22 @@ pwdshadow_op_add(
 {
    slap_overinst *         on;
    pwdshadow_t *           ps;
+   pwdshadow_state_t       st;
 
    // initialize state
    on                = (slap_overinst *)op->o_bd->bd_info;
    ps                = on->on_bi.bi_private;
+   memset(&st, 0, sizeof(st));
+
+   // determines existing attribtues
+   pwdshadow_get_attrs(ps, &st, op->ora_e, PWDSHADOW_FLG_ADD);
+
+   // evaluate attributes for changes
+   pwdshadow_eval(op, &st);
+
+   // processing changes
+   pwdshadow_op_add_attr(op->ora_e, &st.st_pwdShadowExpire);
+   pwdshadow_op_add_attr(op->ora_e, &st.st_pwdShadowLastChange);
 
    if (!(rs))
       return(SLAP_CB_CONTINUE);
