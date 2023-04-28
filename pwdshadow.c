@@ -156,18 +156,6 @@ pwdshadow_copy_int_bv(
 
 
 static int
-pwdshadow_db_destroy(
-         BackendDB *                   be,
-         ConfigReply *                 cr );
-
-
-static int
-pwdshadow_db_init(
-         BackendDB *                   be,
-         ConfigReply *                 cr );
-
-
-static int
 pwdshadow_dat_set(
          pwdshadow_data_t *            dat,
          BerValue *                    bv,
@@ -179,6 +167,18 @@ pwdshadow_dat_value(
          pwdshadow_data_t *            dat,
          int                           val,
          int                           flags );
+
+
+static int
+pwdshadow_db_destroy(
+         BackendDB *                   be,
+         ConfigReply *                 cr );
+
+
+static int
+pwdshadow_db_init(
+         BackendDB *                   be,
+         ConfigReply *                 cr );
 
 
 static int
