@@ -238,7 +238,6 @@ pwdshadow_op_modify(
 
 static int
 pwdshadow_op_modify_mods(
-         AttributeDescription *        ad,
          pwdshadow_data_t *            dat,
          Modifications ***             nextp );
 
@@ -1138,8 +1137,8 @@ pwdshadow_op_modify(
    pwdshadow_eval(op, &st);
 
    // processing pwdShadowLastChange
-   pwdshadow_op_modify_mods(ad_pwdShadowExpire,     &st.st_pwdShadowExpire,     &next);
-   pwdshadow_op_modify_mods(ad_pwdShadowLastChange, &st.st_pwdShadowLastChange, &next);
+   pwdshadow_op_modify_mods(&st.st_pwdShadowExpire,         &next);
+   pwdshadow_op_modify_mods(&st.st_pwdShadowLastChange,     &next);
 
    op->o_bd->bd_info = (BackendInfo *)on->on_info;
    be_entry_release_r( op, entry );
@@ -1153,14 +1152,15 @@ pwdshadow_op_modify(
 
 int
 pwdshadow_op_modify_mods(
-         AttributeDescription *        ad,
          pwdshadow_data_t *            dat,
          Modifications ***             nextp )
 {
+   AttributeDescription *  ad;
    Modifications *         mods;
 
-   if (!(pwdshadow_ops(dat->dat_flag)))
+   if ( (!(pwdshadow_ops(dat->dat_flag))) || (!(dat->dat_ad)) )
       return(0);
+   ad = dat->dat_ad;
 
    // create initial modification
    mods  = (Modifications *) ch_malloc( sizeof( Modifications ) );
