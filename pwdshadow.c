@@ -1116,7 +1116,7 @@ pwdshadow_op_modify(
    {
       mods = *next;
 
-      if (mods->sml_desc == ad_pwdEndTime)
+      if (mods->sml_desc == ps->ps_ad_pwdEndTime)
          pwdshadow_get_mods(mods, &st.st_pwdEndTime, PWDSHADOW_TYPE_TIME);
 
       if (mods->sml_desc == ad_pwdShadowGenerate)
