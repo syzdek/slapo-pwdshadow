@@ -63,8 +63,7 @@ overlay			ppolicy
 overlay			pwdshadow
 ppolicy_default		"dc=example,dc=com"
 ppolicy_hash_cleartext
-pwdshadow_realtime	on
-pwdshadow_override	off
+pwdshadow_override	on
 index	default		eq,pres
 index	objectClass	eq
 index	uid		eq,pres,sub
