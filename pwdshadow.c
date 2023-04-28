@@ -1132,7 +1132,7 @@ pwdshadow_op_modify(
       if (mods->sml_desc == ps->ps_ad_shadowExpire)
          pwdshadow_get_mods(mods, &st.st_shadowExpire, PWDSHADOW_TYPE_DAYS);
 
-      if (mods->sml_desc == ad_shadowLastChange)
+      if (mods->sml_desc == ps->ps_ad_shadowLastChange)
          pwdshadow_get_mods(mods, &st.st_shadowLastChange, PWDSHADOW_TYPE_DAYS);
    };
 
