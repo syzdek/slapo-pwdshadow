@@ -437,7 +437,7 @@ static ConfigTable pwdshadow_cfg_ats[] =
       .length        = 0,
       .arg_type      = ARG_ON_OFF|ARG_OFFSET,
       .arg_item      = (void *)offsetof(pwdshadow_t,ps_cfg_override),
-      .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.3"
+      .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.2"
                         " NAME 'olcPwdShadowOverride'"
                         " DESC 'Attribute which indicates shadow attributes should be generated'"
                         " EQUALITY booleanMatch"
