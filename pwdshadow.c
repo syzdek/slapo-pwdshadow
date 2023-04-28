@@ -864,11 +864,13 @@ pwdshadow_eval_precheck(
          pwdshadow_data_t *            triggers[] )
 {
    int                     idx;
+   int                     should_exist;
    slap_overinst *         on;
    pwdshadow_t *           ps;
 
    on                = (slap_overinst *)op->o_bd->bd_info;
    ps                = on->on_bi.bi_private;
+   should_exist      = 0;
 
    // determine if overlay is disabled for entry
    if ((st->st_purge))
@@ -886,12 +888,16 @@ pwdshadow_eval_precheck(
          dat->dat_post = override->dat_post;
          return(0);
       };
-      if ( ((pwdshadow_flg_set(override))) && (!(pwdshadow_flg_set(dat))) )
+      if ( ((pwdshadow_flg_set(override))) && (!(pwdshadow_flg_del(override))) )
       {
-         dat->dat_flag |= (PWDSHADOW_FLG_MUSTADD | PWDSHADOW_FLG_OVERRIDE);
+         if (!(pwdshadow_flg_set(dat)))
+            dat->dat_flag |= PWDSHADOW_FLG_MUSTADD;
+         dat->dat_flag |= PWDSHADOW_FLG_OVERRIDE;
          dat->dat_post = override->dat_post;
          return(0);
       };
+      if ((pwdshadow_flg_del(override)))
+         dat->dat_flag &= ~PWDSHADOW_FLG_SET;
    };
 
    // check triggers
@@ -907,7 +913,13 @@ pwdshadow_eval_precheck(
          dat->dat_flag |= PWDSHADOW_FLG_MUSTADD;
          dat->dat_post = triggers[idx]->dat_post;
       };
+      if ( ((pwdshadow_flg_set(triggers[idx]))) && (!(pwdshadow_flg_del(triggers[idx]))) )
+         should_exist++;
    };
+
+   // determine if attribute should be removed
+   if ( ((pwdshadow_flg_set(dat))) && (!(should_exist)) )
+         dat->dat_flag |= PWDSHADOW_FLG_MUSTDEL;
 
    return(0);
 }
