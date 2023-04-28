@@ -1122,7 +1122,7 @@ pwdshadow_op_modify(
       if (mods->sml_desc == ad_pwdShadowGenerate)
          pwdshadow_get_mods(mods, &st.st_pwdShadowGenerate, PWDSHADOW_TYPE_BOOL);
 
-      if (mods->sml_desc == ad_userPassword)
+      if (mods->sml_desc == ps->ps_ad_userPassword)
          pwdshadow_get_mods(mods, &st.st_userPassword, PWDSHADOW_TYPE_EXISTS);
 
       // skip remaining attributes if override is disabled
