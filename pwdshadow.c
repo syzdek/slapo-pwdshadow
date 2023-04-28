@@ -1164,7 +1164,7 @@ pwdshadow_op_modify_mods(
    (*nextp)                   = &mods->sml_next;
 
    // exit if deleting entry
-   if (!(pwdshadow_flg_mustdel(dat)))
+   if ((pwdshadow_flg_mustdel(dat)))
       return(0);
 
    // complete modifications for adding/updating value
