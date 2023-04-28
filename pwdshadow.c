@@ -98,7 +98,9 @@ typedef struct pwdshadow_t
    struct berval              ps_def_policy;
    AttributeDescription *     ps_ad_pwdChangedTime;
    AttributeDescription *     ps_ad_pwdEndTime;
+   AttributeDescription *     ps_ad_pwdGraceExpiry;
    AttributeDescription *     ps_ad_shadowExpire;
+   AttributeDescription *     ps_ad_shadowInactive;
    AttributeDescription *     ps_ad_shadowLastChange;
    AttributeDescription *     ps_ad_userPassword;
    int                        ps_cfg_override;
@@ -122,10 +124,13 @@ typedef struct pwdshadow_state_t
    int                        st_purge;
    pwdshadow_data_t           st_pwdChangedTime;
    pwdshadow_data_t           st_pwdEndTime;
+   pwdshadow_data_t           st_pwdGraceExpiry;
    pwdshadow_data_t           st_pwdShadowExpire;
    pwdshadow_data_t           st_pwdShadowGenerate;
+   pwdshadow_data_t           st_pwdShadowInactive;
    pwdshadow_data_t           st_pwdShadowLastChange;
    pwdshadow_data_t           st_shadowExpire;
+   pwdshadow_data_t           st_shadowInactive;
    pwdshadow_data_t           st_shadowLastChange;
    pwdshadow_data_t           st_userPassword;
 } pwdshadow_state_t;
@@ -756,7 +761,9 @@ pwdshadow_db_init(
    // retrieve attribute descriptions
    slap_str2ad("pwdChangedTime",    &ps->ps_ad_pwdChangedTime,    &text);
    slap_str2ad("pwdEndTime",        &ps->ps_ad_pwdEndTime,        &text);
+   slap_str2ad("pwdGraceExpiry",    &ps->ps_ad_pwdGraceExpiry,    &text);
    slap_str2ad("shadowExpire",      &ps->ps_ad_shadowExpire,      &text);
+   slap_str2ad("shadowInactive",    &ps->ps_ad_shadowInactive,    &text);
    slap_str2ad("shadowLastChange",  &ps->ps_ad_shadowLastChange,  &text);
    if ((ps->ps_ad_userPassword = slap_schema.si_ad_userPassword) == NULL)
       slap_str2ad("userPassword", &ps->ps_ad_userPassword, &text);
@@ -784,6 +791,20 @@ pwdshadow_eval(
       &st->st_shadowExpire,         // override attribute
       (pwdshadow_data_t *[])        // triggering attributes
       {  &st->st_pwdEndTime,
+         NULL
+      }
+   );
+   pwdshadow_eval_postcheck(dat);
+
+   // process pwdShadowInactive
+   dat = &st->st_pwdShadowInactive;
+   pwdshadow_eval_precheck(
+      op,
+      st,
+      dat,                          // data
+      &st->st_shadowInactive,       // override attribute
+      (pwdshadow_data_t *[])        // triggering attributes
+      {  &st->st_pwdGraceExpiry,
          NULL
       }
    );
@@ -935,8 +956,10 @@ pwdshadow_get_attrs(
    pwdshadow_get_attr(entry, ps->ps_ad_pwdEndTime,          &st->st_pwdEndTime,           flags|PWDSHADOW_TYPE_TIME);
    pwdshadow_get_attr(entry, ad_pwdShadowExpire,            &st->st_pwdShadowExpire,      flags|PWDSHADOW_TYPE_DAYS);
    pwdshadow_get_attr(entry, ad_pwdShadowGenerate,          &st->st_pwdShadowGenerate,    flags|PWDSHADOW_TYPE_BOOL);
+   pwdshadow_get_attr(entry, ad_pwdShadowInactive,          &st->st_pwdShadowInactive,    flags|PWDSHADOW_TYPE_DAYS);
    pwdshadow_get_attr(entry, ad_pwdShadowLastChange,        &st->st_pwdShadowLastChange,  flags|PWDSHADOW_TYPE_DAYS);
    pwdshadow_get_attr(entry, ps->ps_ad_shadowExpire,        &st->st_shadowExpire,         flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, ps->ps_ad_shadowInactive,      &st->st_shadowInactive,       flags|PWDSHADOW_TYPE_DAYS);
    pwdshadow_get_attr(entry, ps->ps_ad_shadowLastChange,    &st->st_shadowLastChange,     flags|PWDSHADOW_TYPE_DAYS);
    pwdshadow_get_attr(entry, ps->ps_ad_userPassword,        &st->st_userPassword,         flags|PWDSHADOW_TYPE_EXISTS);
    return(0);
@@ -1046,6 +1069,7 @@ pwdshadow_op_add(
 
    // processing changes
    pwdshadow_op_add_attr(op->ora_e, &st.st_pwdShadowExpire);
+   pwdshadow_op_add_attr(op->ora_e, &st.st_pwdShadowInactive);
    pwdshadow_op_add_attr(op->ora_e, &st.st_pwdShadowLastChange);
 
    if (!(rs))
@@ -1138,6 +1162,7 @@ pwdshadow_op_modify(
 
    // processing pwdShadowLastChange
    pwdshadow_op_modify_mods(&st.st_pwdShadowExpire,         &next);
+   pwdshadow_op_modify_mods(&st.st_pwdShadowInactive,       &next);
    pwdshadow_op_modify_mods(&st.st_pwdShadowLastChange,     &next);
 
    op->o_bd->bd_info = (BackendInfo *)on->on_info;
