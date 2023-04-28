@@ -115,9 +115,6 @@ typedef struct pwdshadow_data_t
    int                        dat_prev;
    int                        dat_mod;
    int                        dat_post;
-   int                        cur;
-   int                        op;
-   int                        new;
 } pwdshadow_data_t;
 
 
