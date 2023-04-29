@@ -99,9 +99,11 @@ typedef struct pwdshadow_t
    AttributeDescription *     ps_ad_pwdChangedTime;
    AttributeDescription *     ps_ad_pwdEndTime;
    AttributeDescription *     ps_ad_pwdGraceExpiry;
+   AttributeDescription *     ps_ad_pwdMaxAge;
    AttributeDescription *     ps_ad_shadowExpire;
    AttributeDescription *     ps_ad_shadowInactive;
    AttributeDescription *     ps_ad_shadowLastChange;
+   AttributeDescription *     ps_ad_shadowMax;
    AttributeDescription *     ps_ad_userPassword;
    int                        ps_cfg_override;
 } pwdshadow_t;
@@ -125,13 +127,16 @@ typedef struct pwdshadow_state_t
    pwdshadow_data_t           st_pwdChangedTime;
    pwdshadow_data_t           st_pwdEndTime;
    pwdshadow_data_t           st_pwdGraceExpiry;
+   pwdshadow_data_t           st_pwdMaxAge;
    pwdshadow_data_t           st_pwdShadowExpire;
    pwdshadow_data_t           st_pwdShadowGenerate;
    pwdshadow_data_t           st_pwdShadowInactive;
    pwdshadow_data_t           st_pwdShadowLastChange;
+   pwdshadow_data_t           st_pwdShadowMax;
    pwdshadow_data_t           st_shadowExpire;
    pwdshadow_data_t           st_shadowInactive;
    pwdshadow_data_t           st_shadowLastChange;
+   pwdshadow_data_t           st_shadowMax;
    pwdshadow_data_t           st_userPassword;
 } pwdshadow_state_t;
 
@@ -762,6 +767,7 @@ pwdshadow_db_init(
    slap_str2ad("pwdChangedTime",    &ps->ps_ad_pwdChangedTime,    &text);
    slap_str2ad("pwdEndTime",        &ps->ps_ad_pwdEndTime,        &text);
    slap_str2ad("pwdGraceExpiry",    &ps->ps_ad_pwdGraceExpiry,    &text);
+   slap_str2ad("pwdMaxAge",         &ps->ps_ad_pwdMaxAge,         &text);
    slap_str2ad("shadowExpire",      &ps->ps_ad_shadowExpire,      &text);
    slap_str2ad("shadowInactive",    &ps->ps_ad_shadowInactive,    &text);
    slap_str2ad("shadowLastChange",  &ps->ps_ad_shadowLastChange,  &text);
@@ -824,6 +830,20 @@ pwdshadow_eval(
    );
    if ( ((pwdshadow_flg_mustadd(dat))) && (!(pwdshadow_flg_override(dat))) )
       dat->dat_post = ((int)time(NULL)) / 60 / 60 /24;
+   pwdshadow_eval_postcheck(dat);
+
+   // process pwdShadowMax
+   dat = &st->st_pwdShadowMax;
+   pwdshadow_eval_precheck(
+      op,
+      st,
+      dat,                          // data
+      &st->st_shadowMax,            // override attribute
+      (pwdshadow_data_t *[])        // triggering attributes
+      {  &st->st_pwdMaxAge,
+         NULL
+      }
+   );
    pwdshadow_eval_postcheck(dat);
 
    return(0);
@@ -961,6 +981,7 @@ pwdshadow_get_attrs(
    pwdshadow_get_attr(entry, ps->ps_ad_shadowExpire,        &st->st_shadowExpire,         flags|PWDSHADOW_TYPE_DAYS);
    pwdshadow_get_attr(entry, ps->ps_ad_shadowInactive,      &st->st_shadowInactive,       flags|PWDSHADOW_TYPE_DAYS);
    pwdshadow_get_attr(entry, ps->ps_ad_shadowLastChange,    &st->st_shadowLastChange,     flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, ps->ps_ad_shadowMax,           &st->st_shadowMax,            flags|PWDSHADOW_TYPE_DAYS);
    pwdshadow_get_attr(entry, ps->ps_ad_userPassword,        &st->st_userPassword,         flags|PWDSHADOW_TYPE_EXISTS);
    return(0);
 }
@@ -1071,6 +1092,7 @@ pwdshadow_op_add(
    pwdshadow_op_add_attr(op->ora_e, &st.st_pwdShadowExpire);
    pwdshadow_op_add_attr(op->ora_e, &st.st_pwdShadowInactive);
    pwdshadow_op_add_attr(op->ora_e, &st.st_pwdShadowLastChange);
+   pwdshadow_op_add_attr(op->ora_e, &st.st_pwdShadowMax);
 
    if (!(rs))
       return(SLAP_CB_CONTINUE);
@@ -1155,6 +1177,9 @@ pwdshadow_op_modify(
 
       if (mods->sml_desc == ps->ps_ad_shadowLastChange)
          pwdshadow_get_mods(mods, &st.st_shadowLastChange, PWDSHADOW_TYPE_DAYS);
+
+      if (mods->sml_desc == ps->ps_ad_shadowMax)
+         pwdshadow_get_mods(mods, &st.st_shadowMax, PWDSHADOW_TYPE_DAYS);
    };
 
    // evaluate attributes for changes
@@ -1164,6 +1189,7 @@ pwdshadow_op_modify(
    pwdshadow_op_modify_mods(&st.st_pwdShadowExpire,         &next);
    pwdshadow_op_modify_mods(&st.st_pwdShadowInactive,       &next);
    pwdshadow_op_modify_mods(&st.st_pwdShadowLastChange,     &next);
+   pwdshadow_op_modify_mods(&st.st_pwdShadowMax,            &next);
 
    op->o_bd->bd_info = (BackendInfo *)on->on_info;
    be_entry_release_r( op, entry );
