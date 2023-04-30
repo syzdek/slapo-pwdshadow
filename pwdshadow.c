@@ -127,12 +127,16 @@ typedef struct pwdshadow_state_t
    Entry *                    st_entry;
    int                        st_generate;
    int                        st_purge;
+
+   // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
    pwdshadow_data_t           st_pwdChangedTime;
    pwdshadow_data_t           st_pwdEndTime;
    pwdshadow_data_t           st_pwdGraceExpiry;
    pwdshadow_data_t           st_pwdMaxAge;
    pwdshadow_data_t           st_pwdMinAge;
    pwdshadow_data_t           st_pwdExpireWarning;
+
+   // slapo-pwdshadow attributes
    pwdshadow_data_t           st_pwdShadowExpire;
    pwdshadow_data_t           st_pwdShadowGenerate;
    pwdshadow_data_t           st_pwdShadowInactive;
@@ -140,12 +144,16 @@ typedef struct pwdshadow_state_t
    pwdshadow_data_t           st_pwdShadowMax;
    pwdshadow_data_t           st_pwdShadowMin;
    pwdshadow_data_t           st_pwdShadowWarning;
+
+   // LDAP NIS attributes (RFC 2307)
    pwdshadow_data_t           st_shadowExpire;
    pwdshadow_data_t           st_shadowInactive;
    pwdshadow_data_t           st_shadowLastChange;
    pwdshadow_data_t           st_shadowMax;
    pwdshadow_data_t           st_shadowMin;
    pwdshadow_data_t           st_shadowWarning;
+
+   // User Schema (RFC 2256)
    pwdshadow_data_t           st_userPassword;
 } pwdshadow_state_t;
 
@@ -780,7 +788,7 @@ pwdshadow_db_init(
    slap_str2ad("pwdMaxAge",         &ps->ps_ad_pwdMaxAge,         &text);
    slap_str2ad("pwdMinAge",         &ps->ps_ad_pwdMinAge,         &text);
 
-   // slapo-pwdshadow attributes
+   // LDAP NIS attributes (RFC 2307)
    slap_str2ad("shadowExpire",      &ps->ps_ad_shadowExpire,      &text);
    slap_str2ad("shadowInactive",    &ps->ps_ad_shadowInactive,    &text);
    slap_str2ad("shadowLastChange",  &ps->ps_ad_shadowLastChange,  &text);
