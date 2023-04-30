@@ -1027,6 +1027,9 @@ pwdshadow_get_attrs(
    pwdshadow_get_attr(entry, ad_pwdShadowGenerate,          &st->st_pwdShadowGenerate,    flags|PWDSHADOW_TYPE_BOOL);
    pwdshadow_get_attr(entry, ad_pwdShadowInactive,          &st->st_pwdShadowInactive,    flags|PWDSHADOW_TYPE_DAYS);
    pwdshadow_get_attr(entry, ad_pwdShadowLastChange,        &st->st_pwdShadowLastChange,  flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, ad_pwdShadowMax,               &st->st_pwdShadowMax,         flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, ad_pwdShadowMin,               &st->st_pwdShadowMin,         flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, ad_pwdShadowWarning,           &st->st_pwdShadowWarning,     flags|PWDSHADOW_TYPE_DAYS);
 
    // LDAP NIS attributes (RFC 2307)
    pwdshadow_get_attr(entry, ps->ps_ad_shadowExpire,        &st->st_shadowExpire,         flags|PWDSHADOW_TYPE_DAYS);
