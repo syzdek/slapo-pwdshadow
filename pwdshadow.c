@@ -105,6 +105,7 @@ typedef struct pwdshadow_t
    AttributeDescription *     ps_ad_pwdGraceExpiry;
    AttributeDescription *     ps_ad_pwdMaxAge;
    AttributeDescription *     ps_ad_pwdMinAge;
+   AttributeDescription *     ps_ad_pwdPolicySubentry;
 
    // LDAP NIS attributes (RFC 2307)
    AttributeDescription *     ps_ad_shadowExpire;
@@ -142,6 +143,7 @@ typedef struct pwdshadow_state_t
    pwdshadow_data_t           st_pwdGraceExpiry;
    pwdshadow_data_t           st_pwdMaxAge;
    pwdshadow_data_t           st_pwdMinAge;
+   pwdshadow_data_t           st_pwdPolicySubentry;
 
    // slapo-pwdshadow attributes
    pwdshadow_data_t           st_pwdShadowExpire;
@@ -794,6 +796,7 @@ pwdshadow_db_init(
    slap_str2ad("pwdGraceExpiry",    &ps->ps_ad_pwdGraceExpiry,    &text);
    slap_str2ad("pwdMaxAge",         &ps->ps_ad_pwdMaxAge,         &text);
    slap_str2ad("pwdMinAge",         &ps->ps_ad_pwdMinAge,         &text);
+   slap_str2ad("pwdPolicySubentry", &ps->ps_ad_pwdPolicySubentry, &text);
 
    // LDAP NIS attributes (RFC 2307)
    slap_str2ad("shadowExpire",      &ps->ps_ad_shadowExpire,      &text);
@@ -1036,6 +1039,7 @@ pwdshadow_get_attrs(
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
    pwdshadow_get_attr(entry, ps->ps_ad_pwdChangedTime,      &st->st_pwdChangedTime,       flags|PWDSHADOW_TYPE_TIME);
    pwdshadow_get_attr(entry, ps->ps_ad_pwdEndTime,          &st->st_pwdEndTime,           flags|PWDSHADOW_TYPE_TIME);
+   pwdshadow_get_attr(entry, ps->ps_ad_pwdPolicySubentry,   &st->st_pwdPolicySubentry,    flags|PWDSHADOW_TYPE_EXISTS);
 
    // slapo-pwdshadow attributes
    pwdshadow_get_attr(entry, ad_pwdShadowExpire,            &st->st_pwdShadowExpire,      flags|PWDSHADOW_TYPE_DAYS);
