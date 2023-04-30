@@ -44,7 +44,7 @@
 #define PWDSHADOW_OP_NONE        0
 #define PWDSHADOW_OP_ADD         1
 
-#define PWDSHADOW_FLG_SET        0x0001
+#define PWDSHADOW_FLG_EXISTS     0x0001
 #define PWDSHADOW_FLG_USERADD    0x0002
 #define PWDSHADOW_FLG_USERDEL    0x0004
 #define PWDSHADOW_FLG_EVALADD    0x0008
@@ -60,13 +60,13 @@
 #define PWDSHADOW_TYPE_INTEGER   0x2000
 #define PWDSHADOW_TYPE           0xff00
 #define PWDSHADOW_OPS            ( PWDSHADOW_FLG_EVALADD | PWDSHADOW_FLG_EVALDEL )
-#define PWDSHADOW_STATE          ( PWDSHADOW_FLG_SET | PWDSHADOW_FLG_USERADD | PWDSHADOW_FLG_USERDEL )
+#define PWDSHADOW_STATE          ( PWDSHADOW_FLG_EXISTS | PWDSHADOW_FLG_USERADD | PWDSHADOW_FLG_USERDEL )
 #define PWDSHADOW_HAS_MODS       ( PWDSHADOW_DAT_ADD | PWDSHADOW_DAT_DEL )
 
 // query individual flags
 #define pwdshadow_flg_useradd(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_USERADD)
 #define pwdshadow_flg_userdel(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_USERDEL)
-#define pwdshadow_flg_set(dat)      ((dat)->dat_flag & PWDSHADOW_FLG_SET)
+#define pwdshadow_flg_exists(dat)   ((dat)->dat_flag & PWDSHADOW_FLG_EXISTS)
 #define pwdshadow_flg_evaladd(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_EVALADD)
 #define pwdshadow_flg_evaldel(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_EVALDEL)
 #define pwdshadow_flg_override(dat) ((dat)->dat_flag & PWDSHADOW_FLG_OVERRIDE)
@@ -77,7 +77,7 @@
 #define pwdshadow_type(flags)       (flags & PWDSHADOW_TYPE)
 
 // set flags
-#define pwdshadow_purge(dat)        (dat)->dat_flag |= ((pwdshadow_flg_set(dat))) ? PWDSHADOW_FLG_EVALDEL : 0
+#define pwdshadow_purge(dat)        (dat)->dat_flag |= ((pwdshadow_flg_exists(dat))) ? PWDSHADOW_FLG_EVALDEL : 0
 
 
 /////////////////
@@ -723,9 +723,9 @@ pwdshadow_dat_value(
          int                           val,
          int                           flags )
 {
-   switch(flags & (PWDSHADOW_FLG_SET|PWDSHADOW_FLG_USERADD|PWDSHADOW_FLG_USERDEL))
+   switch(flags & (PWDSHADOW_FLG_EXISTS|PWDSHADOW_FLG_USERADD|PWDSHADOW_FLG_USERDEL))
    {
-      case PWDSHADOW_FLG_SET:
+      case PWDSHADOW_FLG_EXISTS:
       dat->dat_prev = val;
       dat->dat_post = val;
       break;
@@ -944,7 +944,7 @@ pwdshadow_eval_postcheck(
 {
    if (!(pwdshadow_flg_evaladd(dat)))
       return(0);
-   if (!(pwdshadow_flg_set(dat)))
+   if (!(pwdshadow_flg_exists(dat)))
       return(0);
 
    if (dat->dat_prev == dat->dat_post)
@@ -990,9 +990,9 @@ pwdshadow_eval_precheck(
          dat->dat_post = override->dat_post;
          return(0);
       };
-      if ( ((pwdshadow_flg_set(override))) && (!(pwdshadow_flg_userdel(override))) )
+      if ( ((pwdshadow_flg_exists(override))) && (!(pwdshadow_flg_userdel(override))) )
       {
-         if (!(pwdshadow_flg_set(dat)))
+         if (!(pwdshadow_flg_exists(dat)))
             dat->dat_flag |= PWDSHADOW_FLG_EVALADD;
          dat->dat_flag |= PWDSHADOW_FLG_OVERRIDE;
          dat->dat_post = override->dat_post;
@@ -1008,19 +1008,19 @@ pwdshadow_eval_precheck(
          dat->dat_flag |= PWDSHADOW_FLG_EVALADD;
          dat->dat_post = triggers[idx]->dat_post;
       } else
-      if ( ((pwdshadow_flg_set(triggers[idx]))) &&
+      if ( ((pwdshadow_flg_exists(triggers[idx]))) &&
            (!(pwdshadow_flg_userdel(triggers[idx]))) &&
-           (!(pwdshadow_flg_set(dat))) )
+           (!(pwdshadow_flg_exists(dat))) )
       {
          dat->dat_flag |= PWDSHADOW_FLG_EVALADD;
          dat->dat_post = triggers[idx]->dat_post;
       };
-      if ( ((pwdshadow_flg_set(triggers[idx]))) && (!(pwdshadow_flg_userdel(triggers[idx]))) )
+      if ( ((pwdshadow_flg_exists(triggers[idx]))) && (!(pwdshadow_flg_userdel(triggers[idx]))) )
          should_exist++;
    };
 
    // determine if attribute should be removed
-   if ( ((pwdshadow_flg_set(dat))) && (!(should_exist)) )
+   if ( ((pwdshadow_flg_exists(dat))) && (!(should_exist)) )
          dat->dat_flag |= PWDSHADOW_FLG_EVALDEL;
 
    return(0);
@@ -1113,7 +1113,7 @@ pwdshadow_get_mods(
       op = (mods->sml_numvals < 1) ? PWDSHADOW_FLG_USERDEL : PWDSHADOW_FLG_USERADD;
    if (op == 0)
       return(-1);
-   flags &= ~(PWDSHADOW_FLG_USERADD | PWDSHADOW_FLG_USERDEL | PWDSHADOW_FLG_SET);
+   flags &= ~(PWDSHADOW_FLG_USERADD | PWDSHADOW_FLG_USERDEL | PWDSHADOW_FLG_EXISTS);
    flags |= op;
 
    bv = (mods->sml_numvals > 0) ? &mods->sml_values[0]: NULL;
@@ -1258,7 +1258,7 @@ pwdshadow_op_modify(
       return(SLAP_CB_CONTINUE);
 
    // determines existing attribtues
-   pwdshadow_get_attrs(ps, &st, entry, PWDSHADOW_FLG_SET);
+   pwdshadow_get_attrs(ps, &st, entry, PWDSHADOW_FLG_EXISTS);
 
    // scan modifications for attributes of interest
    for(next = &op->orm_modlist; ((*next)); next = &(*next)->sml_next)
