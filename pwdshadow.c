@@ -46,7 +46,7 @@
 
 #define PWDSHADOW_FLG_SET        0x0001
 #define PWDSHADOW_FLG_USERADD    0x0002
-#define PWDSHADOW_FLG_DEL        0x0004
+#define PWDSHADOW_FLG_USERDEL    0x0004
 #define PWDSHADOW_FLG_EVALADD    0x0008
 #define PWDSHADOW_FLG_EVALDEL    0x0010
 #define PWDSHADOW_FLG_OVERRIDE   0x0020
@@ -60,12 +60,12 @@
 #define PWDSHADOW_TYPE_INTEGER   0x2000
 #define PWDSHADOW_TYPE           0xff00
 #define PWDSHADOW_OPS            ( PWDSHADOW_FLG_EVALADD | PWDSHADOW_FLG_EVALDEL )
-#define PWDSHADOW_STATE          ( PWDSHADOW_FLG_SET | PWDSHADOW_FLG_USERADD | PWDSHADOW_FLG_DEL )
+#define PWDSHADOW_STATE          ( PWDSHADOW_FLG_SET | PWDSHADOW_FLG_USERADD | PWDSHADOW_FLG_USERDEL )
 #define PWDSHADOW_HAS_MODS       ( PWDSHADOW_DAT_ADD | PWDSHADOW_DAT_DEL )
 
 // query individual flags
 #define pwdshadow_flg_useradd(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_USERADD)
-#define pwdshadow_flg_del(dat)      ((dat)->dat_flag & PWDSHADOW_FLG_DEL)
+#define pwdshadow_flg_userdel(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_USERDEL)
 #define pwdshadow_flg_set(dat)      ((dat)->dat_flag & PWDSHADOW_FLG_SET)
 #define pwdshadow_flg_evaladd(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_EVALADD)
 #define pwdshadow_flg_evaldel(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_EVALDEL)
@@ -660,7 +660,7 @@ pwdshadow_dat_set(
    if (pwdshadow_type(flags) != type)
       return(-1);
 
-   if ((flags & PWDSHADOW_FLG_DEL))
+   if ((flags & PWDSHADOW_FLG_USERDEL))
       return(pwdshadow_dat_value(dat, 0, flags));
    if (!(bv))
       return(-1);
@@ -723,7 +723,7 @@ pwdshadow_dat_value(
          int                           val,
          int                           flags )
 {
-   switch(flags & (PWDSHADOW_FLG_SET|PWDSHADOW_FLG_USERADD|PWDSHADOW_FLG_DEL))
+   switch(flags & (PWDSHADOW_FLG_SET|PWDSHADOW_FLG_USERADD|PWDSHADOW_FLG_USERDEL))
    {
       case PWDSHADOW_FLG_SET:
       dat->dat_prev = val;
@@ -735,7 +735,7 @@ pwdshadow_dat_value(
       dat->dat_post = val;
       break;
 
-      case PWDSHADOW_FLG_DEL:
+      case PWDSHADOW_FLG_USERDEL:
       dat->dat_mod  = 0;
       dat->dat_post = 0;
       break;
@@ -832,7 +832,7 @@ pwdshadow_eval(
 {
    pwdshadow_data_t *   dat;
 
-   st->st_purge      = ((pwdshadow_flg_del(&st->st_pwdShadowGenerate))) ? 1 : 0;
+   st->st_purge      = ((pwdshadow_flg_userdel(&st->st_pwdShadowGenerate))) ? 1 : 0;
    st->st_generate   = st->st_pwdShadowGenerate.dat_post;
 
    // process pwdShadowExpire
@@ -990,7 +990,7 @@ pwdshadow_eval_precheck(
          dat->dat_post = override->dat_post;
          return(0);
       };
-      if ( ((pwdshadow_flg_set(override))) && (!(pwdshadow_flg_del(override))) )
+      if ( ((pwdshadow_flg_set(override))) && (!(pwdshadow_flg_userdel(override))) )
       {
          if (!(pwdshadow_flg_set(dat)))
             dat->dat_flag |= PWDSHADOW_FLG_EVALADD;
@@ -1009,13 +1009,13 @@ pwdshadow_eval_precheck(
          dat->dat_post = triggers[idx]->dat_post;
       } else
       if ( ((pwdshadow_flg_set(triggers[idx]))) &&
-           (!(pwdshadow_flg_del(triggers[idx]))) &&
+           (!(pwdshadow_flg_userdel(triggers[idx]))) &&
            (!(pwdshadow_flg_set(dat))) )
       {
          dat->dat_flag |= PWDSHADOW_FLG_EVALADD;
          dat->dat_post = triggers[idx]->dat_post;
       };
-      if ( ((pwdshadow_flg_set(triggers[idx]))) && (!(pwdshadow_flg_del(triggers[idx]))) )
+      if ( ((pwdshadow_flg_set(triggers[idx]))) && (!(pwdshadow_flg_userdel(triggers[idx]))) )
          should_exist++;
    };
 
@@ -1108,12 +1108,12 @@ pwdshadow_get_mods(
 
    // determines and sets operation type
    op = (mods->sml_op == LDAP_MOD_ADD)    ? PWDSHADOW_FLG_USERADD : op;
-   op = (mods->sml_op == LDAP_MOD_DELETE) ? PWDSHADOW_FLG_DEL : op;
+   op = (mods->sml_op == LDAP_MOD_DELETE) ? PWDSHADOW_FLG_USERDEL : op;
    if (mods->sml_op == LDAP_MOD_REPLACE)
-      op = (mods->sml_numvals < 1) ? PWDSHADOW_FLG_DEL : PWDSHADOW_FLG_USERADD;
+      op = (mods->sml_numvals < 1) ? PWDSHADOW_FLG_USERDEL : PWDSHADOW_FLG_USERADD;
    if (op == 0)
       return(-1);
-   flags &= ~(PWDSHADOW_FLG_USERADD | PWDSHADOW_FLG_DEL | PWDSHADOW_FLG_SET);
+   flags &= ~(PWDSHADOW_FLG_USERADD | PWDSHADOW_FLG_USERDEL | PWDSHADOW_FLG_SET);
    flags |= op;
 
    bv = (mods->sml_numvals > 0) ? &mods->sml_values[0]: NULL;
