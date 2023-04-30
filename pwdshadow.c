@@ -47,7 +47,7 @@
 #define PWDSHADOW_FLG_SET        0x0001
 #define PWDSHADOW_FLG_ADD        0x0002
 #define PWDSHADOW_FLG_DEL        0x0004
-#define PWDSHADOW_FLG_MUSTADD    0x0008
+#define PWDSHADOW_FLG_EVALADD    0x0008
 #define PWDSHADOW_FLG_MUSTDEL    0x0010
 #define PWDSHADOW_FLG_OVERRIDE   0x0020
 //      PWDSHADOW_FLG_UNUSED     0x0040
@@ -59,7 +59,7 @@
 #define PWDSHADOW_TYPE_DAYS      0x1000
 #define PWDSHADOW_TYPE_INTEGER   0x2000
 #define PWDSHADOW_TYPE           0xff00
-#define PWDSHADOW_OPS            ( PWDSHADOW_FLG_MUSTADD | PWDSHADOW_FLG_MUSTDEL )
+#define PWDSHADOW_OPS            ( PWDSHADOW_FLG_EVALADD | PWDSHADOW_FLG_MUSTDEL )
 #define PWDSHADOW_STATE          ( PWDSHADOW_FLG_SET | PWDSHADOW_FLG_ADD | PWDSHADOW_FLG_DEL )
 #define PWDSHADOW_HAS_MODS       ( PWDSHADOW_DAT_ADD | PWDSHADOW_DAT_DEL )
 
@@ -67,7 +67,7 @@
 #define pwdshadow_flg_add(dat)      ((dat)->dat_flag & PWDSHADOW_FLG_ADD)
 #define pwdshadow_flg_del(dat)      ((dat)->dat_flag & PWDSHADOW_FLG_DEL)
 #define pwdshadow_flg_set(dat)      ((dat)->dat_flag & PWDSHADOW_FLG_SET)
-#define pwdshadow_flg_mustadd(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_MUSTADD)
+#define pwdshadow_flg_evaladd(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_EVALADD)
 #define pwdshadow_flg_mustdel(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_MUSTDEL)
 #define pwdshadow_flg_override(dat) ((dat)->dat_flag & PWDSHADOW_FLG_OVERRIDE)
 
@@ -888,7 +888,7 @@ pwdshadow_eval(
          NULL
       }
    );
-   if ( ((pwdshadow_flg_mustadd(dat))) && (!(pwdshadow_flg_override(dat))) )
+   if ( ((pwdshadow_flg_evaladd(dat))) && (!(pwdshadow_flg_override(dat))) )
       dat->dat_post = ((int)time(NULL)) / 60 / 60 /24;
    pwdshadow_eval_postcheck(dat);
 
@@ -942,14 +942,14 @@ int
 pwdshadow_eval_postcheck(
          pwdshadow_data_t *            dat )
 {
-   if (!(pwdshadow_flg_mustadd(dat)))
+   if (!(pwdshadow_flg_evaladd(dat)))
       return(0);
    if (!(pwdshadow_flg_set(dat)))
       return(0);
 
    if (dat->dat_prev == dat->dat_post)
    {
-      dat->dat_flag &= ~PWDSHADOW_FLG_MUSTADD;
+      dat->dat_flag &= ~PWDSHADOW_FLG_EVALADD;
       return(0);
    };
 
@@ -986,14 +986,14 @@ pwdshadow_eval_precheck(
    {
       if ((pwdshadow_flg_add(override)))
       {
-         dat->dat_flag |= (PWDSHADOW_FLG_MUSTADD | PWDSHADOW_FLG_OVERRIDE);
+         dat->dat_flag |= (PWDSHADOW_FLG_EVALADD | PWDSHADOW_FLG_OVERRIDE);
          dat->dat_post = override->dat_post;
          return(0);
       };
       if ( ((pwdshadow_flg_set(override))) && (!(pwdshadow_flg_del(override))) )
       {
          if (!(pwdshadow_flg_set(dat)))
-            dat->dat_flag |= PWDSHADOW_FLG_MUSTADD;
+            dat->dat_flag |= PWDSHADOW_FLG_EVALADD;
          dat->dat_flag |= PWDSHADOW_FLG_OVERRIDE;
          dat->dat_post = override->dat_post;
          return(0);
@@ -1005,14 +1005,14 @@ pwdshadow_eval_precheck(
    {
       if ((pwdshadow_flg_add(triggers[idx])))
       {
-         dat->dat_flag |= PWDSHADOW_FLG_MUSTADD;
+         dat->dat_flag |= PWDSHADOW_FLG_EVALADD;
          dat->dat_post = triggers[idx]->dat_post;
       } else
       if ( ((pwdshadow_flg_set(triggers[idx]))) &&
            (!(pwdshadow_flg_del(triggers[idx]))) &&
            (!(pwdshadow_flg_set(dat))) )
       {
-         dat->dat_flag |= PWDSHADOW_FLG_MUSTADD;
+         dat->dat_flag |= PWDSHADOW_FLG_EVALADD;
          dat->dat_post = triggers[idx]->dat_post;
       };
       if ( ((pwdshadow_flg_set(triggers[idx]))) && (!(pwdshadow_flg_del(triggers[idx]))) )
@@ -1215,7 +1215,7 @@ pwdshadow_op_add_attr(
    struct berval     bv;
    char              bv_val[128];
 
-   if ( (!(dat->dat_ad)) || (!(dat->dat_flag & PWDSHADOW_FLG_MUSTADD)) )
+   if ( (!(dat->dat_ad)) || (!(dat->dat_flag & PWDSHADOW_FLG_EVALADD)) )
       return(0);
 
    // convert int to BV
