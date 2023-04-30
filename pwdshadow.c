@@ -956,8 +956,6 @@ pwdshadow_eval_precheck(
          dat->dat_post = override->dat_post;
          return(0);
       };
-      if ((pwdshadow_flg_del(override)))
-         dat->dat_flag &= ~PWDSHADOW_FLG_SET;
    };
 
    // check triggers
@@ -967,8 +965,10 @@ pwdshadow_eval_precheck(
       {
          dat->dat_flag |= PWDSHADOW_FLG_MUSTADD;
          dat->dat_post = triggers[idx]->dat_post;
-      };
-      if ( ((pwdshadow_flg_set(triggers[idx]))) && (!(pwdshadow_flg_set(dat))) )
+      } else
+      if ( ((pwdshadow_flg_set(triggers[idx]))) &&
+           (!(pwdshadow_flg_del(triggers[idx]))) &&
+           (!(pwdshadow_flg_set(dat))) )
       {
          dat->dat_flag |= PWDSHADOW_FLG_MUSTADD;
          dat->dat_post = triggers[idx]->dat_post;
