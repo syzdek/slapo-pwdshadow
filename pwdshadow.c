@@ -131,10 +131,10 @@ typedef struct pwdshadow_state_t
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
    pwdshadow_data_t           st_pwdChangedTime;
    pwdshadow_data_t           st_pwdEndTime;
+   pwdshadow_data_t           st_pwdExpireWarning;
    pwdshadow_data_t           st_pwdGraceExpiry;
    pwdshadow_data_t           st_pwdMaxAge;
    pwdshadow_data_t           st_pwdMinAge;
-   pwdshadow_data_t           st_pwdExpireWarning;
 
    // slapo-pwdshadow attributes
    pwdshadow_data_t           st_pwdShadowExpire;
