@@ -48,7 +48,7 @@
 #define PWDSHADOW_FLG_ADD        0x0002
 #define PWDSHADOW_FLG_DEL        0x0004
 #define PWDSHADOW_FLG_EVALADD    0x0008
-#define PWDSHADOW_FLG_MUSTDEL    0x0010
+#define PWDSHADOW_FLG_EVALDEL    0x0010
 #define PWDSHADOW_FLG_OVERRIDE   0x0020
 //      PWDSHADOW_FLG_UNUSED     0x0040
 //      PWDSHADOW_FLG_UNUSED     0x0080
@@ -59,7 +59,7 @@
 #define PWDSHADOW_TYPE_DAYS      0x1000
 #define PWDSHADOW_TYPE_INTEGER   0x2000
 #define PWDSHADOW_TYPE           0xff00
-#define PWDSHADOW_OPS            ( PWDSHADOW_FLG_EVALADD | PWDSHADOW_FLG_MUSTDEL )
+#define PWDSHADOW_OPS            ( PWDSHADOW_FLG_EVALADD | PWDSHADOW_FLG_EVALDEL )
 #define PWDSHADOW_STATE          ( PWDSHADOW_FLG_SET | PWDSHADOW_FLG_ADD | PWDSHADOW_FLG_DEL )
 #define PWDSHADOW_HAS_MODS       ( PWDSHADOW_DAT_ADD | PWDSHADOW_DAT_DEL )
 
@@ -68,7 +68,7 @@
 #define pwdshadow_flg_del(dat)      ((dat)->dat_flag & PWDSHADOW_FLG_DEL)
 #define pwdshadow_flg_set(dat)      ((dat)->dat_flag & PWDSHADOW_FLG_SET)
 #define pwdshadow_flg_evaladd(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_EVALADD)
-#define pwdshadow_flg_mustdel(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_MUSTDEL)
+#define pwdshadow_flg_evaldel(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_EVALDEL)
 #define pwdshadow_flg_override(dat) ((dat)->dat_flag & PWDSHADOW_FLG_OVERRIDE)
 
 // retrieve class of flags
@@ -77,7 +77,7 @@
 #define pwdshadow_type(flags)       (flags & PWDSHADOW_TYPE)
 
 // set flags
-#define pwdshadow_purge(dat)        (dat)->dat_flag |= ((pwdshadow_flg_set(dat))) ? PWDSHADOW_FLG_MUSTDEL : 0
+#define pwdshadow_purge(dat)        (dat)->dat_flag |= ((pwdshadow_flg_set(dat))) ? PWDSHADOW_FLG_EVALDEL : 0
 
 
 /////////////////
@@ -1021,7 +1021,7 @@ pwdshadow_eval_precheck(
 
    // determine if attribute should be removed
    if ( ((pwdshadow_flg_set(dat))) && (!(should_exist)) )
-         dat->dat_flag |= PWDSHADOW_FLG_MUSTDEL;
+         dat->dat_flag |= PWDSHADOW_FLG_EVALDEL;
 
    return(0);
 }
@@ -1348,7 +1348,7 @@ pwdshadow_op_modify_mods(
    (*nextp)                   = &mods->sml_next;
 
    // exit if deleting entry
-   if ((pwdshadow_flg_mustdel(dat)))
+   if ((pwdshadow_flg_evaldel(dat)))
       return(0);
 
    // complete modifications for adding/updating value
