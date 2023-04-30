@@ -97,18 +97,24 @@ typedef struct pwdshadow_t
 {
    struct berval              ps_def_policy;
    int                        ps_cfg_override;
+
+   // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
    AttributeDescription *     ps_ad_pwdChangedTime;
    AttributeDescription *     ps_ad_pwdEndTime;
    AttributeDescription *     ps_ad_pwdExpireWarning;
    AttributeDescription *     ps_ad_pwdGraceExpiry;
    AttributeDescription *     ps_ad_pwdMaxAge;
    AttributeDescription *     ps_ad_pwdMinAge;
+
+   // LDAP NIS attributes (RFC 2307)
    AttributeDescription *     ps_ad_shadowExpire;
    AttributeDescription *     ps_ad_shadowInactive;
    AttributeDescription *     ps_ad_shadowLastChange;
    AttributeDescription *     ps_ad_shadowMax;
    AttributeDescription *     ps_ad_shadowMin;
    AttributeDescription *     ps_ad_shadowWarning;
+
+   // User Schema (RFC 2256)
    AttributeDescription *     ps_ad_userPassword;
 } pwdshadow_t;
 
