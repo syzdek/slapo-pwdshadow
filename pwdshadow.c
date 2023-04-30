@@ -96,8 +96,10 @@ typedef struct pwdshadow_at_t
 typedef struct pwdshadow_t
 {
    struct berval              ps_def_policy;
+   int                        ps_cfg_override;
    AttributeDescription *     ps_ad_pwdChangedTime;
    AttributeDescription *     ps_ad_pwdEndTime;
+   AttributeDescription *     ps_ad_pwdExpireWarning;
    AttributeDescription *     ps_ad_pwdGraceExpiry;
    AttributeDescription *     ps_ad_pwdMaxAge;
    AttributeDescription *     ps_ad_pwdMinAge;
@@ -108,7 +110,6 @@ typedef struct pwdshadow_t
    AttributeDescription *     ps_ad_shadowMin;
    AttributeDescription *     ps_ad_shadowWarning;
    AttributeDescription *     ps_ad_userPassword;
-   int                        ps_cfg_override;
 } pwdshadow_t;
 
 
