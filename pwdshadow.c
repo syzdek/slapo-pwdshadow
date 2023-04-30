@@ -45,7 +45,7 @@
 #define PWDSHADOW_OP_ADD         1
 
 #define PWDSHADOW_FLG_SET        0x0001
-#define PWDSHADOW_FLG_ADD        0x0002
+#define PWDSHADOW_FLG_USERADD    0x0002
 #define PWDSHADOW_FLG_DEL        0x0004
 #define PWDSHADOW_FLG_EVALADD    0x0008
 #define PWDSHADOW_FLG_EVALDEL    0x0010
@@ -60,11 +60,11 @@
 #define PWDSHADOW_TYPE_INTEGER   0x2000
 #define PWDSHADOW_TYPE           0xff00
 #define PWDSHADOW_OPS            ( PWDSHADOW_FLG_EVALADD | PWDSHADOW_FLG_EVALDEL )
-#define PWDSHADOW_STATE          ( PWDSHADOW_FLG_SET | PWDSHADOW_FLG_ADD | PWDSHADOW_FLG_DEL )
+#define PWDSHADOW_STATE          ( PWDSHADOW_FLG_SET | PWDSHADOW_FLG_USERADD | PWDSHADOW_FLG_DEL )
 #define PWDSHADOW_HAS_MODS       ( PWDSHADOW_DAT_ADD | PWDSHADOW_DAT_DEL )
 
 // query individual flags
-#define pwdshadow_flg_add(dat)      ((dat)->dat_flag & PWDSHADOW_FLG_ADD)
+#define pwdshadow_flg_useradd(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_USERADD)
 #define pwdshadow_flg_del(dat)      ((dat)->dat_flag & PWDSHADOW_FLG_DEL)
 #define pwdshadow_flg_set(dat)      ((dat)->dat_flag & PWDSHADOW_FLG_SET)
 #define pwdshadow_flg_evaladd(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_EVALADD)
@@ -723,14 +723,14 @@ pwdshadow_dat_value(
          int                           val,
          int                           flags )
 {
-   switch(flags & (PWDSHADOW_FLG_SET|PWDSHADOW_FLG_ADD|PWDSHADOW_FLG_DEL))
+   switch(flags & (PWDSHADOW_FLG_SET|PWDSHADOW_FLG_USERADD|PWDSHADOW_FLG_DEL))
    {
       case PWDSHADOW_FLG_SET:
       dat->dat_prev = val;
       dat->dat_post = val;
       break;
 
-      case PWDSHADOW_FLG_ADD:
+      case PWDSHADOW_FLG_USERADD:
       dat->dat_mod  = val;
       dat->dat_post = val;
       break;
@@ -984,7 +984,7 @@ pwdshadow_eval_precheck(
    // determine if override value is set for attribute
    if ( ((ps->ps_cfg_override)) && ((override)) )
    {
-      if ((pwdshadow_flg_add(override)))
+      if ((pwdshadow_flg_useradd(override)))
       {
          dat->dat_flag |= (PWDSHADOW_FLG_EVALADD | PWDSHADOW_FLG_OVERRIDE);
          dat->dat_post = override->dat_post;
@@ -1003,7 +1003,7 @@ pwdshadow_eval_precheck(
    // check triggers
    for(idx = 0; ( ((triggers)) && ((triggers[idx])) ); idx++)
    {
-      if ((pwdshadow_flg_add(triggers[idx])))
+      if ((pwdshadow_flg_useradd(triggers[idx])))
       {
          dat->dat_flag |= PWDSHADOW_FLG_EVALADD;
          dat->dat_post = triggers[idx]->dat_post;
@@ -1107,13 +1107,13 @@ pwdshadow_get_mods(
       return(-1);
 
    // determines and sets operation type
-   op = (mods->sml_op == LDAP_MOD_ADD)    ? PWDSHADOW_FLG_ADD : op;
+   op = (mods->sml_op == LDAP_MOD_ADD)    ? PWDSHADOW_FLG_USERADD : op;
    op = (mods->sml_op == LDAP_MOD_DELETE) ? PWDSHADOW_FLG_DEL : op;
    if (mods->sml_op == LDAP_MOD_REPLACE)
-      op = (mods->sml_numvals < 1) ? PWDSHADOW_FLG_DEL : PWDSHADOW_FLG_ADD;
+      op = (mods->sml_numvals < 1) ? PWDSHADOW_FLG_DEL : PWDSHADOW_FLG_USERADD;
    if (op == 0)
       return(-1);
-   flags &= ~(PWDSHADOW_FLG_ADD | PWDSHADOW_FLG_DEL | PWDSHADOW_FLG_SET);
+   flags &= ~(PWDSHADOW_FLG_USERADD | PWDSHADOW_FLG_DEL | PWDSHADOW_FLG_SET);
    flags |= op;
 
    bv = (mods->sml_numvals > 0) ? &mods->sml_values[0]: NULL;
@@ -1186,7 +1186,7 @@ pwdshadow_op_add(
    memset(&st, 0, sizeof(st));
 
    // determines existing attribtues
-   pwdshadow_get_attrs(ps, &st, op->ora_e, PWDSHADOW_FLG_ADD);
+   pwdshadow_get_attrs(ps, &st, op->ora_e, PWDSHADOW_FLG_USERADD);
 
    // evaluate attributes for changes
    pwdshadow_eval(op, &st);
