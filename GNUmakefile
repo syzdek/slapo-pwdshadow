@@ -12,6 +12,8 @@
 #   <http://www.OpenLDAP.org/license.html>.
 #
 
+RELEASEDATE		= 2023/04/30
+LDVERSION		= 0.0
 LTVERSION		= 0:0:0
 
 OPENLDAP_VERSION	?= 2.5.14
@@ -35,13 +37,14 @@ libexecdir		?= $(exec_prefix)/libexec
 moduledir		?= $(libexecdir)/openldap
 mandir			?= $(exec_prefix)/share/man
 man5dir			?= $(mandir)/man5
+sysconfdir		?= $(prefix)/etc/openldap
 
 
 TEST_TARGET		= openldap/pwdshadow-$(OPENLDAP_VERSION)
 TEST_FILES		= openldap/contrib/slapd-modules/pwdshadow/GNUmakefile \
 			  openldap/contrib/slapd-modules/pwdshadow/pwdshadow.c \
 			  openldap/contrib/slapd-modules/pwdshadow/pwdshadow.h \
-			  openldap/contrib/slapd-modules/pwdshadow/doc/slapo-pwdshadow.5
+			  openldap/contrib/slapd-modules/pwdshadow/doc/slapo-pwdshadow.5.in
 
 
 .PHONY: all clean distclean install test-env test-env-install uninstall
@@ -50,7 +53,18 @@ TEST_FILES		= openldap/contrib/slapd-modules/pwdshadow/GNUmakefile \
 .SUFFIXES: .c .o .lo
 
 
-all: pwdshadow.la
+all: pwdshadow.la doc/slapo-pwdshadow.5
+
+
+doc/slapo-pwdshadow.5: doc/slapo-pwdshadow.5.in
+	rm -f $(@)
+	sed \
+	   -e 's,RELEASEDATE,$(RELEASEDATE),g' \
+	   -e 's,LDVERSION,$(LDVERSION),g' \
+	   -e 's,ETCDIR,$(sysconfdir),g' \
+	   doc/slapo-pwdshadow.5.in \
+	   > $(@)
+	touch $(@)
 
 
 pwdshadow.lo: pwdshadow.c pwdshadow.h
@@ -150,13 +164,13 @@ openldap/contrib/slapd-modules/pwdshadow/pwdshadow.h: pwdshadow.h $(TEST_TARGET)
 	touch $(@)
 
 
-openldap/contrib/slapd-modules/pwdshadow/doc/slapo-pwdshadow.5: doc/slapo-pwdshadow.5 $(TEST_TARGET)-all
+openldap/contrib/slapd-modules/pwdshadow/doc/slapo-pwdshadow.5.in: doc/slapo-pwdshadow.5.in $(TEST_TARGET)-all
 	mkdir -p openldap/contrib/slapd-modules/pwdshadow/doc
-	cp -p doc/slapo-pwdshadow.5 $(@)
+	cp -p doc/slapo-pwdshadow.5.in $(@)
 	touch $(@)
 
 
-install: pwdshadow.la
+install: pwdshadow.la doc/slapo-pwdshadow.5
 	mkdir -p $(DESTDIR)/$(moduledir)
 	mkdir -p $(DESTDIR)$(man5dir)
 	$(LIBTOOL) --mode=install $(INSTALL) -c pwdshadow.la $(DESTDIR)/$(moduledir)/pwdshadow.la
@@ -169,11 +183,12 @@ uninstall:
 
 
 clean:
-	rm -rf *.o *.lo *.la .libs
+	rm -rf *.o *.lo *.la .libs doc/*.5
 	rm -Rf openldap/contrib/slapd-modules/pwdshadow/*.o
 	rm -Rf openldap/contrib/slapd-modules/pwdshadow/*.lo
 	rm -Rf openldap/contrib/slapd-modules/pwdshadow/*.la
 	rm -Rf openldap/contrib/slapd-modules/pwdshadow/.libs
+	rm -Rf openldap/contrib/slapd-modules/pwdshadow/doc/*.5
 
 
 distclean: clean
