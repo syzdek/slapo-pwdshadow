@@ -57,6 +57,7 @@
 #define PWDSHADOW_TYPE_TIME      0x0400
 #define PWDSHADOW_TYPE_SECS      0x0800
 #define PWDSHADOW_TYPE_DAYS      0x1000
+#define PWDSHADOW_TYPE_INTEGER   0x2000
 #define PWDSHADOW_TYPE           0xff00
 #define PWDSHADOW_OPS            ( PWDSHADOW_FLG_MUSTADD | PWDSHADOW_FLG_MUSTDEL )
 #define PWDSHADOW_STATE          ( PWDSHADOW_FLG_SET | PWDSHADOW_FLG_ADD | PWDSHADOW_FLG_DEL )
@@ -109,6 +110,7 @@ typedef struct pwdshadow_t
 
    // LDAP NIS attributes (RFC 2307)
    AttributeDescription *     ps_ad_shadowExpire;
+   AttributeDescription *     ps_ad_shadowFlag;
    AttributeDescription *     ps_ad_shadowInactive;
    AttributeDescription *     ps_ad_shadowLastChange;
    AttributeDescription *     ps_ad_shadowMax;
@@ -147,6 +149,7 @@ typedef struct pwdshadow_state_t
 
    // slapo-pwdshadow attributes
    pwdshadow_data_t           st_pwdShadowExpire;
+   pwdshadow_data_t           st_pwdShadowFlag;
    pwdshadow_data_t           st_pwdShadowGenerate;
    pwdshadow_data_t           st_pwdShadowInactive;
    pwdshadow_data_t           st_pwdShadowLastChange;
@@ -156,6 +159,7 @@ typedef struct pwdshadow_state_t
 
    // LDAP NIS attributes (RFC 2307)
    pwdshadow_data_t           st_shadowExpire;
+   pwdshadow_data_t           st_shadowFlag;
    pwdshadow_data_t           st_shadowInactive;
    pwdshadow_data_t           st_shadowLastChange;
    pwdshadow_data_t           st_shadowMax;
@@ -681,6 +685,12 @@ pwdshadow_dat_set(
       ival = ( ((bv)) && ((bv->bv_len)) ) ? 1 : 0;
       return(pwdshadow_dat_value(dat, ival, flags));
 
+      case PWDSHADOW_TYPE_INTEGER:
+      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
+         return(-1);
+      lutil_atoi(&ival, bv->bv_val);
+      return(pwdshadow_dat_value(dat, ival, flags));
+
       case PWDSHADOW_TYPE_SECS:
       if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
          return(-1);
@@ -800,6 +810,7 @@ pwdshadow_db_init(
 
    // LDAP NIS attributes (RFC 2307)
    slap_str2ad("shadowExpire",      &ps->ps_ad_shadowExpire,      &text);
+   slap_str2ad("shadowFlag",        &ps->ps_ad_shadowFlag,        &text);
    slap_str2ad("shadowInactive",    &ps->ps_ad_shadowInactive,    &text);
    slap_str2ad("shadowLastChange",  &ps->ps_ad_shadowLastChange,  &text);
    slap_str2ad("shadowMax",         &ps->ps_ad_shadowMax,         &text);
@@ -834,6 +845,19 @@ pwdshadow_eval(
       (pwdshadow_data_t *[])        // triggering attributes
       {  &st->st_pwdEndTime,
          NULL
+      }
+   );
+   pwdshadow_eval_postcheck(dat);
+
+   // process pwdShadowFlag
+   dat = &st->st_pwdShadowFlag;
+   pwdshadow_eval_precheck(
+      op,
+      st,
+      dat,                          // data
+      &st->st_shadowFlag,           // override attribute
+      (pwdshadow_data_t *[])        // triggering attributes
+      {  NULL
       }
    );
    pwdshadow_eval_postcheck(dat);
@@ -1052,6 +1076,7 @@ pwdshadow_get_attrs(
 
    // LDAP NIS attributes (RFC 2307)
    pwdshadow_get_attr(entry, ps->ps_ad_shadowExpire,        &st->st_shadowExpire,         flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, ps->ps_ad_shadowFlag,          &st->st_shadowFlag,           flags|PWDSHADOW_TYPE_DAYS);
    pwdshadow_get_attr(entry, ps->ps_ad_shadowInactive,      &st->st_shadowInactive,       flags|PWDSHADOW_TYPE_DAYS);
    pwdshadow_get_attr(entry, ps->ps_ad_shadowLastChange,    &st->st_shadowLastChange,     flags|PWDSHADOW_TYPE_DAYS);
    pwdshadow_get_attr(entry, ps->ps_ad_shadowMax,           &st->st_shadowMax,            flags|PWDSHADOW_TYPE_DAYS);
@@ -1168,6 +1193,7 @@ pwdshadow_op_add(
 
    // processing changes
    pwdshadow_op_add_attr(op->ora_e, &st.st_pwdShadowExpire);
+   pwdshadow_op_add_attr(op->ora_e, &st.st_pwdShadowFlag);
    pwdshadow_op_add_attr(op->ora_e, &st.st_pwdShadowInactive);
    pwdshadow_op_add_attr(op->ora_e, &st.st_pwdShadowLastChange);
    pwdshadow_op_add_attr(op->ora_e, &st.st_pwdShadowMax);
@@ -1255,6 +1281,9 @@ pwdshadow_op_modify(
       if (mods->sml_desc == ps->ps_ad_shadowExpire)
          pwdshadow_get_mods(mods, &st.st_shadowExpire, PWDSHADOW_TYPE_DAYS);
 
+      if (mods->sml_desc == ps->ps_ad_shadowFlag)
+         pwdshadow_get_mods(mods, &st.st_shadowFlag, PWDSHADOW_TYPE_INTEGER);
+
       if (mods->sml_desc == ps->ps_ad_shadowInactive)
          pwdshadow_get_mods(mods, &st.st_shadowInactive, PWDSHADOW_TYPE_DAYS);
 
@@ -1276,6 +1305,7 @@ pwdshadow_op_modify(
 
    // processing pwdShadowLastChange
    pwdshadow_op_modify_mods(&st.st_pwdShadowExpire,         &next);
+   pwdshadow_op_modify_mods(&st.st_pwdShadowFlag,           &next);
    pwdshadow_op_modify_mods(&st.st_pwdShadowInactive,       &next);
    pwdshadow_op_modify_mods(&st.st_pwdShadowLastChange,     &next);
    pwdshadow_op_modify_mods(&st.st_pwdShadowMax,            &next);
