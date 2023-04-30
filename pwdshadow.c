@@ -775,13 +775,18 @@ pwdshadow_db_init(
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
    slap_str2ad("pwdChangedTime",    &ps->ps_ad_pwdChangedTime,    &text);
    slap_str2ad("pwdEndTime",        &ps->ps_ad_pwdEndTime,        &text);
+   slap_str2ad("pwdExpireWarning",  &ps->ps_ad_pwdExpireWarning,  &text);
    slap_str2ad("pwdGraceExpiry",    &ps->ps_ad_pwdGraceExpiry,    &text);
    slap_str2ad("pwdMaxAge",         &ps->ps_ad_pwdMaxAge,         &text);
+   slap_str2ad("pwdMinAge",         &ps->ps_ad_pwdMinAge,         &text);
 
    // slapo-pwdshadow attributes
    slap_str2ad("shadowExpire",      &ps->ps_ad_shadowExpire,      &text);
    slap_str2ad("shadowInactive",    &ps->ps_ad_shadowInactive,    &text);
    slap_str2ad("shadowLastChange",  &ps->ps_ad_shadowLastChange,  &text);
+   slap_str2ad("shadowMax",         &ps->ps_ad_shadowMax,         &text);
+   slap_str2ad("shadowMin",         &ps->ps_ad_shadowMin,         &text);
+   slap_str2ad("shadowWarning",     &ps->ps_ad_shadowWarning,     &text);
 
    // User Schema (RFC 2256)
    if ((ps->ps_ad_userPassword = slap_schema.si_ad_userPassword) == NULL)
