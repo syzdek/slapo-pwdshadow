@@ -26,7 +26,7 @@ instead of the manually maintained attributes of shadowAccount.
 These \fBslapd.conf\fR configuration options apply to the pwdshadow overlay.
 They shoud appear after the \fBoverlay\fR directive.
 .TP
-.B pwdshadow_use_pwdpolicy TRUE | FALSE
+.B pwdshadow_use_policy TRUE | FALSE
 Specify that Dereference and use attributes from the pwdPolicy object to
 generate pwdShadow attributes. The default is TRUE.
 .TP
