@@ -238,7 +238,6 @@ pwdshadow_eval_precheck(
 static int
 pwdshadow_get_attr(
          Entry *                       entry,
-         AttributeDescription *        ad,
          pwdshadow_data_t *            dat,
          int                           flags );
 
@@ -1030,21 +1029,16 @@ pwdshadow_eval_precheck(
 int
 pwdshadow_get_attr(
          Entry *                       entry,
-         AttributeDescription *        ad,
          pwdshadow_data_t *            dat,
          int                           flags )
 {
    Attribute *       a;
    BerValue *        bv;
 
-   if (!(ad))
+   if (!(dat->dat_ad))
       return(0);
 
-   dat->dat_ad = ((dat->dat_ad)) ? dat->dat_ad : ad;
-   if (dat->dat_ad != ad)
-      return(-1);
-
-   if ((a = attr_find(entry->e_attrs, ad)) != NULL)
+   if ((a = attr_find(entry->e_attrs, dat->dat_ad)) != NULL)
       a = (a->a_numvals > 0) ? a : NULL;
 
    bv = ((a)) ? &a->a_nvals[0] : NULL;
@@ -1061,30 +1055,30 @@ pwdshadow_get_attrs(
          int                           flags )
 {
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
-   pwdshadow_get_attr(entry, ps->ps_ad_pwdChangedTime,      &st->st_pwdChangedTime,       flags|PWDSHADOW_TYPE_TIME);
-   pwdshadow_get_attr(entry, ps->ps_ad_pwdEndTime,          &st->st_pwdEndTime,           flags|PWDSHADOW_TYPE_TIME);
-   pwdshadow_get_attr(entry, ps->ps_ad_pwdPolicySubentry,   &st->st_pwdPolicySubentry,    flags|PWDSHADOW_TYPE_EXISTS);
+   pwdshadow_get_attr(entry, &st->st_pwdChangedTime,       flags|PWDSHADOW_TYPE_TIME);
+   pwdshadow_get_attr(entry, &st->st_pwdEndTime,           flags|PWDSHADOW_TYPE_TIME);
+   pwdshadow_get_attr(entry, &st->st_pwdPolicySubentry,    flags|PWDSHADOW_TYPE_EXISTS);
 
    // slapo-pwdshadow attributes
-   pwdshadow_get_attr(entry, ad_pwdShadowExpire,            &st->st_pwdShadowExpire,      flags|PWDSHADOW_TYPE_DAYS);
-   pwdshadow_get_attr(entry, ad_pwdShadowGenerate,          &st->st_pwdShadowGenerate,    flags|PWDSHADOW_TYPE_BOOL);
-   pwdshadow_get_attr(entry, ad_pwdShadowInactive,          &st->st_pwdShadowInactive,    flags|PWDSHADOW_TYPE_DAYS);
-   pwdshadow_get_attr(entry, ad_pwdShadowLastChange,        &st->st_pwdShadowLastChange,  flags|PWDSHADOW_TYPE_DAYS);
-   pwdshadow_get_attr(entry, ad_pwdShadowMax,               &st->st_pwdShadowMax,         flags|PWDSHADOW_TYPE_DAYS);
-   pwdshadow_get_attr(entry, ad_pwdShadowMin,               &st->st_pwdShadowMin,         flags|PWDSHADOW_TYPE_DAYS);
-   pwdshadow_get_attr(entry, ad_pwdShadowWarning,           &st->st_pwdShadowWarning,     flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, &st->st_pwdShadowExpire,      flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, &st->st_pwdShadowGenerate,    flags|PWDSHADOW_TYPE_BOOL);
+   pwdshadow_get_attr(entry, &st->st_pwdShadowInactive,    flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, &st->st_pwdShadowLastChange,  flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, &st->st_pwdShadowMax,         flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, &st->st_pwdShadowMin,         flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, &st->st_pwdShadowWarning,     flags|PWDSHADOW_TYPE_DAYS);
 
    // LDAP NIS attributes (RFC 2307)
-   pwdshadow_get_attr(entry, ps->ps_ad_shadowExpire,        &st->st_shadowExpire,         flags|PWDSHADOW_TYPE_DAYS);
-   pwdshadow_get_attr(entry, ps->ps_ad_shadowFlag,          &st->st_shadowFlag,           flags|PWDSHADOW_TYPE_DAYS);
-   pwdshadow_get_attr(entry, ps->ps_ad_shadowInactive,      &st->st_shadowInactive,       flags|PWDSHADOW_TYPE_DAYS);
-   pwdshadow_get_attr(entry, ps->ps_ad_shadowLastChange,    &st->st_shadowLastChange,     flags|PWDSHADOW_TYPE_DAYS);
-   pwdshadow_get_attr(entry, ps->ps_ad_shadowMax,           &st->st_shadowMax,            flags|PWDSHADOW_TYPE_DAYS);
-   pwdshadow_get_attr(entry, ps->ps_ad_shadowMin,           &st->st_shadowMin,            flags|PWDSHADOW_TYPE_DAYS);
-   pwdshadow_get_attr(entry, ps->ps_ad_shadowWarning,       &st->st_shadowWarning,        flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, &st->st_shadowExpire,         flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, &st->st_shadowFlag,           flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, &st->st_shadowInactive,       flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, &st->st_shadowLastChange,     flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, &st->st_shadowMax,            flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, &st->st_shadowMin,            flags|PWDSHADOW_TYPE_DAYS);
+   pwdshadow_get_attr(entry, &st->st_shadowWarning,        flags|PWDSHADOW_TYPE_DAYS);
 
    // User Schema (RFC 2256)
-   pwdshadow_get_attr(entry, ps->ps_ad_userPassword,        &st->st_userPassword,         flags|PWDSHADOW_TYPE_EXISTS);
+   pwdshadow_get_attr(entry, &st->st_userPassword,         flags|PWDSHADOW_TYPE_EXISTS);
 
    return(0);
 }
