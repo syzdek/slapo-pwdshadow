@@ -168,6 +168,7 @@ typedef struct pwdshadow_t
 
    // User Schema (RFC 2256)
    AttributeDescription *     ps_ad_userPassword;
+   pwdshadow_state_t          ps_state;
 } pwdshadow_t;
 
 
@@ -778,6 +779,7 @@ pwdshadow_db_init(
 {
    slap_overinst *   on;
    pwdshadow_t *     ps;
+   pwdshadow_state_t *     st;
    const char *      text;
 
    on = (slap_overinst *) be->bd_info;
@@ -796,6 +798,8 @@ pwdshadow_db_init(
    // allocate memory for database instance configuration
    on->on_bi.bi_private          = ch_calloc( sizeof(pwdshadow_t), 1 );
    ps                            = on->on_bi.bi_private;
+   memset(ps, 0, sizeof(pwdshadow_t));
+   st                            = &ps->ps_state;
    ps->ps_cfg_override           = 1;
 
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
@@ -806,6 +810,23 @@ pwdshadow_db_init(
    slap_str2ad("pwdMaxAge",         &ps->ps_ad_pwdMaxAge,         &text);
    slap_str2ad("pwdMinAge",         &ps->ps_ad_pwdMinAge,         &text);
    slap_str2ad("pwdPolicySubentry", &ps->ps_ad_pwdPolicySubentry, &text);
+   slap_str2ad("pwdChangedTime",       &st->st_pwdChangedTime.dat_ad,      &text);
+   slap_str2ad("pwdEndTime",           &st->st_pwdEndTime.dat_ad,          &text);
+   slap_str2ad("pwdExpireWarning",     &st->st_pwdExpireWarning.dat_ad,    &text);
+   slap_str2ad("pwdGraceExpiry",       &st->st_pwdGraceExpiry.dat_ad,      &text);
+   slap_str2ad("pwdMaxAge",            &st->st_pwdMaxAge.dat_ad,           &text);
+   slap_str2ad("pwdMinAge",            &st->st_pwdMinAge.dat_ad,           &text);
+   slap_str2ad("pwdPolicySubentry",    &st->st_pwdPolicySubentry.dat_ad,   &text);
+
+   // slapo-pwdshadow attributes
+   slap_str2ad("pwdShadowExpire",      &st->st_pwdShadowExpire.dat_ad,     &text);
+   slap_str2ad("pwdShadowFlag",        &st->st_pwdShadowFlag.dat_ad,       &text);
+   slap_str2ad("pwdShadowGenerate",    &st->st_pwdShadowGenerate.dat_ad,   &text);
+   slap_str2ad("pwdShadowInactive",    &st->st_pwdShadowInactive.dat_ad,   &text);
+   slap_str2ad("pwdShadowLastChange",  &st->st_pwdShadowLastChange.dat_ad, &text);
+   slap_str2ad("pwdShadowMax",         &st->st_pwdShadowMax.dat_ad,        &text);
+   slap_str2ad("pwdShadowMin",         &st->st_pwdShadowMin.dat_ad,        &text);
+   slap_str2ad("pwdShadowWarning",     &st->st_pwdShadowWarning.dat_ad,    &text);
 
    // LDAP NIS attributes (RFC 2307)
    slap_str2ad("shadowExpire",      &ps->ps_ad_shadowExpire,      &text);
@@ -815,10 +836,19 @@ pwdshadow_db_init(
    slap_str2ad("shadowMax",         &ps->ps_ad_shadowMax,         &text);
    slap_str2ad("shadowMin",         &ps->ps_ad_shadowMin,         &text);
    slap_str2ad("shadowWarning",     &ps->ps_ad_shadowWarning,     &text);
+   slap_str2ad("shadowExpire",         &st->st_shadowExpire.dat_ad,        &text);
+   slap_str2ad("shadowFlag",           &st->st_shadowFlag.dat_ad,          &text);
+   slap_str2ad("shadowInactive",       &st->st_shadowInactive.dat_ad,      &text);
+   slap_str2ad("shadowLastChange",     &st->st_shadowLastChange.dat_ad,    &text);
+   slap_str2ad("shadowMax",            &st->st_shadowMax.dat_ad,           &text);
+   slap_str2ad("shadowMin",            &st->st_shadowMin.dat_ad,           &text);
+   slap_str2ad("shadowWarning",        &st->st_shadowWarning.dat_ad,       &text);
 
    // User Schema (RFC 2256)
    if ((ps->ps_ad_userPassword = slap_schema.si_ad_userPassword) == NULL)
       slap_str2ad("userPassword", &ps->ps_ad_userPassword, &text);
+   if ((st->st_userPassword.dat_ad = slap_schema.si_ad_userPassword) == NULL)
+      slap_str2ad("userPassword",      &st->st_userPassword.dat_ad,        &text);
 
    return(0);
 }
