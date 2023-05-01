@@ -777,10 +777,10 @@ pwdshadow_db_init(
          BackendDB *                   be,
          ConfigReply *                 cr )
 {
-   slap_overinst *   on;
-   pwdshadow_t *     ps;
+   slap_overinst *         on;
+   pwdshadow_t *           ps;
    pwdshadow_state_t *     st;
-   const char *      text;
+   const char *            text;
 
    on = (slap_overinst *) be->bd_info;
 
