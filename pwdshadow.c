@@ -148,6 +148,7 @@ typedef struct pwdshadow_t
    struct berval              ps_def_policy;
    int                        ps_cfg_overrides;
    int                        ps_cfg_use_policies;
+   int                        ps_cfg_autoexpire;
    pwdshadow_state_t          ps_state;
 } pwdshadow_t;
 
@@ -485,6 +486,21 @@ static ConfigTable pwdshadow_cfg_ats[] =
                         " SINGLE-VALUE )"
    },
    {
+      .name          = "pwdshadow_autoexpire",
+      .what          = "on|off",
+      .min_args      = 2,
+      .max_args      = 2,
+      .length        = 0,
+      .arg_type      = ARG_ON_OFF|ARG_OFFSET,
+      .arg_item      = (void *)offsetof(pwdshadow_t,ps_cfg_autoexpire),
+      .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.4"
+                        " NAME 'olcPwdShadowAutoExpire'"
+                        " DESC 'Use pwdShadowLastChange, pwdMaxAge, and pwdGraceExpiry to generate pwdShadowExpire if pwdEndTime does not exist'"
+                        " EQUALITY booleanMatch"
+                        " SYNTAX OMsBoolean"
+                        " SINGLE-VALUE )"
+   },
+   {
       .name          = NULL,
       .what          = NULL,
       .min_args      = 0,
@@ -800,6 +816,7 @@ pwdshadow_db_init(
    memset(ps, 0, sizeof(pwdshadow_t));
    ps->ps_cfg_overrides          = 1;
    ps->ps_cfg_use_policies       = 1;
+   ps->ps_cfg_autoexpire         = 0;
 
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
    slap_str2ad("pwdChangedTime",       &st->st_pwdChangedTime.dat_ad,      &text);
