@@ -931,7 +931,14 @@ pwdshadow_eval(
       }
    );
    if ( ((pwdshadow_flg_evaladd(dat))) && (!(pwdshadow_flg_override(dat))) )
-      dat->dat_post = ((int)time(NULL)) / 60 / 60 /24;
+   {
+      if ((pwdshadow_flg_useradd(&st->st_userPassword)))
+         dat->dat_post = ((int)time(NULL)) / 60 / 60 /24;
+      else if ((pwdshadow_flg_exists(&st->st_pwdChangedTime)))
+         dat->dat_post = st->st_pwdChangedTime.dat_post;
+      else
+         dat->dat_post = ((int)time(NULL)) / 60 / 60 /24;
+   };
    pwdshadow_eval_postcheck(dat);
 
    // process pwdShadowMax
