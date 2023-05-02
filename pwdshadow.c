@@ -173,20 +173,6 @@ pwdshadow_copy_int_bv(
 
 
 static int
-pwdshadow_set(
-         pwdshadow_data_t *            dat,
-         BerValue *                    bv,
-         int                           flags );
-
-
-static int
-pwdshadow_set_value(
-         pwdshadow_data_t *            dat,
-         int                           val,
-         int                           flags );
-
-
-static int
 pwdshadow_db_destroy(
          BackendDB *                   be,
          ConfigReply *                 cr );
@@ -273,6 +259,20 @@ static int
 pwdshadow_op_modify_mods(
          pwdshadow_data_t *            dat,
          Modifications ***             nextp );
+
+
+static int
+pwdshadow_set(
+         pwdshadow_data_t *            dat,
+         BerValue *                    bv,
+         int                           flags );
+
+
+static int
+pwdshadow_set_value(
+         pwdshadow_data_t *            dat,
+         int                           val,
+         int                           flags );
 
 
 static int
@@ -664,113 +664,6 @@ pwdshadow_copy_int_bv(
    bv->bv_val = ch_malloc( (size_t)bv->bv_len );
    bv->bv_len = snprintf(bv->bv_val, bv->bv_len, "%i", i);
    return;
-}
-
-
-int
-pwdshadow_set(
-         pwdshadow_data_t *            dat,
-         BerValue *                    bv,
-         int                           flags )
-{
-   int                     type;
-   int                     ival;
-   struct lutil_tm         tm;
-   struct lutil_timet      tt;
-   AttributeDescription *  ad;
-
-   ad   = dat->dat_ad;
-   type = ((pwdshadow_type(dat->dat_flag))) ? pwdshadow_type(dat->dat_flag) : pwdshadow_type(flags);
-   if (pwdshadow_type(flags) != type)
-      return(-1);
-
-   if ((flags & PWDSHADOW_FLG_USERDEL))
-      return(pwdshadow_set_value(dat, 0, flags));
-   if (!(bv))
-      return(-1);
-
-   switch(type)
-   {
-      case PWDSHADOW_TYPE_BOOL:
-      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.7")))
-         return(-1);
-      ival = 0;
-      if ( ((bv)) && ((bv->bv_val)) && (!(strcasecmp(bv->bv_val, "TRUE"))) )
-         ival = 1;
-      return(pwdshadow_set_value(dat, ival, flags));
-
-      case PWDSHADOW_TYPE_DAYS:
-      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
-         return(-1);
-      lutil_atoi(&ival, bv->bv_val);
-      return(pwdshadow_set_value(dat, ival, flags));
-
-      case PWDSHADOW_TYPE_EXISTS:
-      ival = ( ((bv)) && ((bv->bv_len)) ) ? 1 : 0;
-      return(pwdshadow_set_value(dat, ival, flags));
-
-      case PWDSHADOW_TYPE_INTEGER:
-      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
-         return(-1);
-      lutil_atoi(&ival, bv->bv_val);
-      return(pwdshadow_set_value(dat, ival, flags));
-
-      case PWDSHADOW_TYPE_SECS:
-      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
-         return(-1);
-      lutil_atoi(&ival, bv->bv_val);
-      ival /= 60 * 60 * 24;
-      return(pwdshadow_set_value(dat, ival, flags));
-
-      case PWDSHADOW_TYPE_TIME:
-      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.24")))
-         return(-1);
-      if (lutil_parsetime(bv->bv_val, &tm) != 0)
-         return(-1);
-      lutil_tm2time(&tm, &tt);
-      ival = (int)tt.tt_sec;
-      ival /= 60 * 60 * 24; // convert from seconds to days
-      return(pwdshadow_set_value(dat, ival, flags));
-
-      default:
-      Debug( LDAP_DEBUG_ANY, "pwdshadow: pwdshadow_set(): unknown data type\n" );
-      return(-1);
-   };
-
-   return(0);
-}
-
-
-int
-pwdshadow_set_value(
-         pwdshadow_data_t *            dat,
-         int                           val,
-         int                           flags )
-{
-   switch(flags & (PWDSHADOW_FLG_EXISTS|PWDSHADOW_FLG_USERADD|PWDSHADOW_FLG_USERDEL))
-   {
-      case PWDSHADOW_FLG_EXISTS:
-      dat->dat_prev = val;
-      dat->dat_post = val;
-      break;
-
-      case PWDSHADOW_FLG_USERADD:
-      dat->dat_mod  = val;
-      dat->dat_post = val;
-      break;
-
-      case PWDSHADOW_FLG_USERDEL:
-      dat->dat_mod  = 0;
-      dat->dat_post = 0;
-      break;
-
-      default:
-      return(-1);
-   };
-
-   dat->dat_flag  |= flags;
-
-   return(0);
 }
 
 
@@ -1550,6 +1443,113 @@ pwdshadow_op_modify_mods(
    pwdshadow_copy_int_bv(dat->dat_post, &mods->sml_values[0]);
    mods->sml_values[1].bv_val = NULL;
    mods->sml_values[1].bv_len = 0;
+
+   return(0);
+}
+
+
+int
+pwdshadow_set(
+         pwdshadow_data_t *            dat,
+         BerValue *                    bv,
+         int                           flags )
+{
+   int                     type;
+   int                     ival;
+   struct lutil_tm         tm;
+   struct lutil_timet      tt;
+   AttributeDescription *  ad;
+
+   ad   = dat->dat_ad;
+   type = ((pwdshadow_type(dat->dat_flag))) ? pwdshadow_type(dat->dat_flag) : pwdshadow_type(flags);
+   if (pwdshadow_type(flags) != type)
+      return(-1);
+
+   if ((flags & PWDSHADOW_FLG_USERDEL))
+      return(pwdshadow_set_value(dat, 0, flags));
+   if (!(bv))
+      return(-1);
+
+   switch(type)
+   {
+      case PWDSHADOW_TYPE_BOOL:
+      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.7")))
+         return(-1);
+      ival = 0;
+      if ( ((bv)) && ((bv->bv_val)) && (!(strcasecmp(bv->bv_val, "TRUE"))) )
+         ival = 1;
+      return(pwdshadow_set_value(dat, ival, flags));
+
+      case PWDSHADOW_TYPE_DAYS:
+      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
+         return(-1);
+      lutil_atoi(&ival, bv->bv_val);
+      return(pwdshadow_set_value(dat, ival, flags));
+
+      case PWDSHADOW_TYPE_EXISTS:
+      ival = ( ((bv)) && ((bv->bv_len)) ) ? 1 : 0;
+      return(pwdshadow_set_value(dat, ival, flags));
+
+      case PWDSHADOW_TYPE_INTEGER:
+      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
+         return(-1);
+      lutil_atoi(&ival, bv->bv_val);
+      return(pwdshadow_set_value(dat, ival, flags));
+
+      case PWDSHADOW_TYPE_SECS:
+      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
+         return(-1);
+      lutil_atoi(&ival, bv->bv_val);
+      ival /= 60 * 60 * 24;
+      return(pwdshadow_set_value(dat, ival, flags));
+
+      case PWDSHADOW_TYPE_TIME:
+      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.24")))
+         return(-1);
+      if (lutil_parsetime(bv->bv_val, &tm) != 0)
+         return(-1);
+      lutil_tm2time(&tm, &tt);
+      ival = (int)tt.tt_sec;
+      ival /= 60 * 60 * 24; // convert from seconds to days
+      return(pwdshadow_set_value(dat, ival, flags));
+
+      default:
+      Debug( LDAP_DEBUG_ANY, "pwdshadow: pwdshadow_set(): unknown data type\n" );
+      return(-1);
+   };
+
+   return(0);
+}
+
+
+int
+pwdshadow_set_value(
+         pwdshadow_data_t *            dat,
+         int                           val,
+         int                           flags )
+{
+   switch(flags & (PWDSHADOW_FLG_EXISTS|PWDSHADOW_FLG_USERADD|PWDSHADOW_FLG_USERDEL))
+   {
+      case PWDSHADOW_FLG_EXISTS:
+      dat->dat_prev = val;
+      dat->dat_post = val;
+      break;
+
+      case PWDSHADOW_FLG_USERADD:
+      dat->dat_mod  = val;
+      dat->dat_post = val;
+      break;
+
+      case PWDSHADOW_FLG_USERDEL:
+      dat->dat_mod  = 0;
+      dat->dat_post = 0;
+      break;
+
+      default:
+      return(-1);
+   };
+
+   dat->dat_flag  |= flags;
 
    return(0);
 }
