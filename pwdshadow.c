@@ -1085,9 +1085,7 @@ pwdshadow_eval_precheck(
       };
       if ( ((pwdshadow_flg_exists(override))) && (!(pwdshadow_flg_userdel(override))) )
       {
-         if (!(pwdshadow_flg_exists(dat)))
-            dat->dat_flag |= PWDSHADOW_FLG_EVALADD;
-         dat->dat_flag |= PWDSHADOW_FLG_OVERRIDE;
+         dat->dat_flag |= (PWDSHADOW_FLG_EVALADD | PWDSHADOW_FLG_OVERRIDE);
          dat->dat_post = override->dat_post;
          return(0);
       };
@@ -1102,13 +1100,14 @@ pwdshadow_eval_precheck(
          dat->dat_post = triggers[idx]->dat_post;
       } else
       if ( ((pwdshadow_flg_exists(triggers[idx]))) &&
-           (!(pwdshadow_flg_userdel(triggers[idx]))) &&
-           (!(pwdshadow_flg_exists(dat))) )
+           (!(pwdshadow_flg_userdel(triggers[idx]))) )
       {
          dat->dat_flag |= PWDSHADOW_FLG_EVALADD;
          dat->dat_post = triggers[idx]->dat_post;
       };
       if ( ((pwdshadow_flg_exists(triggers[idx]))) && (!(pwdshadow_flg_userdel(triggers[idx]))) )
+         should_exist++;
+      else if ((pwdshadow_flg_useradd(triggers[idx])))
          should_exist++;
    };
 
