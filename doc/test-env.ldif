@@ -11,6 +11,8 @@ pwdMustChange: TRUE
 pwdMinLength: 8
 pwdCheckQuality: 2
 pwdMinAge: 30
+pwdMaxAge: 31536000
+pwdGraceExpiry: 604800
 pwdInHistory: 40
 pwdGraceAuthNLimit: 0
 pwdExpireWarning: 1209600
