@@ -173,7 +173,7 @@ pwdshadow_copy_int_bv(
 
 
 static int
-pwdshadow_dat_set(
+pwdshadow_set(
          pwdshadow_data_t *            dat,
          BerValue *                    bv,
          int                           flags );
@@ -668,7 +668,7 @@ pwdshadow_copy_int_bv(
 
 
 int
-pwdshadow_dat_set(
+pwdshadow_set(
          pwdshadow_data_t *            dat,
          BerValue *                    bv,
          int                           flags )
@@ -733,7 +733,7 @@ pwdshadow_dat_set(
       return(pwdshadow_dat_value(dat, ival, flags));
 
       default:
-      Debug( LDAP_DEBUG_ANY, "pwdshadow: pwdshadow_dat_set(): unknown data type\n" );
+      Debug( LDAP_DEBUG_ANY, "pwdshadow: pwdshadow_set(): unknown data type\n" );
       return(-1);
    };
 
@@ -1193,7 +1193,7 @@ pwdshadow_get_attr(
 
    bv = ((a)) ? &a->a_nvals[0] : NULL;
 
-   return(pwdshadow_dat_set(dat, bv, flags));
+   return(pwdshadow_set(dat, bv, flags));
 }
 
 
@@ -1291,7 +1291,7 @@ pwdshadow_get_mods(
 
    bv = (mods->sml_numvals > 0) ? &mods->sml_values[0]: NULL;
 
-   return(pwdshadow_dat_set(dat, bv, flags));
+   return(pwdshadow_set(dat, bv, flags));
 }
 
 
