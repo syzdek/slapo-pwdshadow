@@ -1087,10 +1087,10 @@ pwdshadow_get_attrs(
          Entry *                       entry,
          int                           flags )
 {
-   int      flags_bool;
-   int      flags_days;
-   int      flags_exists;
-   int      flags_time;
+   int                     flags_bool;
+   int                     flags_days;
+   int                     flags_exists;
+   int                     flags_time;
 
    if (!(ps))
       return(0);
@@ -1289,11 +1289,11 @@ pwdshadow_op_modify(
    memcpy(&st, &ps->ps_state, sizeof(st));
 
    // retrieve entry from backend
-   bd_info           = op->o_bd->bd_info;
-   op->o_bd->bd_info = (BackendInfo *)on->on_info;
-   rc                = be_entry_get_rw( op, &op->o_req_ndn, NULL, NULL, 0, &entry );
-   op->o_bd->bd_info = (BackendInfo *)bd_info;
-   st.st_entry       = entry;
+   bd_info              = op->o_bd->bd_info;
+   op->o_bd->bd_info    = (BackendInfo *)on->on_info;
+   rc                   = be_entry_get_rw( op, &op->o_req_ndn, NULL, NULL, 0, &entry );
+   op->o_bd->bd_info    = (BackendInfo *)bd_info;
+   st.st_entry          = entry;
    if ( rc != LDAP_SUCCESS )
       return(SLAP_CB_CONTINUE);
 
