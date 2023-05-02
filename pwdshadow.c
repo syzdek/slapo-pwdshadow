@@ -874,27 +874,17 @@ pwdshadow_eval(
          Operation *                   op,
          pwdshadow_state_t *           st )
 {
+   slap_overinst *      on;
+   pwdshadow_t *        ps;
    pwdshadow_data_t *   dat;
 
+   on                = (slap_overinst *)op->o_bd->bd_info;
+   ps                = on->on_bi.bi_private;
    st->st_purge      = ((pwdshadow_flg_userdel(&st->st_pwdShadowGenerate))) ? 1 : 0;
    st->st_generate   = st->st_pwdShadowGenerate.dat_post;
 
    // retrieve password policy
    pwdshadow_eval_policy(op, st);
-
-   // process pwdShadowExpire
-   dat = &st->st_pwdShadowExpire;
-   pwdshadow_eval_precheck(
-      op,
-      st,
-      dat,                          // data
-      &st->st_shadowExpire,         // override attribute
-      (pwdshadow_data_t *[])        // triggering attributes
-      {  &st->st_pwdEndTime,
-         NULL
-      }
-   );
-   pwdshadow_eval_postcheck(dat);
 
    // process pwdShadowFlag
    dat = &st->st_pwdShadowFlag;
@@ -986,6 +976,43 @@ pwdshadow_eval(
          NULL
       }
    );
+   pwdshadow_eval_postcheck(dat);
+
+   // process pwdShadowExpire
+   dat = &st->st_pwdShadowExpire;
+   pwdshadow_eval_precheck(
+      op,
+      st,
+      dat,                          // data
+      &st->st_shadowExpire,         // override attribute
+      (pwdshadow_data_t *[])        // triggering attributes
+      {  &st->st_userPassword,
+         &st->st_pwdMaxAge,
+         &st->st_pwdGraceExpiry,
+         &st->st_pwdEndTime,
+         NULL
+      }
+   );
+   if ( ((pwdshadow_flg_evaladd(dat))) && (!(pwdshadow_flg_override(dat))) )
+   {
+      if ((pwdshadow_flg_willexist(&st->st_pwdEndTime)))
+         dat->dat_post = st->st_pwdEndTime.dat_post;
+      else if ( ((ps->ps_cfg_autoexpire)) &&
+           ((pwdshadow_flg_willexist(&st->st_pwdShadowLastChange))) &&
+           ((pwdshadow_flg_exists(&st->st_pwdMaxAge))) )
+      {
+         dat->dat_post =  st->st_pwdShadowLastChange.dat_post;
+         dat->dat_post += st->st_pwdMaxAge.dat_post;
+         if ((pwdshadow_flg_exists(&st->st_pwdGraceExpiry)))
+            dat->dat_post += st->st_pwdGraceExpiry.dat_post;
+      }
+      else
+      {
+         dat->dat_flag &= ~PWDSHADOW_FLG_EVALADD;
+         if ((pwdshadow_flg_exists(dat)))
+            dat->dat_flag |= PWDSHADOW_FLG_EVALDEL;
+      };
+   };
    pwdshadow_eval_postcheck(dat);
 
    return(0);
