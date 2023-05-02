@@ -146,7 +146,7 @@ typedef struct pwdshadow_state_t
 typedef struct pwdshadow_t
 {
    struct berval              ps_def_policy;
-   int                        ps_cfg_override;
+   int                        ps_cfg_overrides;
    int                        ps_cfg_use_policies;
    pwdshadow_state_t          ps_state;
 } pwdshadow_t;
@@ -455,15 +455,15 @@ static ConfigTable pwdshadow_cfg_ats[] =
                         " SINGLE-VALUE )"
    },
    {
-      .name          = "pwdshadow_override",
+      .name          = "pwdshadow_overrides",
       .what          = "on|off",
       .min_args      = 2,
       .max_args      = 2,
       .length        = 0,
       .arg_type      = ARG_ON_OFF|ARG_OFFSET,
-      .arg_item      = (void *)offsetof(pwdshadow_t,ps_cfg_override),
+      .arg_item      = (void *)offsetof(pwdshadow_t,ps_cfg_overrides),
       .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.2"
-                        " NAME 'olcPwdShadowOverride'"
+                        " NAME 'olcPwdShadowOverrides'"
                         " DESC 'Attribute which indicates shadow attributes should be generated'"
                         " EQUALITY booleanMatch"
                         " SYNTAX OMsBoolean"
@@ -507,7 +507,7 @@ static ConfigOCs pwdshadow_cfg_ocs[] =
                         " SUP olcOverlayConfig"
                         " MAY ( olcPwdShadowDefault $"
                               " olcPwdShadowUsePolicies $"
-                              " olcPwdShadowOverride ) )",
+                              " olcPwdShadowOverrides ) )",
       .co_type       = Cft_Overlay,
       .co_table      = pwdshadow_cfg_ats
    },
@@ -796,7 +796,7 @@ pwdshadow_db_init(
    ps                            = on->on_bi.bi_private;
    memset(ps, 0, sizeof(pwdshadow_t));
    st                            = &ps->ps_state;
-   ps->ps_cfg_override           = 1;
+   ps->ps_cfg_overrides          = 1;
    ps->ps_cfg_use_policies       = 1;
 
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
@@ -992,7 +992,7 @@ pwdshadow_eval_precheck(
    };
 
    // determine if override value is set for attribute
-   if ( ((ps->ps_cfg_override)) && ((override)) )
+   if ( ((ps->ps_cfg_overrides)) && ((override)) )
    {
       if ((pwdshadow_flg_useradd(override)))
       {
@@ -1293,7 +1293,7 @@ pwdshadow_op_modify(
          pwdshadow_get_mods(mods, &st.st_userPassword, PWDSHADOW_TYPE_EXISTS);
 
       // skip remaining attributes if override is disabled
-      if (!(ps->ps_cfg_override))
+      if (!(ps->ps_cfg_overrides))
          continue;
 
       if (mods->sml_desc == st.st_shadowExpire.dat_ad)

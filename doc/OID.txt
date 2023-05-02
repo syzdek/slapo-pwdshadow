@@ -45,7 +45,7 @@ This project defines the following OIDs:
 1.3.6.1.4.1.27893.4.2.3.1        - pwdShadowAccount
 1.3.6.1.4.1.27893.4.2.4        - OpenLDAP configuration AttributeTypes
 1.3.6.1.4.1.27893.4.2.4.1        - olcPwdShadowDefault (pwdshadow_default)
-1.3.6.1.4.1.27893.4.2.4.2        - olcPwdShadowOverride (pwdshadow_override)
+1.3.6.1.4.1.27893.4.2.4.2        - olcPwdShadowOverrides (pwdshadow_overrides)
 1.3.6.1.4.1.27893.4.2.4.3        - olcPwdShadowUsePolicies (pwdshadow_use_policies)
 1.3.6.1.4.1.27893.4.2.5        - OpenLDAP configuration ObjectClasses
 1.3.6.1.4.1.27893.4.2.5.1        - olcPwdShadowConfig
