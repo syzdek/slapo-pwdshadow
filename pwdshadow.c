@@ -1222,16 +1222,16 @@ pwdshadow_initialize( void )
       return(code);
    };
 
-   pwdshadow.on_bi.bi_type             = "pwdshadow";
-   pwdshadow.on_bi.bi_flags            = SLAPO_BFLAG_SINGLE;
+   pwdshadow.on_bi.bi_type          = "pwdshadow";
+   pwdshadow.on_bi.bi_flags         = SLAPO_BFLAG_SINGLE;
 
-   pwdshadow.on_bi.bi_db_init          = pwdshadow_db_init;
-   pwdshadow.on_bi.bi_db_destroy       = pwdshadow_db_destroy;
+   pwdshadow.on_bi.bi_db_init       = pwdshadow_db_init;
+   pwdshadow.on_bi.bi_db_destroy    = pwdshadow_db_destroy;
 
-   pwdshadow.on_bi.bi_op_add          = pwdshadow_op_add;
-   pwdshadow.on_bi.bi_op_modify       = pwdshadow_op_modify;
+   pwdshadow.on_bi.bi_op_add        = pwdshadow_op_add;
+   pwdshadow.on_bi.bi_op_modify     = pwdshadow_op_modify;
 
-   pwdshadow.on_bi.bi_cf_ocs           = pwdshadow_cfg_ocs;
+   pwdshadow.on_bi.bi_cf_ocs        = pwdshadow_cfg_ocs;
 
    return(overlay_register( &pwdshadow ));
 }
