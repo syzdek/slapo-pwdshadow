@@ -506,6 +506,7 @@ static ConfigOCs pwdshadow_cfg_ocs[] =
                         " DESC 'Password Shadow configuration'"
                         " SUP olcOverlayConfig"
                         " MAY ( olcPwdShadowDefault $"
+                              " olcPwdShadowUsePolicies $"
                               " olcPwdShadowOverride ) )",
       .co_type       = Cft_Overlay,
       .co_table      = pwdshadow_cfg_ats
