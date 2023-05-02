@@ -794,8 +794,6 @@ pwdshadow_db_init(
    pwdshadow_state_t *     st;
    const char *            text;
 
-   on = (slap_overinst *) be->bd_info;
-
    if (( SLAP_ISGLOBALOVERLAY( be ) ))
    {
       // do not allow slapo-pwdshadow to be global
@@ -808,6 +806,7 @@ pwdshadow_db_init(
    };
 
    // allocate memory for database instance configuration
+   on                            = (slap_overinst *) be->bd_info;
    on->on_bi.bi_private          = ch_calloc( sizeof(pwdshadow_t), 1 );
    ps                            = on->on_bi.bi_private;
    st                            = &ps->ps_state;
