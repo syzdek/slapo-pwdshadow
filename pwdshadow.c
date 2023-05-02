@@ -794,8 +794,10 @@ pwdshadow_db_init(
    // allocate memory for database instance configuration
    on->on_bi.bi_private          = ch_calloc( sizeof(pwdshadow_t), 1 );
    ps                            = on->on_bi.bi_private;
-   memset(ps, 0, sizeof(pwdshadow_t));
    st                            = &ps->ps_state;
+
+   // set default values
+   memset(ps, 0, sizeof(pwdshadow_t));
    ps->ps_cfg_overrides          = 1;
    ps->ps_cfg_use_policies       = 1;
 
