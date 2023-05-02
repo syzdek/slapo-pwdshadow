@@ -180,7 +180,7 @@ pwdshadow_set(
 
 
 static int
-pwdshadow_dat_value(
+pwdshadow_set_value(
          pwdshadow_data_t *            dat,
          int                           val,
          int                           flags );
@@ -685,7 +685,7 @@ pwdshadow_set(
       return(-1);
 
    if ((flags & PWDSHADOW_FLG_USERDEL))
-      return(pwdshadow_dat_value(dat, 0, flags));
+      return(pwdshadow_set_value(dat, 0, flags));
    if (!(bv))
       return(-1);
 
@@ -697,30 +697,30 @@ pwdshadow_set(
       ival = 0;
       if ( ((bv)) && ((bv->bv_val)) && (!(strcasecmp(bv->bv_val, "TRUE"))) )
          ival = 1;
-      return(pwdshadow_dat_value(dat, ival, flags));
+      return(pwdshadow_set_value(dat, ival, flags));
 
       case PWDSHADOW_TYPE_DAYS:
       if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
          return(-1);
       lutil_atoi(&ival, bv->bv_val);
-      return(pwdshadow_dat_value(dat, ival, flags));
+      return(pwdshadow_set_value(dat, ival, flags));
 
       case PWDSHADOW_TYPE_EXISTS:
       ival = ( ((bv)) && ((bv->bv_len)) ) ? 1 : 0;
-      return(pwdshadow_dat_value(dat, ival, flags));
+      return(pwdshadow_set_value(dat, ival, flags));
 
       case PWDSHADOW_TYPE_INTEGER:
       if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
          return(-1);
       lutil_atoi(&ival, bv->bv_val);
-      return(pwdshadow_dat_value(dat, ival, flags));
+      return(pwdshadow_set_value(dat, ival, flags));
 
       case PWDSHADOW_TYPE_SECS:
       if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
          return(-1);
       lutil_atoi(&ival, bv->bv_val);
       ival /= 60 * 60 * 24;
-      return(pwdshadow_dat_value(dat, ival, flags));
+      return(pwdshadow_set_value(dat, ival, flags));
 
       case PWDSHADOW_TYPE_TIME:
       if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.24")))
@@ -730,7 +730,7 @@ pwdshadow_set(
       lutil_tm2time(&tm, &tt);
       ival = (int)tt.tt_sec;
       ival /= 60 * 60 * 24; // convert from seconds to days
-      return(pwdshadow_dat_value(dat, ival, flags));
+      return(pwdshadow_set_value(dat, ival, flags));
 
       default:
       Debug( LDAP_DEBUG_ANY, "pwdshadow: pwdshadow_set(): unknown data type\n" );
@@ -742,7 +742,7 @@ pwdshadow_set(
 
 
 int
-pwdshadow_dat_value(
+pwdshadow_set_value(
          pwdshadow_data_t *            dat,
          int                           val,
          int                           flags )
