@@ -225,6 +225,11 @@ pwdshadow_eval_precheck(
 
 
 static int
+pwdshadow_flg_willexist(
+         pwdshadow_data_t *            dat);
+
+
+static int
 pwdshadow_get_attr(
          Entry *                       entry,
          pwdshadow_data_t *            dat,
@@ -1122,6 +1127,24 @@ pwdshadow_eval_precheck(
    if ( ((pwdshadow_flg_exists(dat))) && (!(should_exist)) )
          dat->dat_flag |= PWDSHADOW_FLG_EVALDEL;
 
+   return(0);
+}
+
+
+int
+pwdshadow_flg_willexist(
+         pwdshadow_data_t *            dat)
+{
+   if ((dat->dat_flag & PWDSHADOW_FLG_EVALDEL))
+      return(0);
+   if ((dat->dat_flag & PWDSHADOW_FLG_USERDEL))
+      return(0);
+   if ((dat->dat_flag & PWDSHADOW_FLG_EXISTS))
+      return(1);
+   if ((dat->dat_flag & PWDSHADOW_FLG_USERADD))
+      return(1);
+   if ((dat->dat_flag & PWDSHADOW_FLG_EVALADD))
+      return(1);
    return(0);
 }
 
