@@ -147,7 +147,7 @@ typedef struct pwdshadow_t
 {
    struct berval              ps_def_policy;
    int                        ps_cfg_override;
-   int                        ps_cfg_use_policy;
+   int                        ps_cfg_use_policies;
    pwdshadow_state_t          ps_state;
 } pwdshadow_t;
 
@@ -470,15 +470,15 @@ static ConfigTable pwdshadow_cfg_ats[] =
                         " SINGLE-VALUE )"
    },
    {
-      .name          = "pwdshadow_use_policy",
+      .name          = "pwdshadow_use_policies",
       .what          = "on|off",
       .min_args      = 2,
       .max_args      = 2,
       .length        = 0,
       .arg_type      = ARG_ON_OFF|ARG_OFFSET,
-      .arg_item      = (void *)offsetof(pwdshadow_t,ps_cfg_use_policy),
+      .arg_item      = (void *)offsetof(pwdshadow_t,ps_cfg_use_policies),
       .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.3"
-                        " NAME 'olcPwdShadowUsePolicy'"
+                        " NAME 'olcPwdShadowUsePolicies'"
                         " DESC 'Use pwdPolicy to determine values of generated attributes'"
                         " EQUALITY booleanMatch"
                         " SYNTAX OMsBoolean"
@@ -796,7 +796,7 @@ pwdshadow_db_init(
    memset(ps, 0, sizeof(pwdshadow_t));
    st                            = &ps->ps_state;
    ps->ps_cfg_override           = 1;
-   ps->ps_cfg_use_policy         = 1;
+   ps->ps_cfg_use_policies       = 1;
 
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
    slap_str2ad("pwdChangedTime",       &st->st_pwdChangedTime.dat_ad,      &text);
