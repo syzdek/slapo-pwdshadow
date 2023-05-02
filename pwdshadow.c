@@ -107,6 +107,7 @@ typedef struct pwdshadow_data_t
 typedef struct pwdshadow_state_t
 {
    Entry *                    st_entry;
+   BerValue                   st_policy;
    int                        st_generate;
    int                        st_purge;
 
@@ -199,6 +200,12 @@ pwdshadow_db_init(
 
 static int
 pwdshadow_eval(
+         Operation *                   op,
+         pwdshadow_state_t *           st );
+
+
+static int
+pwdshadow_eval_policy(
          Operation *                   op,
          pwdshadow_state_t *           st );
 
@@ -867,6 +874,9 @@ pwdshadow_eval(
    st->st_purge      = ((pwdshadow_flg_userdel(&st->st_pwdShadowGenerate))) ? 1 : 0;
    st->st_generate   = st->st_pwdShadowGenerate.dat_post;
 
+   // retrieve password policy
+   pwdshadow_eval_policy(op, st);
+
    // process pwdShadowExpire
    dat = &st->st_pwdShadowExpire;
    pwdshadow_eval_precheck(
@@ -965,6 +975,57 @@ pwdshadow_eval(
       }
    );
    pwdshadow_eval_postcheck(dat);
+
+   return(0);
+}
+
+
+int
+pwdshadow_eval_policy(
+         Operation *                   op,
+         pwdshadow_state_t *           st )
+{
+   int                  rc;
+   int                  flags;
+	slap_overinst *      on;
+   pwdshadow_t *        ps;
+   BackendDB *          bd_orig;
+   Entry *              entry;
+
+   on       = (slap_overinst *)op->o_bd->bd_info;
+   ps       = on->on_bi.bi_private;
+   bd_orig  = op->o_bd;
+
+   // exit if not policy is specified or policies are disabled
+   if ( (!(st->st_policy.bv_val)) || (!(ps->ps_cfg_use_policies)) )
+      return(0);
+
+   // retrieve backend of policy
+   op->o_bd = select_backend( &st->st_policy, 0 );
+   if ( op->o_bd == NULL )
+   {
+		op->o_bd = bd_orig;
+      return(0);
+   };
+
+   // retrieve entry
+	rc = be_entry_get_rw(op, &st->st_policy, NULL, NULL, 0, &entry);
+   if ((rc))
+   {
+		op->o_bd = bd_orig;
+      return(0);
+   };
+
+   // retrieve password policy attributes
+   flags = PWDSHADOW_FLG_EXISTS | PWDSHADOW_TYPE_SECS;
+   pwdshadow_get_attr(entry, &st->st_pwdExpireWarning,   flags);
+   pwdshadow_get_attr(entry, &st->st_pwdGraceExpiry,     flags);
+   pwdshadow_get_attr(entry, &st->st_pwdMaxAge,          flags);
+   pwdshadow_get_attr(entry, &st->st_pwdMinAge,          flags);
+
+   // release entry
+	be_entry_release_r(op, entry);
+	op->o_bd = bd_orig;
 
    return(0);
 }
@@ -1091,6 +1152,8 @@ pwdshadow_get_attrs(
    int                     flags_days;
    int                     flags_exists;
    int                     flags_time;
+   Attribute *             a;
+   AttributeDescription *  ad;
 
    if (!(ps))
       return(0);
@@ -1125,6 +1188,20 @@ pwdshadow_get_attrs(
 
    // User Schema (RFC 2256)
    pwdshadow_get_attr(entry, &st->st_userPassword,         flags_exists);
+
+   // update pwdPolicy
+   if ((ps->ps_cfg_use_policies))
+   {
+      ad = st->st_pwdPolicySubentry.dat_ad;
+      if ((a = attr_find(entry->e_attrs, ad)) != NULL)
+      {
+         if ((a = (a->a_numvals > 0) ? a : NULL) != NULL)
+         {
+            st->st_policy.bv_len = a->a_nvals[0].bv_len;
+            st->st_policy.bv_val = a->a_nvals[0].bv_val;
+         };
+      };
+   };
 
    return(0);
 }
@@ -1224,6 +1301,8 @@ pwdshadow_op_add(
    on                = (slap_overinst *)op->o_bd->bd_info;
    ps                = on->on_bi.bi_private;
    memcpy(&st, &ps->ps_state, sizeof(st));
+   st.st_policy.bv_len = ps->ps_def_policy.bv_len;
+   st.st_policy.bv_val = ps->ps_def_policy.bv_val;
 
    // determines existing attribtues
    pwdshadow_get_attrs(ps, &st, op->ora_e, PWDSHADOW_FLG_USERADD);
@@ -1294,6 +1373,8 @@ pwdshadow_op_modify(
    rc                   = be_entry_get_rw( op, &op->o_req_ndn, NULL, NULL, 0, &entry );
    op->o_bd->bd_info    = (BackendInfo *)bd_info;
    st.st_entry          = entry;
+   st.st_policy.bv_len  = ps->ps_def_policy.bv_len;
+   st.st_policy.bv_val  = ps->ps_def_policy.bv_val;
    if ( rc != LDAP_SUCCESS )
       return(SLAP_CB_CONTINUE);
 
@@ -1313,6 +1394,21 @@ pwdshadow_op_modify(
 
       if (mods->sml_desc == st.st_userPassword.dat_ad)
          pwdshadow_get_mods(mods, &st.st_userPassword, PWDSHADOW_TYPE_EXISTS);
+
+      if (mods->sml_desc == st.st_pwdPolicySubentry.dat_ad)
+      {
+         pwdshadow_get_mods(mods, &st.st_pwdPolicySubentry, PWDSHADOW_TYPE_EXISTS);
+         if ((pwdshadow_flg_userdel(&st.st_pwdPolicySubentry)))
+         {
+            st.st_policy.bv_len  = ps->ps_def_policy.bv_len;
+            st.st_policy.bv_val  = ps->ps_def_policy.bv_val;
+         };
+         if ((pwdshadow_flg_useradd(&st.st_pwdPolicySubentry)))
+         {
+            st.st_policy.bv_len  = mods->sml_values[0].bv_len;
+            st.st_policy.bv_val  = mods->sml_values[0].bv_val;
+         };
+      };
 
       // skip remaining attributes if override is disabled
       if (!(ps->ps_cfg_overrides))
