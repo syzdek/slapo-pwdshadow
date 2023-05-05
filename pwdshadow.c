@@ -769,6 +769,7 @@ pwdshadow_eval(
          Operation *                   op,
          pwdshadow_state_t *           st )
 {
+   int                  count;
    slap_overinst *      on;
    pwdshadow_t *        ps;
    pwdshadow_data_t *   dat;
@@ -777,6 +778,22 @@ pwdshadow_eval(
    ps                = on->on_bi.bi_private;
    st->st_purge      = ((pwdshadow_flg_userdel(&st->st_pwdShadowGenerate))) ? 1 : 0;
    st->st_generate   = st->st_pwdShadowGenerate.dat_post;
+
+   // determine modification count
+   count  = 0;
+   count += ((pwdshadow_flg_usermods(&st->st_pwdEndTime)))        ? 1 : 0;
+   count += ((pwdshadow_flg_usermods(&st->st_pwdPolicySubentry))) ? 1 : 0;
+   count += ((pwdshadow_flg_usermods(&st->st_pwdShadowGenerate))) ? 1 : 0;
+   count += ((pwdshadow_flg_usermods(&st->st_shadowExpire)))      ? 1 : 0;
+   count += ((pwdshadow_flg_usermods(&st->st_shadowFlag)))        ? 1 : 0;
+   count += ((pwdshadow_flg_usermods(&st->st_shadowLastChange)))  ? 1 : 0;
+   count += ((pwdshadow_flg_usermods(&st->st_shadowMin)))         ? 1 : 0;
+   count += ((pwdshadow_flg_usermods(&st->st_shadowMax)))         ? 1 : 0;
+   count += ((pwdshadow_flg_usermods(&st->st_shadowWarning)))     ? 1 : 0;
+   count += ((pwdshadow_flg_usermods(&st->st_shadowInactive)))    ? 1 : 0;
+   count += ((pwdshadow_flg_usermods(&st->st_userPassword)))      ? 1 : 0;
+   if (!(count))
+      return(0);
 
    // retrieve password policy
    pwdshadow_eval_policy(op, st);
