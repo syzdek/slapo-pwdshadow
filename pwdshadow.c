@@ -110,7 +110,6 @@ typedef struct pwdshadow_state_t
 {
    Entry *                    st_entry;
    BerValue                   st_policy;
-   int                        st_generate;
    int                        st_purge;
 
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
@@ -777,7 +776,6 @@ pwdshadow_eval(
    on                = (slap_overinst *)op->o_bd->bd_info;
    ps                = on->on_bi.bi_private;
    st->st_purge      = ((st->st_pwdShadowGenerate.dat_post)) ? 0 : 1;
-   st->st_generate   = st->st_pwdShadowGenerate.dat_post;
 
    // determine modification count
    count  = 0;
