@@ -1338,8 +1338,29 @@ pwdshadow_op_modify(
       if (mods->sml_desc == st.st_pwdEndTime.dat_ad)
          pwdshadow_get_mods(mods, &st.st_pwdEndTime, PWDSHADOW_TYPE_TIME);
 
+      if (mods->sml_desc == st.st_pwdShadowExpire.dat_ad)
+         pwdshadow_get_mods(mods, &st.st_pwdShadowExpire, PWDSHADOW_TYPE_DAYS);
+
+      if (mods->sml_desc == st.st_pwdShadowFlag.dat_ad)
+         pwdshadow_get_mods(mods, &st.st_pwdShadowFlag, PWDSHADOW_TYPE_INTEGER);
+
       if (mods->sml_desc == st.st_pwdShadowGenerate.dat_ad)
          pwdshadow_get_mods(mods, &st.st_pwdShadowGenerate, PWDSHADOW_TYPE_BOOL);
+
+      if (mods->sml_desc == st.st_pwdShadowInactive.dat_ad)
+         pwdshadow_get_mods(mods, &st.st_pwdShadowInactive, PWDSHADOW_TYPE_DAYS);
+
+      if (mods->sml_desc == st.st_pwdShadowLastChange.dat_ad)
+         pwdshadow_get_mods(mods, &st.st_pwdShadowLastChange, PWDSHADOW_TYPE_DAYS);
+
+      if (mods->sml_desc == st.st_pwdShadowMax.dat_ad)
+         pwdshadow_get_mods(mods, &st.st_pwdShadowMax, PWDSHADOW_TYPE_DAYS);
+
+      if (mods->sml_desc == st.st_pwdShadowMin.dat_ad)
+         pwdshadow_get_mods(mods, &st.st_pwdShadowMin, PWDSHADOW_TYPE_DAYS);
+
+      if (mods->sml_desc == st.st_pwdShadowWarning.dat_ad)
+         pwdshadow_get_mods(mods, &st.st_pwdShadowWarning, PWDSHADOW_TYPE_DAYS);
 
       if (mods->sml_desc == st.st_userPassword.dat_ad)
          pwdshadow_get_mods(mods, &st.st_userPassword, PWDSHADOW_TYPE_EXISTS);
