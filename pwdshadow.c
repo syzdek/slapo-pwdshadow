@@ -776,7 +776,7 @@ pwdshadow_eval(
 
    on                = (slap_overinst *)op->o_bd->bd_info;
    ps                = on->on_bi.bi_private;
-   st->st_purge      = ((pwdshadow_flg_userdel(&st->st_pwdShadowGenerate))) ? 1 : 0;
+   st->st_purge      = ((st->st_pwdShadowGenerate.dat_post)) ? 0 : 1;
    st->st_generate   = st->st_pwdShadowGenerate.dat_post;
 
    // determine modification count
