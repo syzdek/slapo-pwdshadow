@@ -47,6 +47,7 @@
 #define PWDSHADOW_FLG_EXISTS     0x0001
 #define PWDSHADOW_FLG_USERADD    0x0002
 #define PWDSHADOW_FLG_USERDEL    0x0004
+#define PWDSHADOW_FLG_USERMODS   ( PWDSHADOW_FLG_USERADD | PWDSHADOW_FLG_USERDEL )
 #define PWDSHADOW_FLG_EVALADD    0x0008
 #define PWDSHADOW_FLG_EVALDEL    0x0010
 #define PWDSHADOW_FLG_OVERRIDE   0x0020
@@ -66,6 +67,7 @@
 // query individual flags
 #define pwdshadow_flg_useradd(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_USERADD)
 #define pwdshadow_flg_userdel(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_USERDEL)
+#define pwdshadow_flg_usermods(dat) ((dat)->dat_flag & PWDSHADOW_FLG_USERMODS)
 #define pwdshadow_flg_exists(dat)   ((dat)->dat_flag & PWDSHADOW_FLG_EXISTS)
 #define pwdshadow_flg_evaladd(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_EVALADD)
 #define pwdshadow_flg_evaldel(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_EVALDEL)
@@ -967,6 +969,8 @@ int
 pwdshadow_eval_postcheck(
          pwdshadow_data_t *            dat )
 {
+   if ((pwdshadow_flg_usermods(dat)))
+      return(0);
    if (!(pwdshadow_flg_evaladd(dat)))
       return(0);
    if (!(pwdshadow_flg_exists(dat)))
@@ -998,6 +1002,9 @@ pwdshadow_eval_precheck(
    on                = (slap_overinst *)op->o_bd->bd_info;
    ps                = on->on_bi.bi_private;
    should_exist      = 0;
+
+   if ((pwdshadow_flg_usermods(dat)))
+      return(0);
 
    // determine if overlay is disabled for entry
    if ((st->st_purge))
@@ -1283,6 +1290,8 @@ pwdshadow_op_add_attr(
    struct berval     bv;
    char              bv_val[128];
 
+   if ((pwdshadow_flg_usermods(dat)))
+      return(0);
    if ( (!(dat->dat_ad)) || (!(dat->dat_flag & PWDSHADOW_FLG_EVALADD)) )
       return(0);
 
@@ -1436,6 +1445,8 @@ pwdshadow_op_modify_mods(
    AttributeDescription *  ad;
    Modifications *         mods;
 
+   if ((pwdshadow_flg_usermods(dat)))
+      return(0);
    if ( (!(pwdshadow_ops(dat->dat_flag))) || (!(dat->dat_ad)) )
       return(0);
    ad = dat->dat_ad;
