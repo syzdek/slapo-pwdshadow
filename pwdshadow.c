@@ -684,7 +684,7 @@ pwdshadow_db_destroy(
    ps->ps_def_policy.bv_val = NULL;
 
    memset(ps, 0, sizeof(pwdshadow_t));
-   free( ps );
+   ch_free( ps );
 
    if ((cr))
       return(0);
