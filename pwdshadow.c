@@ -969,8 +969,6 @@ int
 pwdshadow_eval_postcheck(
          pwdshadow_data_t *            dat )
 {
-   if ((pwdshadow_flg_usermods(dat)))
-      return(0);
    if (!(pwdshadow_flg_evaladd(dat)))
       return(0);
    if (!(pwdshadow_flg_exists(dat)))
@@ -1002,9 +1000,6 @@ pwdshadow_eval_precheck(
    on                = (slap_overinst *)op->o_bd->bd_info;
    ps                = on->on_bi.bi_private;
    should_exist      = 0;
-
-   if ((pwdshadow_flg_usermods(dat)))
-      return(0);
 
    // determine if overlay is disabled for entry
    if ((st->st_purge))
