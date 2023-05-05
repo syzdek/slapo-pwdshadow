@@ -794,7 +794,8 @@ pwdshadow_eval(
       return(0);
 
    // retrieve password policy
-   pwdshadow_eval_policy(op, st);
+   if (!(st->st_purge))
+      pwdshadow_eval_policy(op, st);
 
    // process pwdShadowFlag
    dat = &st->st_pwdShadowFlag;
