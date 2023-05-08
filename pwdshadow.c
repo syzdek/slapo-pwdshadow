@@ -113,6 +113,7 @@ typedef struct pwdshadow_state_t
    Entry *                    st_entry;
    BerValue                   st_policy;
    int                        st_purge;
+   int                        st_autoexpire;
 
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
    pwdshadow_data_t           st_pwdChangedTime;
@@ -122,6 +123,9 @@ typedef struct pwdshadow_state_t
    pwdshadow_data_t           st_pwdMaxAge;
    pwdshadow_data_t           st_pwdMinAge;
    pwdshadow_data_t           st_pwdPolicySubentry;
+
+   // slapo-pwdshadow policy attributes
+   pwdshadow_data_t           st_pwdShadowAutoExpire;
 
    // slapo-pwdshadow attributes
    pwdshadow_data_t           st_pwdShadowExpire;
@@ -152,7 +156,6 @@ typedef struct pwdshadow_t
    struct berval              ps_def_policy;
    int                        ps_cfg_overrides;
    int                        ps_cfg_use_policies;
-   int                        ps_cfg_autoexpire;
    pwdshadow_state_t          ps_state;
 } pwdshadow_t;
 
@@ -514,21 +517,6 @@ static ConfigTable pwdshadow_cfg_ats[] =
                         " SINGLE-VALUE )"
    },
    {
-      .name          = "pwdshadow_autoexpire",
-      .what          = "on|off",
-      .min_args      = 2,
-      .max_args      = 2,
-      .length        = 0,
-      .arg_type      = ARG_ON_OFF|ARG_OFFSET,
-      .arg_item      = (void *)offsetof(pwdshadow_t,ps_cfg_autoexpire),
-      .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.4"
-                        " NAME 'olcPwdShadowAutoExpire'"
-                        " DESC 'Use pwdShadowLastChange, pwdMaxAge, and pwdGraceExpiry to generate pwdShadowExpire if pwdEndTime does not exist'"
-                        " EQUALITY booleanMatch"
-                        " SYNTAX OMsBoolean"
-                        " SINGLE-VALUE )"
-   },
-   {
       .name          = NULL,
       .what          = NULL,
       .min_args      = 0,
@@ -740,7 +728,6 @@ pwdshadow_db_init(
    memset(ps, 0, sizeof(pwdshadow_t));
    ps->ps_cfg_overrides          = 1;
    ps->ps_cfg_use_policies       = 1;
-   ps->ps_cfg_autoexpire         = 0;
 
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
    slap_str2ad("pwdChangedTime",       &st->st_pwdChangedTime.dat_ad,      &text);
@@ -750,6 +737,9 @@ pwdshadow_db_init(
    slap_str2ad("pwdMaxAge",            &st->st_pwdMaxAge.dat_ad,           &text);
    slap_str2ad("pwdMinAge",            &st->st_pwdMinAge.dat_ad,           &text);
    slap_str2ad("pwdPolicySubentry",    &st->st_pwdPolicySubentry.dat_ad,   &text);
+
+   // slapo-pwdshadow policy attributes
+   st->st_pwdShadowAutoExpire.dat_ad   = ad_pwdShadowAutoExpire;
 
    // slapo-pwdshadow attributes
    st->st_pwdShadowExpire.dat_ad       = ad_pwdShadowExpire;
@@ -912,7 +902,8 @@ pwdshadow_eval(
       dat,                          // data
       &st->st_shadowExpire,         // override attribute
       (pwdshadow_data_t *[])        // triggering attributes
-      {  &st->st_userPassword,
+      {  &st->st_pwdShadowLastChange,
+         &st->st_pwdShadowAutoExpire,
          &st->st_pwdMaxAge,
          &st->st_pwdGraceExpiry,
          &st->st_pwdEndTime,
@@ -923,7 +914,7 @@ pwdshadow_eval(
    {
       if ((pwdshadow_flg_willexist(&st->st_pwdEndTime)))
          dat->dat_post = st->st_pwdEndTime.dat_post;
-      else if ( ((ps->ps_cfg_autoexpire)) &&
+      else if ( ((st->st_autoexpire)) &&
            ((pwdshadow_flg_willexist(&st->st_pwdShadowLastChange))) &&
            ((pwdshadow_flg_exists(&st->st_pwdMaxAge))) )
       {
@@ -940,6 +931,9 @@ pwdshadow_eval(
       };
    };
    pwdshadow_eval_postcheck(dat);
+
+   if (!(ps))
+      return(0);
 
    return(0);
 }
@@ -987,6 +981,11 @@ pwdshadow_eval_policy(
    pwdshadow_get_attr(entry, &st->st_pwdGraceExpiry,        flags);
    pwdshadow_get_attr(entry, &st->st_pwdMaxAge,             flags);
    pwdshadow_get_attr(entry, &st->st_pwdMinAge,             flags);
+   flags = PWDSHADOW_FLG_EXISTS | PWDSHADOW_TYPE_BOOL;
+   pwdshadow_get_attr(entry, &st->st_pwdShadowAutoExpire,   flags);
+
+   if ((pwdshadow_flg_exists(&st->st_pwdShadowAutoExpire)))
+      st->st_autoexpire = ((st->st_pwdShadowAutoExpire.dat_post)) ? 1 : 0;
 
    // release entry
 	be_entry_release_r(op, entry);

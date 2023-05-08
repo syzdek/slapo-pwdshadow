@@ -42,11 +42,6 @@ be generated.
 .B pwdshadow_overrides TRUE | FALSE
 The generated values for pwdShadow attributes can be manually overridden by the
 equivalent shadow attributes. The default is TRUE.
-.TP
-.B pwdshadow_autoexpire TRUE | FALSE
-Generate the value of \fBpwdShadowExpire\fR from \fBpwdMaxAge\fR and
-\fBpwdGraceExpiry\fR if \fBpwdEndTime\fR is not set on the user's entry. The
-default is FALSE.
 
 .SH OPERATIONAL ATTRIBUTES
 The operational attributes used by the \fBpwdshadow\fR module are stored in the
