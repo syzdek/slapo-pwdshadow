@@ -112,6 +112,20 @@ overlay, however it is tracked by the overlay. Please refer to the standard
 OpenLDAP schema for its definition.
 
 .TP 4
+.B pwdEndTime
+The
+.B pwdEndTime
+attribute is not part of the
+.B pwdshadow
+overlay, however it is used to determine the value of
+.B pwdShadowExpire
+if the attribute
+.B shadowExpire
+is not present on the directory user's entry. Please refer to the man page for
+.BR slapo-ppolicy (5)
+overlay for its definition.
+
+.TP 4
 .B pwdPolicySubentry
 The
 .B pwdPolicySubentry
