@@ -27,18 +27,18 @@ instead of the manually maintained attributes of shadowAccount.
 .SH CONFIGURATION
 These \fBslapd.conf\fR configuration options apply to the pwdshadow overlay.
 They shoud appear after the \fBoverlay\fR directive.
-.TP
+.TP 4
 .B pwdshadow_use_policies TRUE | FALSE
 Specify that Dereference and use attributes from the pwdPolicy object to
 generate pwdShadow attributes. The default is TRUE.
-.TP
+.TP 4
 .B pwdshadow_default <policyDN>
 Specify the DN of the pwdPolicy object to use when no specific policy is
 set on a given user's entry. If there is no specific policy for an entry
 and no default is given, then the attributes \fBpwdShadowInactive\fR,
 \fBpwdShadowMax\fR, \fBpwdShadowMin\fR, and \fBpwdShadowWarning\fR will not
 be generated.
-.TP
+.TP 4
 .B pwdshadow_overrides TRUE | FALSE
 The generated values for pwdShadow attributes can be manually overridden by the
 equivalent shadow attributes. The default is TRUE.
@@ -51,21 +51,21 @@ module in a format compatible with most LDAP auth implementations of Linux
 distributions. They have been detailed here so that systems administrators can
 configure their systems to use the generated LDAP attributes.
 
+.TP 4
 .B userPassword
-.P
 The \fBuserPassword\fR attribute is not part of the \fBpwdshadow\fR module,
 however it is tracked by the module. Please refer to the standard OpenLDAP
 schema for its definition.
 
+.TP 4
 .B pwdPolicySubentry
-.P
 The \fBpwdPolicySubentry\fR attribute is not part of the \fBpwdshadow\fR module,
 however it is used to determine the \fBpwdPolicy\fR subentry that is to be used
 for this particular directory user. Please refer to the man page for
 \fBppolicy\fR module for its definition.
 
+.TP 4
 .B pwdShadowGenerate
-.P
 This attribute controls if the module generates attributes for this particular
 directory user. If the attribute is missing or set to \fBFALSE\fR, then the
 module will not generate attributes for this particilar directory user. If this
@@ -85,8 +85,8 @@ the directory user.
    USAGE directoryOperation )
 .RE
 
+.TP 4
 .B pwdShadowExpire
-.P
 .LP
 .RS 4
 (  1.3.6.1.4.1.27893.4.2.1.10
@@ -100,8 +100,8 @@ the directory user.
    USAGE directoryOperation )
 .RE
 
+.TP 4
 .B pwdShadowInactive
-.P
 .LP
 .RS 4
 (  1.3.6.1.4.1.27893.4.2.1.9
@@ -114,8 +114,8 @@ the directory user.
    USAGE directoryOperation )
 .RE
 
+.TP 4
 .B pwdShadowLastChange
-.P
 .LP
 .RS 4
 (  1.3.6.1.4.1.27893.4.2.1.5
@@ -129,8 +129,8 @@ the directory user.
    USAGE directoryOperation )
 .RE
 
+.TP 4
 .B pwdShadowMax
-.P
 .LP
 .RS 4
 (  1.3.6.1.4.1.27893.4.2.1.7
@@ -143,8 +143,8 @@ the directory user.
    USAGE directoryOperation )
 .RE
 
+.TP 4
 .B pwdShadowMin
-.P
 .LP
 .RS 4
 (  1.3.6.1.4.1.27893.4.2.1.6
@@ -157,8 +157,8 @@ the directory user.
    USAGE directoryOperation )
 .RE
 
+.TP 4
 .B pwdShadowWarning
-.P
 .LP
 .RS 4
 (  1.3.6.1.4.1.27893.4.2.1.8
@@ -173,7 +173,7 @@ the directory user.
 
 .SH EXAMPLES
 .LP
-.RS
+.RS 4
 .nf
 database mdb
 suffix dc=example,dc=com
