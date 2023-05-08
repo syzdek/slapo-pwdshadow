@@ -182,19 +182,21 @@ If
 .B pwdEndTime
 is not present on the user's entry and
 .B pwdShadowAutoExpire
-is set, then
+is set on the
+.B pwdShadowPolicy
+object's entry, then
 .B pwdShadowExpire
 is derived by adding the values of
 .BR pwdShadowLastChange ,
 .BR pwdShadowMax ,
 and
 .BR pwdShadowInactive .
-The automatic expire value will not be set if either
+Both
 .BR pwdShadowLastChange
-or
+and
 .B pwdShadowMax
-are not present on the user's entry.  This attribute can be overriden by
-setting
+must be present on the user's entry to generate the value using autoexpire.
+This attribute can be overriden by setting
 .BR shadowExpire .
 .HP 4
 .EX
