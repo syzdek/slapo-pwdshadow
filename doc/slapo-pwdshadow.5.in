@@ -334,17 +334,27 @@ This attribute can be overriden by setting
 
 .TP 4
 .B pwdShadowWarning
-.LP
-.RS 4
+The number of days before a password is going to expire. If
+.B pwdExpireWarning
+is present on the
+.B pwdPolicy
+object's entry, then
+.B pwdShadowWarning
+is derived from the value of
+.BR pwdExpireWarning .
+This attribute can be overriden by setting
+.BR shadowWarning .
+.HP 4
+.EX
 (  1.3.6.1.4.1.27893.4.2.1.8
    NAME 'pwdShadowWarning'
-   DESC 'The value of pwdExpireWarning converted for shadowWarning'
+   DESC 'shadowWarning equivalent derived from pwdExpireWarning'
    EQUALITY integerMatch
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
    SINGLE-VALUE
    NO-USER-MODIFICATION
    USAGE directoryOperation )
-.RE
+.EE
 
 .SH EXAMPLES
 .LP
