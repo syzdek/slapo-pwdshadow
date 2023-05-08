@@ -533,7 +533,7 @@ static ConfigTable pwdshadow_cfg_ats[] =
 #pragma mark pwdshadow_cfg_ocs
 static ConfigOCs pwdshadow_cfg_ocs[] =
 {
-   {  .co_def        = "( 1.3.6.1.4.1.27893.4.2.4.1"
+   {  .co_def        = "( 1.3.6.1.4.1.27893.4.2.5.1"
                         " NAME 'olcPwdShadowConfig'"
                         " DESC 'Password Shadow configuration'"
                         " SUP olcOverlayConfig"
