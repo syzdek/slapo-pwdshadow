@@ -92,9 +92,12 @@ The default is
 .IR on .
 
 .SH OPERATIONAL ATTRIBUTES
-The operational attributes used by the \fBpwdshadow\fR module are stored in the
-user's entry. Most of these attributes are not intended to be changed directly
-by users; they are used to present the policy attributes from the \fBppolicy\fR
+The operational attributes used by the
+.B pwdshadow
+overlay are stored in the user's entry. Most of these attributes are not
+intended to be changed directly by users; they are used to present the policy
+attributes from the
+.B ppolicy
 module in a format compatible with most LDAP auth implementations of Linux
 distributions. They have been detailed here so that systems administrators can
 configure their systems to use the generated LDAP attributes.
