@@ -171,18 +171,43 @@ added to the directory user's entry.
 
 .TP 4
 .B pwdShadowExpire
-.LP
-.RS 4
+This attribute contains the date of the expiration of the account, expressed
+as the number of days since January 1, 1970. If
+.B pwdEndTime
+is present on the user's entry, then
+.B pwdShadowExpire
+is derived from the value of
+.BR pwdEndTime .
+If
+.B pwdEndTime
+is not present on the user's entry and
+.B pwdShadowAutoExpire
+is set, then
+.B pwdShadowExpire
+is derived by adding the values of
+.BR pwdShadowLastChange ,
+.BR pwdShadowMax ,
+and
+.BR pwdShadowInactive .
+The automatic expire value will not be set if either
+.BR pwdShadowLastChange
+or
+.B pwdShadowMax
+are not present on the user's entry.  This attribute can be overriden by
+setting
+.BR shadowExpire .
+.HP 4
+.EX
 (  1.3.6.1.4.1.27893.4.2.1.10
    NAME 'pwdShadowExpire'
-   DESC 'The time the password was last changed'
+   DESC 'shadowExpire equivalent derived from pwdEndTime'
    EQUALITY integerMatch
    ORDERING integerOrderingMatch
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
    SINGLE-VALUE
    NO-USER-MODIFICATION
    USAGE directoryOperation )
-.RE
+.EE
 
 .TP 4
 .B pwdShadowInactive
