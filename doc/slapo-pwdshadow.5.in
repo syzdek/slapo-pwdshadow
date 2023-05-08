@@ -284,17 +284,28 @@ This attribute can be overriden by setting
 
 .TP 4
 .B pwdShadowMax
-.LP
-.RS 4
+The number of days following the last password change on which the password must
+again be changed.
+.B pwdMaxAge
+is present on the
+.B pwdPolicy
+object's entry, then
+.B pwdShadowMax
+is derived from the value of
+.BR pwdMaxAge .
+This attribute can be overriden by setting
+.BR shadowMax .
+.HP 4
+.EX
 (  1.3.6.1.4.1.27893.4.2.1.7
    NAME 'pwdShadowMax'
-   DESC 'The value of pwdMaxAge converted for shadowMax'
+   DESC 'shadowMax equivalent derived from pwdMaxAge'
    EQUALITY integerMatch
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
    SINGLE-VALUE
    NO-USER-MODIFICATION
    USAGE directoryOperation )
-.RE
+.EE
 
 .TP 4
 .B pwdShadowMin
