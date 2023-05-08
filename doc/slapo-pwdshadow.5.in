@@ -142,24 +142,26 @@ module for its definition.
 
 .TP 4
 .B pwdShadowGenerate
-This attribute controls if the module generates attributes for this particular
-directory user. If the attribute is missing or set to \fBFALSE\fR, then the
-module will not generate attributes for this particilar directory user. If this
-attribute is removed from the directory user or changed from \fBTRUE\fR to
-\fBFALSE\fR, then this module's attributes will be removed from the directory
-user. If this attribute is added with a value of \fBTRUE\fR or changed from
-\fBFALSE\fR to \fBTRUE\fB, then the attributes will be generated and added to
-the directory user.
-.LP
-.RS 4
+The
+.BR pwdShadowGenerate
+attribute controls if the module generates attributes for this particular
+directory user. If the attribute is not present or is not set (its value is
+"FALSE"), then the module will not generate attributes for this particilar
+directory user. If this attribute is removed from the directory user or is unset
+(its value changes from "TRUE" to "FALSE"), then this module's attributes will
+be removed from the directory user. If attribute is set (added with or changed
+to a value of "TRUE"), then the pwdShadow attributes will be generated and
+added to the directory user's entry.
+.HP 4
+.EX
 (  1.3.6.1.4.1.27893.4.2.2.1
    NAME 'pwdShadowGenerate'
-   DESC 'Enables the generation of shadow compatible attributes'
+   DESC 'generate shadowAccount equivalent attributes'
    EQUALITY booleanMatch
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
    SINGLE-VALUE
    USAGE directoryOperation )
-.RE
+.EE
 
 .TP 4
 .B pwdShadowExpire
