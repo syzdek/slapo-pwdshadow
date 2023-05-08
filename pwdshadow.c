@@ -294,6 +294,7 @@ pwdshadow_verify_attr_syntax(
 static slap_overinst pwdshadow;
 
 // internal attribute descriptions
+static AttributeDescription *       ad_pwdShadowAutoExpire  = NULL;
 static AttributeDescription *       ad_pwdShadowLastChange  = NULL;
 static AttributeDescription *       ad_pwdShadowMin         = NULL;
 static AttributeDescription *       ad_pwdShadowMax         = NULL;
@@ -428,6 +429,19 @@ static pwdshadow_at_t pwdshadow_ats[] =
                   " SINGLE-VALUE "
                   " USAGE directoryOperation )",
       .ad      = &ad_pwdShadowGenerate
+   },
+   {  // pwdShadowAutoExpire: This attribute, when added to the subentry
+      // specified by pwdPolicySubentry, enables the generation of
+      // 'pwdShadowExpire' from 'pwdShadowLastChange', 'pwdShadowMax', and
+      // 'pwdGraceExpiry' if neither 'shadowExpire' or 'pwdEndTime' are set
+      // on the user's entry.
+      .def     = "( 1.3.6.1.4.1.27893.4.2.2.2"
+                  " NAME ( 'pwdShadowAutoExpire' )"
+                  " DESC 'Generate pwdShadowExpire from shadowLastChange, shadowMax, and pwdGraceExpiry'"
+                  " EQUALITY booleanMatch"
+                  " SYNTAX 1.3.6.1.4.1.1466.115.121.1.7"
+                  " SINGLE-VALUE )",
+      .ad      = &ad_pwdShadowAutoExpire
    },
    {  
       .def     = NULL,
