@@ -455,12 +455,11 @@ static pwdshadow_at_t pwdshadow_ats[] =
 static char * pwdshadow_ocs[] =
 {
    "( 1.3.6.1.4.1.27893.4.2.3.1"
-    " NAME 'pwdShadowAccount'"
+    " NAME 'pwdShadowPolicy'"
     " DESC 'Attributes for controlling pwdShadow overlay'"
     " SUP top"
     " AUXILIARY"
-    " MUST ( uid )"
-    " MAY ( pwdShadowGenerate ) )",
+    " MAY ( pwdShadowAutoExpire ) )",
    NULL
 };
 
