@@ -752,14 +752,14 @@ pwdshadow_db_init(
    slap_str2ad("pwdPolicySubentry",    &st->st_pwdPolicySubentry.dat_ad,   &text);
 
    // slapo-pwdshadow attributes
-   slap_str2ad("pwdShadowExpire",      &st->st_pwdShadowExpire.dat_ad,     &text);
-   slap_str2ad("pwdShadowFlag",        &st->st_pwdShadowFlag.dat_ad,       &text);
-   slap_str2ad("pwdShadowGenerate",    &st->st_pwdShadowGenerate.dat_ad,   &text);
-   slap_str2ad("pwdShadowInactive",    &st->st_pwdShadowInactive.dat_ad,   &text);
-   slap_str2ad("pwdShadowLastChange",  &st->st_pwdShadowLastChange.dat_ad, &text);
-   slap_str2ad("pwdShadowMax",         &st->st_pwdShadowMax.dat_ad,        &text);
-   slap_str2ad("pwdShadowMin",         &st->st_pwdShadowMin.dat_ad,        &text);
-   slap_str2ad("pwdShadowWarning",     &st->st_pwdShadowWarning.dat_ad,    &text);
+   st->st_pwdShadowExpire.dat_ad       = ad_pwdShadowExpire;
+   st->st_pwdShadowFlag.dat_ad         = ad_pwdShadowFlag;
+   st->st_pwdShadowGenerate.dat_ad     = ad_pwdShadowGenerate;
+   st->st_pwdShadowInactive.dat_ad     = ad_pwdShadowInactive;
+   st->st_pwdShadowLastChange.dat_ad   = ad_pwdShadowLastChange;
+   st->st_pwdShadowMax.dat_ad          = ad_pwdShadowMax;
+   st->st_pwdShadowMin.dat_ad          = ad_pwdShadowMin;
+   st->st_pwdShadowWarning.dat_ad      = ad_pwdShadowWarning;
 
    // LDAP NIS attributes (RFC 2307)
    slap_str2ad("shadowExpire",         &st->st_shadowExpire.dat_ad,        &text);
