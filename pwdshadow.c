@@ -329,7 +329,7 @@ static pwdshadow_at_t pwdshadow_ats[] =
       // password is changed and is not calculated at the time of the query.
       .def     = "( 1.3.6.1.4.1.27893.4.2.1.5"
                   " NAME ( 'pwdShadowLastChange' )"
-                  " DESC 'The auto-generated value for shadowLastChange'"
+                  " DESC 'The generated value for shadowLastChange'"
                   " EQUALITY integerMatch"
                   " ORDERING integerOrderingMatch"
                   " SYNTAX 1.3.6.1.4.1.1466.115.121.1.27"
@@ -344,7 +344,7 @@ static pwdshadow_at_t pwdshadow_ats[] =
       // (pwdMinAge / 60 / 60 /24).
       .def     = "( 1.3.6.1.4.1.27893.4.2.1.6"
                   " NAME ( 'pwdShadowMin' )"
-                  " DESC 'The value of pwdMinAge converted for shadowMin'"
+                  " DESC 'shadowMin equivalent derived from pwdMinAge'"
                   " EQUALITY integerMatch"
                   " SYNTAX 1.3.6.1.4.1.1466.115.121.1.27"
                   " SINGLE-VALUE"
@@ -358,7 +358,7 @@ static pwdshadow_at_t pwdshadow_ats[] =
       // 60 /24).
       .def     = "( 1.3.6.1.4.1.27893.4.2.1.7"
                   " NAME ( 'pwdShadowMax' )"
-                  " DESC 'The value of pwdMaxAge converted for shadowMax'"
+                  " DESC 'shadowMax equivalent derived from pwdMaxAge'"
                   " EQUALITY integerMatch"
                   " SYNTAX 1.3.6.1.4.1.1466.115.121.1.27"
                   " SINGLE-VALUE"
@@ -372,7 +372,7 @@ static pwdshadow_at_t pwdshadow_ats[] =
       // in current password policy (pwdExpireWarning / 60 / 60 /24).
       .def     = "( 1.3.6.1.4.1.27893.4.2.1.8"
                   " NAME ( 'pwdShadowWarning' )"
-                  " DESC 'The value of pwdExpireWarning converted for shadowWarning'"
+                  " DESC 'shadowWarning equivalent derived from pwdExpireWarning'"
                   " EQUALITY integerMatch"
                   " SYNTAX 1.3.6.1.4.1.1466.115.121.1.27"
                   " SINGLE-VALUE"
@@ -387,7 +387,7 @@ static pwdshadow_at_t pwdshadow_ats[] =
       // 60 /24).
       .def     = "( 1.3.6.1.4.1.27893.4.2.1.9"
                   " NAME ( 'pwdShadowInactive' )"
-                  " DESC 'The value of pwdGraceExpiry converted for shadowInactive'"
+                  " DESC 'shadowInactive equivalent derived from pwdGraceExpiry'"
                   " EQUALITY integerMatch"
                   " SYNTAX 1.3.6.1.4.1.1466.115.121.1.27"
                   " SINGLE-VALUE"
@@ -400,7 +400,7 @@ static pwdshadow_at_t pwdshadow_ats[] =
       // but is derived from the value of 'pwdEndTime' of the entry.
       .def     = "( 1.3.6.1.4.1.27893.4.2.1.10"
                   " NAME ( 'pwdShadowExpire' )"
-                  " DESC 'The time the password was last changed'"
+                  " DESC 'shadowExpire equivalent derived from pwdEndTime'"
                   " EQUALITY integerMatch"
                   " ORDERING integerOrderingMatch"
                   " SYNTAX 1.3.6.1.4.1.1466.115.121.1.27"
@@ -415,6 +415,7 @@ static pwdshadow_at_t pwdshadow_ats[] =
       // shadowAccount.
       .def     = "( 1.3.6.1.4.1.27893.4.2.1.11"
                   " NAME ( 'pwdShadowFlag' )"
+                  " DESC 'duplicates shadowFlag'"
                   " EQUALITY integerMatch"
                   " SYNTAX 1.3.6.1.4.1.1466.115.121.1.27"
                   " SINGLE-VALUE"
@@ -426,7 +427,7 @@ static pwdshadow_at_t pwdshadow_ats[] =
       // of shadow compatible attributes from the password policy attributes.
       .def     = "( 1.3.6.1.4.1.27893.4.2.2.1"
                   " NAME ( 'pwdShadowGenerate' )"
-                  " DESC 'Enables the generation of shadow compatible attributes'"
+                  " DESC 'generate shadowAccount equivalent attributes'"
                   " EQUALITY booleanMatch"
                   " SYNTAX 1.3.6.1.4.1.1466.115.121.1.7"
                   " SINGLE-VALUE "
@@ -440,7 +441,7 @@ static pwdshadow_at_t pwdshadow_ats[] =
       // on the user's entry.
       .def     = "( 1.3.6.1.4.1.27893.4.2.2.2"
                   " NAME ( 'pwdShadowAutoExpire' )"
-                  " DESC 'Generate pwdShadowExpire from shadowLastChange, shadowMax, and pwdGraceExpiry'"
+                  " DESC 'generate pwdShadowExpire from pwdShadow attributes'"
                   " EQUALITY booleanMatch"
                   " SYNTAX 1.3.6.1.4.1.1466.115.121.1.7"
                   " SINGLE-VALUE )",
