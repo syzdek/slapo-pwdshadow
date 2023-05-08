@@ -104,9 +104,12 @@ configure their systems to use the generated LDAP attributes.
 
 .TP 4
 .B userPassword
-The \fBuserPassword\fR attribute is not part of the \fBpwdshadow\fR module,
-however it is tracked by the module. Please refer to the standard OpenLDAP
-schema for its definition.
+The
+.B userPassword
+attribute is not part of the
+.B pwdshadow
+overlay, however it is tracked by the overlay. Please refer to the standard
+OpenLDAP schema for its definition.
 
 .TP 4
 .B pwdPolicySubentry
