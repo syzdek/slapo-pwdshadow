@@ -113,10 +113,18 @@ OpenLDAP schema for its definition.
 
 .TP 4
 .B pwdPolicySubentry
-The \fBpwdPolicySubentry\fR attribute is not part of the \fBpwdshadow\fR module,
-however it is used to determine the \fBpwdPolicy\fR subentry that is to be used
-for this particular directory user. Please refer to the man page for
-\fBppolicy\fR module for its definition.
+The
+.B pwdPolicySubentry
+attribute is not part of the
+.B pwdshadow
+overlay, however it is used to determine the
+.B pwdPolicy
+and
+.B pwdShadowPolicy
+subentry that is to be used for this particular directory user. Please refer
+to the man page for
+.BR slapo-ppolicy (5)
+module for its definition.
 
 .TP 4
 .B pwdShadowGenerate
