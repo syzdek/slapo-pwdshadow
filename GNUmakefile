@@ -15,7 +15,7 @@
 #
 
 RELEASEDATE		= 2023/04/30
-LDVERSION		= 0.0
+PKGVERSION		= 0.0
 LTVERSION		= 0:0:0
 
 OPENLDAP_VERSION	?= 2.5.14
@@ -62,7 +62,7 @@ doc/slapo-pwdshadow.5: doc/slapo-pwdshadow.5.in
 	rm -f $(@)
 	sed \
 	   -e 's,RELEASEDATE,$(RELEASEDATE),g' \
-	   -e 's,LDVERSION,$(LDVERSION),g' \
+	   -e 's,LDVERSION,$(PKGVERSION),g' \
 	   -e 's,ETCDIR,$(sysconfdir),g' \
 	   doc/slapo-pwdshadow.5.in \
 	   > $(@)
