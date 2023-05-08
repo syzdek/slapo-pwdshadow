@@ -228,17 +228,28 @@ by the overlay for completeness. This attribute can be overriden by setting
 
 .TP 4
 .B pwdShadowInactive
-.LP
-.RS 4
+The number of days after a password has expired during which the password
+should still be accepted. If
+.B pwdGraceExpiry
+is present on the
+.B pwdPolicy
+object's entry, then
+.B pwdShadowInactive
+is derived from the value of
+.BR pwdGraceExpiry .
+This attribute can  be  overriden  by setting
+.BR shadowInactive .
+.HP 4
+.EX
 (  1.3.6.1.4.1.27893.4.2.1.9
    NAME 'pwdShadowInactive'
-   DESC 'The value of pwdGraceExpiry converted for shadowInactive'
+   DESC 'shadowInactive equivalent derived from pwdGraceExpiry'
    EQUALITY integerMatch
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
    SINGLE-VALUE
    NO-USER-MODIFICATION
    USAGE directoryOperation )
-.RE
+.EE
 
 .TP 4
 .B pwdShadowLastChange
