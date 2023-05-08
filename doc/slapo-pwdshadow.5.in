@@ -210,6 +210,23 @@ setting
 .EE
 
 .TP 4
+.B pwdShadowFlag
+The overlay does not generate a value for this attribute.  It is included
+by the overlay for completeness. This attribute can be overriden by setting
+.BR shadowFlag .
+.HP 4
+.EX
+(  1.3.6.1.4.1.27893.4.2.1.11
+   NAME 'pwdShadowFlag'
+   DESC 'duplicates shadowFlag'
+   EQUALITY integerMatch
+   SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+   SINGLE-VALUE
+   NO-USER-MODIFICATION
+   USAGE directoryOperation )
+.EE
+
+.TP 4
 .B pwdShadowInactive
 .LP
 .RS 4
