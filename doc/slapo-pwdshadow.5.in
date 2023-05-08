@@ -33,23 +33,63 @@ can be used instead of the manually maintained attributes of
 .BR shadowAccount.
 
 .SH CONFIGURATION
-These \fBslapd.conf\fR configuration options apply to the pwdshadow overlay.
-They shoud appear after the \fBoverlay\fR directive.
+These
+.BR slapd.conf (5)
+configuration options apply to the
+.BR pwdshadow
+overlay. They shoud appear after
+the
+.BR overlay
+directive.
+
 .TP 4
-.B pwdshadow_use_policies TRUE | FALSE
-Specify that Dereference and use attributes from the pwdPolicy object to
-generate pwdShadow attributes. The default is TRUE.
+.BI pwdshadow_default " <policyDN> "
+Specify the DN of the
+.B pwdPolicy
+and
+.B pwdShadowPolicy
+objects to use when no specific policy is set on a given user's entry. If there
+is no specific policy for an entry and no default is given, then the attributes
+.BR pwdShadowInactive ,
+.BR pwdShadowMax ,
+.BR pwdShadowMin ,
+and
+.B pwdShadowWarning
+will not be generated. The default policy may be specified in the config backend
+by setting
+.BR olcPwdShadowDefault .
+
 .TP 4
-.B pwdshadow_default <policyDN>
-Specify the DN of the pwdPolicy object to use when no specific policy is
-set on a given user's entry. If there is no specific policy for an entry
-and no default is given, then the attributes \fBpwdShadowInactive\fR,
-\fBpwdShadowMax\fR, \fBpwdShadowMin\fR, and \fBpwdShadowWarning\fR will not
-be generated.
+.BI pwdshadow_use_policies " on " | " off "
+Specifies that the
+.B pwdPolicy
+and
+.B pwdShadowPolicy
+attributes should be retrieved from the DN specified by either the
+.B pwdPolicySubentry
+attribute (if present in the directory user's entry) or the
+.B pwdshadow_default
+configuration option. If this option is disabled, then only the
+.B pwdShadowLastChanged
+and
+.B pwdShadowExpire
+attributes will be generatd by the overlay. This option may be specified in the
+config backend by setting
+.BR olcPwdShadowUsePolicies .
+The default is
+.IR on .
+
 .TP 4
-.B pwdshadow_overrides TRUE | FALSE
-The generated values for pwdShadow attributes can be manually overridden by the
-equivalent shadow attributes. The default is TRUE.
+.BI pwdshadow_overrides " on " | " off "
+The generated values for
+.B pwdShadow
+attributes can be manually overridden by setting the equivalent
+.B shadowAccount
+attributes on the directory user's entry. This option may be specified in the
+config backend by setting
+.BR olcPwdShadowOverrides .
+The default is
+.IR on .
 
 .SH OPERATIONAL ATTRIBUTES
 The operational attributes used by the \fBpwdshadow\fR module are stored in the
