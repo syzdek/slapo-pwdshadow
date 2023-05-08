@@ -2,6 +2,7 @@ dn: dc=example,dc=com
 objectClass: top
 objectClass: domain
 objectClass: pwdPolicy
+objectClass: pwdShadowPolicy
 dc: example
 pwdAttribute: userPassword
 pwdLockout: TRUE
@@ -18,6 +19,7 @@ pwdGraceAuthNLimit: 0
 pwdExpireWarning: 1209600
 pwdMaxRecordedFailure: 100
 pwdLockoutDuration: 600
+pwdShadowAutoExpire: TRUE
 
 dn: ou=PPolicies,dc=example,dc=com
 objectClass: top
