@@ -983,10 +983,10 @@ pwdshadow_eval_policy(
 
    // retrieve password policy attributes
    flags = PWDSHADOW_FLG_EXISTS | PWDSHADOW_TYPE_SECS;
-   pwdshadow_get_attr(entry, &st->st_pwdExpireWarning,   flags);
-   pwdshadow_get_attr(entry, &st->st_pwdGraceExpiry,     flags);
-   pwdshadow_get_attr(entry, &st->st_pwdMaxAge,          flags);
-   pwdshadow_get_attr(entry, &st->st_pwdMinAge,          flags);
+   pwdshadow_get_attr(entry, &st->st_pwdExpireWarning,      flags);
+   pwdshadow_get_attr(entry, &st->st_pwdGraceExpiry,        flags);
+   pwdshadow_get_attr(entry, &st->st_pwdMaxAge,             flags);
+   pwdshadow_get_attr(entry, &st->st_pwdMinAge,             flags);
 
    // release entry
 	be_entry_release_r(op, entry);
