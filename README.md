@@ -33,6 +33,34 @@ policies used by the slapo-ppolicy overlay. This package defines an alternate
 schema which is a drop in replacement for the accountShadow and related
 attributes which are defined by RFC2307.
 
+At a mimumum add the following configuration options to the slapd.conf:
+
+    database mdb
+    suffix dc=example,dc=com
+    ...
+    overlay pwdshadow
+    pwdshadow_default "cn=Standard,ou=Policies,dc=example,dc=com"
+    pwdshadow_override on
+
+To enable the generation of pwdShadow attributes on the user's entry using,
+set pwdShadowGenerate on the user's entry:
+
+    dn: uid=jdoe,ou=People,dc=example,dc=com
+    changetype: modify
+    replace: pwdShadowGenerate
+    pwdShadowGenerate: TRUE
+
+Once the overlay is enabled in the server and the pwdShadowGenerate attribute
+has been set on the user's entry, the following attribute should appear on the
+user's entry:
+
+    ldapsearch -LLL -x uid=jdoe pwdShadowGenerate pwdShadowLastChange \
+    > pwdChangedTime
+    dn: uid=jdoe,ou=People,dc=example,dc=com
+    pwdChangedTime: 20230508153856Z
+    pwdShadowGenerate: TRUE
+    pwdShadowLastChange: 19485
+
 
 Software Requirements
 =====================
