@@ -37,6 +37,8 @@ attributes which are defined by RFC2307.
 Software Requirements
 =====================
 
+   * OpenLDAP >= 2.5.x
+
 
 Source Code
 ===========
@@ -89,23 +91,14 @@ package.
 New Release Checklist:
 
    - Switch to 'master' branch in Git repository.
-   - Update version in configure.ac.
-   - Update date and version in ChangeLog.
-   - Commit configure.ac and ChangeLog changes to repository.
+   - Update PKGVERSION and RELEASEDATE in GNUmakefile.
+   - Update date and version in ChangeLog.md.
+   - Commit GNUmakefile and ChangeLog.md changes to repository.
    - Create tag in git repository:
 
            $ git tag -s v${MAJOR}.${MINOR}
 
    - Push repository to publishing server:
 
-           $ git push --tags origin master:master next:next pu:pu
-
-Creating Source Distribution Archives:
-
-      $ ./configure
-      $ make update
-      $ make distcheck
-      $ make dist-bzip2
-      $ make dist-xz
-
+           $ git push --tags origin master next pu
 
