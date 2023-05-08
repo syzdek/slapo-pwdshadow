@@ -255,18 +255,32 @@ This attribute can  be  overriden  by setting
 
 .TP 4
 .B pwdShadowLastChange
-.LP
-.RS 4
+This attribute contains the date of the last password change, expressed as the
+number of days since January 1, 1970.  This attribute is set to the current
+date when the
+.B userPassword
+attribute is updated. If
+.B pwdShadowGenerate
+is set after the password was set and
+.B pwdChangedTime
+is present on the user's entry, then
+.B pwdShadowLastChange
+is derived from the value of
+.BR pwdChangedTime .
+This attribute can be overriden by setting
+.BR shadowLastChange .
+.HP 4
+.EX
 (  1.3.6.1.4.1.27893.4.2.1.5
    NAME 'pwdShadowLastChange'
-   DESC 'The auto-generated value for shadowLastChange'
+   DESC 'The generated value for shadowLastChange'
    EQUALITY integerMatch
    ORDERING integerOrderingMatch
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
    SINGLE-VALUE
    NO-USER-MODIFICATION
    USAGE directoryOperation )
-.RE
+.EE
 
 .TP 4
 .B pwdShadowMax
