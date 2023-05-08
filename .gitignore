@@ -3,6 +3,7 @@
 *.o
 *.swp
 ._*
+.DS_Store
 .deps
 .libs
 .test-env
