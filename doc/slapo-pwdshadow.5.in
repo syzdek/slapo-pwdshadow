@@ -91,6 +91,84 @@ config backend by setting
 The default is
 .IR on .
 
+.SH OBJECT CLASS
+.The
+.B pwdshadow
+overlay depends on the
+.B pwdPolicy
+and
+.B pwdShadowPolicy
+object classes.  The definition of
+.B pwdPolicy
+is documented by
+.BR slapo-ppolicy (5).
+The definition of
+.B pwdShadowPolicy
+is as follows:
+.HP 4
+.EX
+(  1.3.6.1.4.1.27893.4.2.3.1
+   NAME 'pwdShadowPolicy'
+   DESC 'Attributes for controlling pwdShadow overlay'
+   SUP top
+   AUXILIARY
+   MAY ( pwdShadowAutoExpire ) )
+.EE
+.LP
+Every account that should have generated
+.B pwdShadow
+attributes should have a
+.B pwdPolicySubentry
+attribute containing the DN of a valid
+.B pwdPolicy
+and
+.B pwdShadowPolicy
+entry and should have set the
+.B pwdShadowGenerate
+attribute (its value is
+.IR TRUE )
+on the account's entry.
+
+.SH OBJECT CLASS ATTRIBUTES
+The following details the meaning and use of attributes of the
+.B pwdShadowPolicy
+object class.
+
+.TP 4
+.B pwdShadowAutoExpire
+If this attribute is set (its value is
+.IR TRUE )
+in the
+.B pwdShadowPolicy
+object and
+.B pwdEndTime
+is not set on the user's entry, then the value of
+.B pwdShadowExpire
+will be calculated by adding the values of
+.BR pwdShadowLastChange ,
+.BR pwdShadowMax ,
+and
+.BR pwdShadowInactive .
+If either
+.B pwdShadowLastChange
+or
+.B pwdShadowMax
+are not set on the user's entry, then no value will be set for
+.B pwdShadowExpire.
+If
+.B pwdShadowInactive
+is not set on the user's entry, then a default value of zero is used for
+.BR pwdShadowInactive.
+.HP 4
+.EX
+(  1.3.6.1.4.1.27893.4.2.2.2
+   NAME 'pwdShadowAutoExpire'
+   DESC 'generate pwdShadowExpire from pwdShadow attributes'
+   EQUALITY booleanMatch
+   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
+   SINGLE-VALUE )
+.EE
+
 .SH OPERATIONAL ATTRIBUTES
 The operational attributes used by the
 .B pwdshadow
