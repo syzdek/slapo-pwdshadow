@@ -309,17 +309,28 @@ This attribute can be overriden by setting
 
 .TP 4
 .B pwdShadowMin
-.LP
-.RS 4
+The minimum number of days after the password was last changed before
+the password may again be changed. If
+.B pwdMinAge
+is present on the
+.B pwdPolicy
+object's entry, then
+.B pwdShadowMin
+is derived from the value of
+.BR pwdMinAge .
+This attribute can be overriden by setting
+.BR shadowMin .
+.HP 4
+.EX
 (  1.3.6.1.4.1.27893.4.2.1.6
    NAME 'pwdShadowMin'
-   DESC 'The value of pwdMinAge converted for shadowMin'
+   DESC 'shadowMin equivalent derived from pwdMinAge'
    EQUALITY integerMatch
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
    SINGLE-VALUE
    NO-USER-MODIFICATION
    USAGE directoryOperation )
-.RE
+.EE
 
 .TP 4
 .B pwdShadowWarning
