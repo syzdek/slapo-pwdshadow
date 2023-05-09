@@ -469,7 +469,7 @@ is still evolving. This code will continue to be in flux until the
 specification is finalized.
 
 .SH ACKNOWLEDGEMENTS
-This module was written in 2004 by David M. Syzdek of Alaska Communicatins and
+This module was written in 2023 by David M. Syzdek of Alaska Communicatins and
 is modeled after slapo-ppolicy, slapo-refint, and slapo-memberof.
 
 .\" end of man page
