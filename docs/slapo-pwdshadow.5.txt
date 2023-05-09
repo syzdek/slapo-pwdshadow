@@ -1,0 +1,310 @@
+SLAPO_PWDSHADOW(5)					    SLAPO_PWDSHADOW(5)
+
+
+
+NAME
+       slapo-pwdshadow	 -   Password  Policy  conversion  to  RFC2256	Shadow
+       attribtues overlay
+
+SYNOPSIS
+       /usr/local/etc/openldap/slapd.conf
+
+DESCRIPTION
+       The pwdshadow overlay translates the attributes	used  by  the  ppolicy
+       overlay into attributes compatible with the attributes in the shadowAc-
+       count object class defined by RFC2307.	The  attribtues  generated  by
+       pwdshadow  can be used instead of the manually maintained attributes of
+       shadowAccount.
+
+
+CONFIGURATION
+       These slapd.conf(5) configuration options apply to the pwdshadow  over-
+       lay. They shoud appear after the overlay directive.
+
+
+       pwdshadow_default <policyDN>
+	   Specify  the DN of the pwdPolicy and pwdShadowPolicy objects to use
+	   when no specific policy is set on a given user's entry. If there is
+	   no  specific  policy for an entry and no default is given, then the
+	   attributes pwdShadowInactive, pwdShadowMax, pwdShadowMin, and  pwd-
+	   ShadowWarning  will	not  be  generated.  The default policy may be
+	   specified in the config backend by setting olcPwdShadowDefault.
+
+
+       pwdshadow_use_policies on | off
+	   Specifies that the pwdPolicy and pwdShadowPolicy attributes	should
+	   be  retrieved from the DN specified by either the pwdPolicySubentry
+	   attribute (if present in the directory user's entry)  or  the  pwd-
+	   shadow_default  configuration  option.  If this option is disabled,
+	   then only the pwdShadowLastChanged and  pwdShadowExpire  attributes
+	   will  be  generatd  by the overlay. This option may be specified in
+	   the config backend by setting olcPwdShadowUsePolicies.  The default
+	   is on.
+
+
+       pwdshadow_overrides on | off
+	   The generated values for pwdShadow attributes can be manually over-
+	   ridden by setting the equivalent shadowAccount  attributes  on  the
+	   directory  user's entry. This option may be specified in the config
+	   backend by setting olcPwdShadowOverrides.  The default is on.
+
+
+OBJECT CLASS
+       pwdshadow overlay depends on the pwdPolicy and  pwdShadowPolicy	object
+       classes.   The  definition  of  pwdPolicy  is documented by slapo-ppol-
+       icy(5).	The definition of pwdShadowPolicy is as follows:
+
+       (  1.3.6.1.4.1.27893.4.2.3.1
+	      NAME 'pwdShadowPolicy'
+	      DESC 'Attributes for controlling pwdShadow overlay'
+	      SUP top
+	      AUXILIARY
+	      MAY ( pwdShadowAutoExpire ) )
+
+       Every account that should have generated  pwdShadow  attributes	should
+       have a pwdPolicySubentry attribute containing the DN of a valid pwdPol-
+       icy and pwdShadowPolicy entry and should have set the pwdShadowGenerate
+       attribute (its value is TRUE) on the account's entry.
+
+
+OBJECT CLASS ATTRIBUTES
+       The following details the meaning and use of attributes of the pwdShad-
+       owPolicy object class.
+
+
+       pwdShadowAutoExpire
+	   If this attribute is set (its value is TRUE) in the pwdShadowPolicy
+	   object  and	pwdEndTime  is	not  set on the user's entry, then the
+	   value of pwdShadowExpire will be calculated by adding the values of
+	   pwdShadowLastChange,   pwdShadowMax,   and  pwdShadowInactive.   If
+	   either pwdShadowLastChange or  pwdShadowMax	are  not  set  on  the
+	   user's  entry,  then  no value will be set for pwdShadowExpire.  If
+	   pwdShadowInactive is not set on the user's entry,  then  a  default
+	   value of zero is used for pwdShadowInactive.
+
+       (  1.3.6.1.4.1.27893.4.2.2.2
+	      NAME 'pwdShadowAutoExpire'
+	      DESC 'generate pwdShadowExpire from pwdShadow attributes'
+	      EQUALITY booleanMatch
+	      SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
+	      SINGLE-VALUE )
+
+
+OPERATIONAL ATTRIBUTES
+       The  operational attributes used by the pwdshadow overlay are stored in
+       the user's entry. Most of these	attributes  are  not  intended	to  be
+       changed	directly  by  users;  they  are  used  to  present  the policy
+       attributes from the ppolicy module in a	format	compatible  with  most
+       LDAP auth implementations used by Linux distributions. However, if pwd-
+       shadow_overrides is enabled, the values of the  operational  attributes
+       generated  by  the  overlay may be overridden by setting the equivelent
+       shadowAccount attributes on the directory user's entry. The operational
+       attributes  have  been detailed here so that systems administrators can
+       configure their systems to use the generated LDAP attributes.
+
+
+       userPassword
+	   The userPassword attribute is not part of  the  pwdshadow  overlay,
+	   however  it is tracked by the overlay. Please refer to the standard
+	   OpenLDAP schema for its definition.
+
+
+       pwdEndTime
+	   The pwdEndTime attribute is not part of the pwdshadow overlay, how-
+	   ever  it  is  used to determine the value of pwdShadowExpire if the
+	   attribute shadowExpire is  not  present  on	the  directory	user's
+	   entry.  Please  refer  to the man page for slapo-ppolicy(5) overlay
+	   for its definition.
+
+
+       pwdPolicySubentry
+	   The pwdPolicySubentry attribute is not part of the pwdshadow  over-
+	   lay,  however  it is used to determine the pwdPolicy and pwdShadow-
+	   Policy subentry that is to be used for  this  particular  directory
+	   user.  Please refer to the man page for slapo-ppolicy(5) module for
+	   its definition.
+
+
+       pwdShadowGenerate
+	   The pwdShadowGenerate attribute controls if	the  module  generates
+	   attributes  for this particular directory user. If the attribute is
+	   not present or is not set (its value is "FALSE"), then  the	module
+	   will not generate attributes for this particilar directory user. If
+	   this attribute is removed from the directory user or is unset  (its
+	   value   changes   from  "TRUE"  to  "FALSE"),  then	this  module's
+	   attributes will be removed from the directory user. If attribute is
+	   set	(added	with  or  changed to a value of "TRUE"), then the pwd-
+	   Shadow attributes will be generated	and  added  to	the  directory
+	   user's entry.
+
+       (  1.3.6.1.4.1.27893.4.2.2.1
+	      NAME 'pwdShadowGenerate'
+	      DESC 'generate shadowAccount equivalent attributes'
+	      EQUALITY booleanMatch
+	      SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
+	      SINGLE-VALUE
+	      USAGE directoryOperation )
+
+
+       pwdShadowExpire
+	   This  attribute contains the date of the expiration of the account,
+	   expressed as the number of days since January 1, 1970.  If  pwdEnd-
+	   Time  is  present  on  the  user's  entry,  then pwdShadowExpire is
+	   derived from the value of pwdEndTime.  If pwdEndTime is not present
+	   on  the user's entry and pwdShadowAutoExpire is set on the pwdShad-
+	   owPolicy object's entry, then pwdShadowExpire is derived by	adding
+	   the values of pwdShadowLastChange, pwdShadowMax, and pwdShadowInac-
+	   tive.  Both pwdShadowLastChange and pwdShadowMax must be present on
+	   the	user's	entry  to  generate  the value using autoexpire.  This
+	   attribute can be overriden by setting shadowExpire.
+
+       (  1.3.6.1.4.1.27893.4.2.1.10
+	      NAME 'pwdShadowExpire'
+	      DESC 'shadowExpire equivalent derived from pwdEndTime'
+	      EQUALITY integerMatch
+	      ORDERING integerOrderingMatch
+	      SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+	      SINGLE-VALUE
+	      NO-USER-MODIFICATION
+	      USAGE directoryOperation )
+
+
+       pwdShadowFlag
+	   The overlay does not generate a value for this  attribute.	It  is
+	   included  by  the  overlay  for completeness. This attribute can be
+	   overriden by setting shadowFlag.
+
+       (  1.3.6.1.4.1.27893.4.2.1.11
+	      NAME 'pwdShadowFlag'
+	      DESC 'duplicates shadowFlag'
+	      EQUALITY integerMatch
+	      SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+	      SINGLE-VALUE
+	      NO-USER-MODIFICATION
+	      USAGE directoryOperation )
+
+
+       pwdShadowInactive
+	   The number of days after a password has expired  during  which  the
+	   password  should still be accepted. If pwdGraceExpiry is present on
+	   the pwdPolicy object's entry,  then	pwdShadowInactive  is  derived
+	   from  the value of pwdGraceExpiry.  This attribute can  be  overri-
+	   den	by setting shadowInactive.
+
+       (  1.3.6.1.4.1.27893.4.2.1.9
+	      NAME 'pwdShadowInactive'
+	      DESC 'shadowInactive equivalent derived from pwdGraceExpiry'
+	      EQUALITY integerMatch
+	      SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+	      SINGLE-VALUE
+	      NO-USER-MODIFICATION
+	      USAGE directoryOperation )
+
+
+       pwdShadowLastChange
+	   This attribute contains the	date  of  the  last  password  change,
+	   expressed  as  the  number  of  days  since	January 1, 1970.  This
+	   attribute  is  set  to  the	current  date  when  the  userPassword
+	   attribute  is  updated. If pwdShadowGenerate is set after the pass-
+	   word was set and pwdChangedTime is present  on  the	user's	entry,
+	   then  pwdShadowLastChange  is derived from the value of pwdChanged-
+	   Time.  This attribute can be overriden by setting shadowLastChange.
+
+       (  1.3.6.1.4.1.27893.4.2.1.5
+	      NAME 'pwdShadowLastChange'
+	      DESC 'The generated value for shadowLastChange'
+	      EQUALITY integerMatch
+	      ORDERING integerOrderingMatch
+	      SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+	      SINGLE-VALUE
+	      NO-USER-MODIFICATION
+	      USAGE directoryOperation )
+
+
+       pwdShadowMax
+	   The	number of days following the last password change on which the
+	   password must again be changed.  pwdMaxAge is present on  the  pwd-
+	   Policy  object's entry, then pwdShadowMax is derived from the value
+	   of pwdMaxAge.  This attribute can be overriden by  setting  shadow-
+	   Max.
+
+       (  1.3.6.1.4.1.27893.4.2.1.7
+	      NAME 'pwdShadowMax'
+	      DESC 'shadowMax equivalent derived from pwdMaxAge'
+	      EQUALITY integerMatch
+	      SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+	      SINGLE-VALUE
+	      NO-USER-MODIFICATION
+	      USAGE directoryOperation )
+
+
+       pwdShadowMin
+	   The	minimum  number  of  days  after the password was last changed
+	   before the password may again be changed. If pwdMinAge  is  present
+	   on  the pwdPolicy object's entry, then pwdShadowMin is derived from
+	   the value of pwdMinAge.  This attribute can be overriden by setting
+	   shadowMin.
+
+       (  1.3.6.1.4.1.27893.4.2.1.6
+	      NAME 'pwdShadowMin'
+	      DESC 'shadowMin equivalent derived from pwdMinAge'
+	      EQUALITY integerMatch
+	      SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+	      SINGLE-VALUE
+	      NO-USER-MODIFICATION
+	      USAGE directoryOperation )
+
+
+       pwdShadowWarning
+	   The	number of days before a password is going to expire. If pwdEx-
+	   pireWarning is present on the pwdPolicy object's entry,  then  pwd-
+	   ShadowWarning  is derived from the value of pwdExpireWarning.  This
+	   attribute can be overriden by setting shadowWarning.
+
+       (  1.3.6.1.4.1.27893.4.2.1.8
+	      NAME 'pwdShadowWarning'
+	      DESC 'shadowWarning equivalent derived from pwdExpireWarning'
+	      EQUALITY integerMatch
+	      SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+	      SINGLE-VALUE
+	      NO-USER-MODIFICATION
+	      USAGE directoryOperation )
+
+
+EXAMPLES
+	   database mdb
+	   suffix dc=example,dc=com
+	   ...
+	   overlay pwdshadow
+	   pwdshadow_default "cn=Standard,ou=Policies,dc=example,dc=com"
+	   pwdshadow_override on
+
+
+SEE ALSO
+       ldap(3), slapd.conf(5), slapd-config(5), slapo-ppolicy(5), shadow(5).
+
+       "OpenLDAP Administrator's Guide" (http://www.OpenLDAP.org/doc/admin/)
+
+       IETF LDAP password policy proposal by P. Behera, L. Poitou and J.  Ser-
+       mersheim:  documented in IETF document "draft-behera-ldap-password-pol-
+       icy-10.txt".
+
+       "An Approach for Using LDAP as a Network  Information  Service"	by  L.
+       Howard: documented in RFC2022.
+
+
+BUGS
+       The LDAP Password Policy specification is not yet an approved standard,
+       and it is still evolving. This code will continue to be in  flux  until
+       the specification is finalized.
+
+
+ACKNOWLEDGEMENTS
+       This  module  was written in 2023 by David M. Syzdek of Alaska Communi-
+       catins and is modeled after slapo-ppolicy, slapo-refint, and slapo-mem-
+       berof.
+
+
+
+
+slapo-pwdshadow 0.0		  2023/04/30		    SLAPO_PWDSHADOW(5)
