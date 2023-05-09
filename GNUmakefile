@@ -49,7 +49,7 @@ TEST_FILES		= openldap/contrib/slapd-modules/pwdshadow/GNUmakefile \
 			  openldap/contrib/slapd-modules/pwdshadow/doc/slapo-pwdshadow.5.in
 
 
-.PHONY: all clean distclean install test-env test-env-install uninstall
+.PHONY: all clean distclean install test-env test-env-install uninstall html
 
 
 .SUFFIXES: .c .o .lo
@@ -170,6 +170,18 @@ openldap/contrib/slapd-modules/pwdshadow/doc/slapo-pwdshadow.5.in: doc/slapo-pwd
 	mkdir -p openldap/contrib/slapd-modules/pwdshadow/doc
 	cp -p doc/slapo-pwdshadow.5.in $(@)
 	touch $(@)
+
+
+html/slapo-pwdshadow.5.html: doc/slapo-pwdshadow.5
+	rm -f $(@) $(@).new
+	mkdir -p html
+	cat doc/slapo-pwdshadow.5 |groff -mandoc -Thtml > $(@).new
+	grep -v '^<!-- Creat' $(@).new > $(@)
+	rm -f $(@).new
+	touch $(@)
+
+
+html: html/slapo-pwdshadow.5.html
 
 
 install: pwdshadow.la doc/slapo-pwdshadow.5
