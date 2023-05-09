@@ -46,7 +46,7 @@ TEST_TARGET		= openldap/pwdshadow-$(OPENLDAP_VERSION)
 TEST_FILES		= openldap/contrib/slapd-modules/pwdshadow/GNUmakefile \
 			  openldap/contrib/slapd-modules/pwdshadow/pwdshadow.c \
 			  openldap/contrib/slapd-modules/pwdshadow/pwdshadow.h \
-			  openldap/contrib/slapd-modules/pwdshadow/doc/slapo-pwdshadow.5.in
+			  openldap/contrib/slapd-modules/pwdshadow/docs/slapo-pwdshadow.5.in
 
 
 .PHONY: all clean distclean install test-env test-env-install uninstall html
@@ -55,16 +55,16 @@ TEST_FILES		= openldap/contrib/slapd-modules/pwdshadow/GNUmakefile \
 .SUFFIXES: .c .o .lo
 
 
-all: pwdshadow.la doc/slapo-pwdshadow.5
+all: pwdshadow.la docs/slapo-pwdshadow.5
 
 
-doc/slapo-pwdshadow.5: doc/slapo-pwdshadow.5.in
+docs/slapo-pwdshadow.5: docs/slapo-pwdshadow.5.in
 	rm -f $(@)
 	sed \
 	   -e 's,RELEASEDATE,$(RELEASEDATE),g' \
 	   -e 's,LDVERSION,$(PKGVERSION),g' \
 	   -e 's,ETCDIR,$(sysconfdir),g' \
-	   doc/slapo-pwdshadow.5.in \
+	   docs/slapo-pwdshadow.5.in \
 	   > $(@)
 	touch $(@)
 
@@ -88,7 +88,7 @@ test-env: $(TEST_FILES)
 
 test-env-install: test-env $(TEST_TARGET)-install
 	make -C openldap/contrib/slapd-modules/pwdshadow prefix=/tmp/openldap install
-	$(INSTALL) -m 644 doc/slapd.conf-test /tmp/openldap/etc/openldap
+	$(INSTALL) -m 644 docs/slapd.conf-test /tmp/openldap/etc/openldap
 
 
 openldap-$(OPENLDAP_VERSION).tgz:
@@ -166,29 +166,28 @@ openldap/contrib/slapd-modules/pwdshadow/pwdshadow.h: pwdshadow.h $(TEST_TARGET)
 	touch $(@)
 
 
-openldap/contrib/slapd-modules/pwdshadow/doc/slapo-pwdshadow.5.in: doc/slapo-pwdshadow.5.in $(TEST_TARGET)-all
-	mkdir -p openldap/contrib/slapd-modules/pwdshadow/doc
-	cp -p doc/slapo-pwdshadow.5.in $(@)
+openldap/contrib/slapd-modules/pwdshadow/docs/slapo-pwdshadow.5.in: docs/slapo-pwdshadow.5.in $(TEST_TARGET)-all
+	mkdir -p openldap/contrib/slapd-modules/pwdshadow/docs
+	cp -p docs/slapo-pwdshadow.5.in $(@)
 	touch $(@)
 
 
-html/slapo-pwdshadow.5.html: doc/slapo-pwdshadow.5
+docs/slapo-pwdshadow.5.html: docs/slapo-pwdshadow.5
 	rm -f $(@) $(@).new
-	mkdir -p html
-	cat doc/slapo-pwdshadow.5 |groff -mandoc -Thtml > $(@).new
+	cat docs/slapo-pwdshadow.5 |groff -mandoc -Thtml > $(@).new
 	grep -v '^<!-- Creat' $(@).new > $(@)
 	rm -f $(@).new
 	touch $(@)
 
 
-html: html/slapo-pwdshadow.5.html
+html: docs/slapo-pwdshadow.5.html
 
 
-install: pwdshadow.la doc/slapo-pwdshadow.5
+install: pwdshadow.la docs/slapo-pwdshadow.5
 	mkdir -p $(DESTDIR)/$(moduledir)
 	mkdir -p $(DESTDIR)$(man5dir)
 	$(LIBTOOL) --mode=install $(INSTALL) -c pwdshadow.la $(DESTDIR)/$(moduledir)/pwdshadow.la
-	$(INSTALL) -m 644 doc/slapo-pwdshadow.5 $(DESTDIR)$(man5dir)
+	$(INSTALL) -m 644 docs/slapo-pwdshadow.5 $(DESTDIR)$(man5dir)
 
 
 uninstall:
@@ -197,12 +196,12 @@ uninstall:
 
 
 clean:
-	rm -rf *.o *.lo *.la .libs doc/*.5
+	rm -rf *.o *.lo *.la .libs docs/*.5
 	rm -Rf openldap/contrib/slapd-modules/pwdshadow/*.o
 	rm -Rf openldap/contrib/slapd-modules/pwdshadow/*.lo
 	rm -Rf openldap/contrib/slapd-modules/pwdshadow/*.la
 	rm -Rf openldap/contrib/slapd-modules/pwdshadow/.libs
-	rm -Rf openldap/contrib/slapd-modules/pwdshadow/doc/*.5
+	rm -Rf openldap/contrib/slapd-modules/pwdshadow/docs/*.5
 
 
 distclean: clean
