@@ -180,13 +180,7 @@ docs/slapo-pwdshadow.5.html: docs/slapo-pwdshadow.5
 	touch $(@)
 
 
-docs/index.html: docs/slapo-pwdshadow.5.html
-	rm -f $(@)
-	cp docs/slapo-pwdshadow.5.html $(@)
-	touch $(@)
-
-
-html: docs/index.html
+html: docs/slapo-pwdshadow.5.html
 
 
 install: pwdshadow.la docs/slapo-pwdshadow.5
