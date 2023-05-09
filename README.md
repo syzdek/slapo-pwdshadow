@@ -61,6 +61,8 @@ user's entry:
     pwdShadowGenerate: TRUE
     pwdShadowLastChange: 19485
 
+For more information, please see the man page: [slapo-pwdshadow.5](https://syzdek.github.io/slapo-pwdshadow/slapo-pwdshadow.5.html)
+
 
 Software Requirements
 =====================
