@@ -172,11 +172,17 @@ openldap/contrib/slapd-modules/pwdshadow/docs/slapo-pwdshadow.5.in: docs/slapo-p
 	touch $(@)
 
 
-docs/index.html: docs/slapo-pwdshadow.5
+docs/slapo-pwdshadow.5.html: docs/slapo-pwdshadow.5
 	rm -f $(@) $(@).new
 	cat docs/slapo-pwdshadow.5 |groff -mandoc -Thtml > $(@).new
 	grep -v '^<!-- Creat' $(@).new > $(@)
 	rm -f $(@).new
+	touch $(@)
+
+
+docs/index.html: docs/slapo-pwdshadow.5.html
+	rm -f $(@)
+	cp docs/slapo-pwdshadow.5.html $(@)
 	touch $(@)
 
 
