@@ -283,12 +283,6 @@ pwdshadow_set_value(
          int                           flags );
 
 
-static int
-pwdshadow_verify_attr_syntax(
-         AttributeDescription *        ad,
-         const char *                  oid );
-
-
 /////////////////
 //             //
 //  Variables  //
@@ -1675,30 +1669,6 @@ pwdshadow_set_value(
    dat->dat_flag  |= flags;
 
    return(0);
-}
-
-
-int
-pwdshadow_verify_attr_syntax(
-         AttributeDescription *        ad,
-         const char *                  oid )
-{
-   const char * syn_oid;
-
-   if (ad == NULL)
-      return(0);
-   if (ad->ad_type == NULL)
-      return(0);
-   if (ad->ad_type->sat_syntax == NULL)
-      return(0);
-   if (ad->ad_type->sat_syntax->ssyn_oid == NULL)
-      return(0);
-   syn_oid = ad->ad_type->sat_syntax->ssyn_oid;
-
-   if ((strcmp(syn_oid, oid)))
-      return(0);
-
-   return(1);
 }
 
 /* end of source file */
