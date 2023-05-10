@@ -1154,6 +1154,7 @@ pwdshadow_get_attrs(
 
    // slapo-pwdshadow attributes
    pwdshadow_get_attr(entry, &st->st_pwdShadowExpire,      flags_days);
+   pwdshadow_get_attr(entry, &st->st_pwdShadowFlag,        flags_integer);
    pwdshadow_get_attr(entry, &st->st_pwdShadowGenerate,    flags_bool);
    pwdshadow_get_attr(entry, &st->st_pwdShadowInactive,    flags_days);
    pwdshadow_get_attr(entry, &st->st_pwdShadowLastChange,  flags_days);
