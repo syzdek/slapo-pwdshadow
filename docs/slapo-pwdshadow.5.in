@@ -42,7 +42,7 @@ the
 .BR overlay
 directive.
 
-.TP 4
+.SS
 .BI pwdshadow_default " <policyDN> "
 Specify the DN of the
 .B pwdPolicy
@@ -59,7 +59,7 @@ will not be generated. The default policy may be specified in the config backend
 by setting
 .BR olcPwdShadowDefault .
 
-.TP 4
+.SS
 .BI pwdshadow_use_policies " on " | " off "
 Specifies that the
 .B pwdPolicy
@@ -79,7 +79,7 @@ config backend by setting
 The default is
 .IR on .
 
-.TP 4
+.SS
 .BI pwdshadow_overrides " on " | " off "
 The generated values for
 .B pwdShadow
@@ -105,7 +105,8 @@ is documented by
 The definition of
 .B pwdShadowPolicy
 is as follows:
-.HP 4
+.LP
+.RS 4
 .EX
 (  1.3.6.1.4.1.27893.4.2.3.1
    NAME 'pwdShadowPolicy'
@@ -114,6 +115,7 @@ is as follows:
    AUXILIARY
    MAY ( pwdShadowAutoExpire ) )
 .EE
+.RE
 .LP
 Every account that should have generated
 .B pwdShadow
@@ -130,12 +132,13 @@ attribute (its value is
 on the account's entry.
 
 .SH OBJECT CLASS ATTRIBUTES
+.P
 The following details the meaning and use of attributes of the
 .B pwdShadowPolicy
 object class.
 
-.TP 4
-.B pwdShadowAutoExpire
+.SS pwdShadowAutoExpire
+.LP
 If this attribute is set (its value is
 .IR TRUE )
 in the
@@ -159,7 +162,8 @@ If
 .B pwdShadowInactive
 is not set on the user's entry, then a default value of zero is used for
 .BR pwdShadowInactive.
-.HP 4
+.LP
+.RS 4
 .EX
 (  1.3.6.1.4.1.27893.4.2.2.2
    NAME 'pwdShadowAutoExpire'
@@ -168,6 +172,7 @@ is not set on the user's entry, then a default value of zero is used for
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
    SINGLE-VALUE )
 .EE
+.RE
 
 .SH OPERATIONAL ATTRIBUTES
 The operational attributes used by the
@@ -186,8 +191,8 @@ attributes on the directory user's entry. The operational attributes have been
 detailed here so that systems administrators can configure their systems to
 use the generated LDAP attributes.
 
-.TP 4
-.B userPassword
+.SS userPassword
+.LP
 The
 .B userPassword
 attribute is not part of the
@@ -195,8 +200,8 @@ attribute is not part of the
 overlay, however it is tracked by the overlay. Please refer to the standard
 OpenLDAP schema for its definition.
 
-.TP 4
-.B pwdEndTime
+.SS pwdEndTime
+.LP
 The
 .B pwdEndTime
 attribute is not part of the
@@ -209,8 +214,8 @@ is not present on the directory user's entry. Please refer to the man page for
 .BR slapo-ppolicy (5)
 overlay for its definition.
 
-.TP 4
-.B pwdShadowPolicySubentry
+.SS pwdShadowPolicySubentry
+.LP
 This attribute refers directly to the
 .B pwdPolicy
 and
@@ -244,7 +249,8 @@ subentry using the
 .B pwdshadow_policy_attr
 option in
 .IR slapd.conf .
-.HP 4
+.LP
+.RS 4
 .EX
 (  1.3.6.1.4.1.27893.4.2.2.3
    NAME 'pwdShadowPolicySubentry'
@@ -254,9 +260,10 @@ option in
    SINGLE-VALUE
    USAGE directoryOperation )
 .EE
+.RE
 
-.TP 4
-.B pwdShadowGenerate
+.SS pwdShadowGenerate
+.LP
 The
 .BR pwdShadowGenerate
 attribute controls if the module generates attributes for this particular
@@ -267,7 +274,8 @@ directory user. If this attribute is removed from the directory user or is unset
 be removed from the directory user. If attribute is set (added with or changed
 to a value of "TRUE"), then the pwdShadow attributes will be generated and
 added to the directory user's entry.
-.HP 4
+.LP
+.RS 4
 .EX
 (  1.3.6.1.4.1.27893.4.2.2.1
    NAME 'pwdShadowGenerate'
@@ -277,9 +285,10 @@ added to the directory user's entry.
    SINGLE-VALUE
    USAGE directoryOperation )
 .EE
+.RE
 
-.TP 4
-.B pwdShadowExpire
+.SS pwdShadowExpire
+.LP
 This attribute contains the date of the expiration of the account, expressed
 as the number of days since January 1, 1970. If
 .B pwdEndTime
@@ -307,7 +316,8 @@ and
 must be present on the user's entry to generate the value using autoexpire.
 This attribute can be overriden by setting
 .BR shadowExpire .
-.HP 4
+.LP
+.RS 4
 .EX
 (  1.3.6.1.4.1.27893.4.2.1.10
    NAME 'pwdShadowExpire'
@@ -319,13 +329,15 @@ This attribute can be overriden by setting
    NO-USER-MODIFICATION
    USAGE directoryOperation )
 .EE
+.RE
 
-.TP 4
-.B pwdShadowFlag
+.SS pwdShadowFlag
+.LP
 The overlay does not generate a value for this attribute.  It is included
 by the overlay for completeness. This attribute can be overriden by setting
 .BR shadowFlag .
-.HP 4
+.LP
+.RS 4
 .EX
 (  1.3.6.1.4.1.27893.4.2.1.11
    NAME 'pwdShadowFlag'
@@ -336,9 +348,10 @@ by the overlay for completeness. This attribute can be overriden by setting
    NO-USER-MODIFICATION
    USAGE directoryOperation )
 .EE
+.RE
 
-.TP 4
-.B pwdShadowInactive
+.SS pwdShadowInactive
+.LP
 The number of days after a password has expired during which the password
 should still be accepted. If
 .B pwdGraceExpiry
@@ -350,7 +363,8 @@ is derived from the value of
 .BR pwdGraceExpiry .
 This attribute can  be  overriden  by setting
 .BR shadowInactive .
-.HP 4
+.LP
+.RS 4
 .EX
 (  1.3.6.1.4.1.27893.4.2.1.9
    NAME 'pwdShadowInactive'
@@ -361,9 +375,10 @@ This attribute can  be  overriden  by setting
    NO-USER-MODIFICATION
    USAGE directoryOperation )
 .EE
+.RE
 
-.TP 4
-.B pwdShadowLastChange
+.SS pwdShadowLastChange
+.LP
 This attribute contains the date of the last password change, expressed as the
 number of days since January 1, 1970.  This attribute is set to the current
 date when the
@@ -378,7 +393,8 @@ is derived from the value of
 .BR pwdChangedTime .
 This attribute can be overriden by setting
 .BR shadowLastChange .
-.HP 4
+.LP
+.RS 4
 .EX
 (  1.3.6.1.4.1.27893.4.2.1.5
    NAME 'pwdShadowLastChange'
@@ -390,9 +406,10 @@ This attribute can be overriden by setting
    NO-USER-MODIFICATION
    USAGE directoryOperation )
 .EE
+.RE
 
-.TP 4
-.B pwdShadowMax
+.SS pwdShadowMax
+.LP
 The number of days following the last password change on which the password must
 again be changed.
 .B pwdMaxAge
@@ -404,7 +421,8 @@ is derived from the value of
 .BR pwdMaxAge .
 This attribute can be overriden by setting
 .BR shadowMax .
-.HP 4
+.LP
+.RS 4
 .EX
 (  1.3.6.1.4.1.27893.4.2.1.7
    NAME 'pwdShadowMax'
@@ -415,9 +433,10 @@ This attribute can be overriden by setting
    NO-USER-MODIFICATION
    USAGE directoryOperation )
 .EE
+.RE
 
-.TP 4
-.B pwdShadowMin
+.SS pwdShadowMin
+.LP
 The minimum number of days after the password was last changed before
 the password may again be changed. If
 .B pwdMinAge
@@ -429,7 +448,8 @@ is derived from the value of
 .BR pwdMinAge .
 This attribute can be overriden by setting
 .BR shadowMin .
-.HP 4
+.LP
+.RS 4
 .EX
 (  1.3.6.1.4.1.27893.4.2.1.6
    NAME 'pwdShadowMin'
@@ -440,9 +460,10 @@ This attribute can be overriden by setting
    NO-USER-MODIFICATION
    USAGE directoryOperation )
 .EE
+.RE
 
-.TP 4
-.B pwdShadowWarning
+.SS pwdShadowWarning
+.LP
 The number of days before a password is going to expire. If
 .B pwdExpireWarning
 is present on the
@@ -453,7 +474,8 @@ is derived from the value of
 .BR pwdExpireWarning .
 This attribute can be overriden by setting
 .BR shadowWarning .
-.HP 4
+.LP
+.RS 4
 .EX
 (  1.3.6.1.4.1.27893.4.2.1.8
    NAME 'pwdShadowWarning'
@@ -464,6 +486,7 @@ This attribute can be overriden by setting
    NO-USER-MODIFICATION
    USAGE directoryOperation )
 .EE
+.RE
 
 .SH EXAMPLES
 .LP
