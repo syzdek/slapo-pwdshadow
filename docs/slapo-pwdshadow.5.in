@@ -210,21 +210,6 @@ is not present on the directory user's entry. Please refer to the man page for
 overlay for its definition.
 
 .TP 4
-.B pwdPolicySubentry
-The
-.B pwdPolicySubentry
-attribute is not part of the
-.B pwdshadow
-overlay, however it is used to determine the
-.B pwdPolicy
-and
-.B pwdShadowPolicy
-subentry that is to be used for this particular directory user. Please refer
-to the man page for
-.BR slapo-ppolicy (5)
-module for its definition.
-
-.TP 4
 .B pwdShadowGenerate
 The
 .BR pwdShadowGenerate
