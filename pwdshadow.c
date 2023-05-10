@@ -101,7 +101,7 @@ typedef struct pwdshadow_at_t
 
 typedef struct pwdshadow_data_t
 {
-   AttributeDescription *     dat_ad;
+   AttributeDescription *     dt_ad;
    int                        dat_flag;
    int                        dat_prev;
    int                        dat_mod;
@@ -781,38 +781,38 @@ pwdshadow_db_init(
    ps->ps_policy_ad        = ad_pwdShadowPolicySubentry;
 
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
-   slap_str2ad("pwdChangedTime",       &st->st_pwdChangedTime.dat_ad,      &text);
-   slap_str2ad("pwdEndTime",           &st->st_pwdEndTime.dat_ad,          &text);
-   slap_str2ad("pwdExpireWarning",     &st->st_pwdExpireWarning.dat_ad,    &text);
-   slap_str2ad("pwdGraceExpiry",       &st->st_pwdGraceExpiry.dat_ad,      &text);
-   slap_str2ad("pwdMaxAge",            &st->st_pwdMaxAge.dat_ad,           &text);
-   slap_str2ad("pwdMinAge",            &st->st_pwdMinAge.dat_ad,           &text);
+   slap_str2ad("pwdChangedTime",       &st->st_pwdChangedTime.dt_ad,      &text);
+   slap_str2ad("pwdEndTime",           &st->st_pwdEndTime.dt_ad,          &text);
+   slap_str2ad("pwdExpireWarning",     &st->st_pwdExpireWarning.dt_ad,    &text);
+   slap_str2ad("pwdGraceExpiry",       &st->st_pwdGraceExpiry.dt_ad,      &text);
+   slap_str2ad("pwdMaxAge",            &st->st_pwdMaxAge.dt_ad,           &text);
+   slap_str2ad("pwdMinAge",            &st->st_pwdMinAge.dt_ad,           &text);
 
    // slapo-pwdshadow policy attributes
-   st->st_pwdShadowAutoExpire.dat_ad   = ad_pwdShadowAutoExpire;
+   st->st_pwdShadowAutoExpire.dt_ad    = ad_pwdShadowAutoExpire;
 
    // slapo-pwdshadow attributes
-   st->st_pwdShadowExpire.dat_ad       = ad_pwdShadowExpire;
-   st->st_pwdShadowFlag.dat_ad         = ad_pwdShadowFlag;
-   st->st_pwdShadowGenerate.dat_ad     = ad_pwdShadowGenerate;
-   st->st_pwdShadowInactive.dat_ad     = ad_pwdShadowInactive;
-   st->st_pwdShadowLastChange.dat_ad   = ad_pwdShadowLastChange;
-   st->st_pwdShadowMax.dat_ad          = ad_pwdShadowMax;
-   st->st_pwdShadowMin.dat_ad          = ad_pwdShadowMin;
-   st->st_pwdShadowWarning.dat_ad      = ad_pwdShadowWarning;
+   st->st_pwdShadowExpire.dt_ad        = ad_pwdShadowExpire;
+   st->st_pwdShadowFlag.dt_ad          = ad_pwdShadowFlag;
+   st->st_pwdShadowGenerate.dt_ad      = ad_pwdShadowGenerate;
+   st->st_pwdShadowInactive.dt_ad      = ad_pwdShadowInactive;
+   st->st_pwdShadowLastChange.dt_ad    = ad_pwdShadowLastChange;
+   st->st_pwdShadowMax.dt_ad           = ad_pwdShadowMax;
+   st->st_pwdShadowMin.dt_ad           = ad_pwdShadowMin;
+   st->st_pwdShadowWarning.dt_ad       = ad_pwdShadowWarning;
 
    // LDAP NIS attributes (RFC 2307)
-   slap_str2ad("shadowExpire",         &st->st_shadowExpire.dat_ad,        &text);
-   slap_str2ad("shadowFlag",           &st->st_shadowFlag.dat_ad,          &text);
-   slap_str2ad("shadowInactive",       &st->st_shadowInactive.dat_ad,      &text);
-   slap_str2ad("shadowLastChange",     &st->st_shadowLastChange.dat_ad,    &text);
-   slap_str2ad("shadowMax",            &st->st_shadowMax.dat_ad,           &text);
-   slap_str2ad("shadowMin",            &st->st_shadowMin.dat_ad,           &text);
-   slap_str2ad("shadowWarning",        &st->st_shadowWarning.dat_ad,       &text);
+   slap_str2ad("shadowExpire",         &st->st_shadowExpire.dt_ad,        &text);
+   slap_str2ad("shadowFlag",           &st->st_shadowFlag.dt_ad,          &text);
+   slap_str2ad("shadowInactive",       &st->st_shadowInactive.dt_ad,      &text);
+   slap_str2ad("shadowLastChange",     &st->st_shadowLastChange.dt_ad,    &text);
+   slap_str2ad("shadowMax",            &st->st_shadowMax.dt_ad,           &text);
+   slap_str2ad("shadowMin",            &st->st_shadowMin.dt_ad,           &text);
+   slap_str2ad("shadowWarning",        &st->st_shadowWarning.dt_ad,       &text);
 
    // User Schema (RFC 2256)
-   if ((st->st_userPassword.dat_ad = slap_schema.si_ad_userPassword) == NULL)
-      slap_str2ad("userPassword",      &st->st_userPassword.dat_ad,        &text);
+   if ((st->st_userPassword.dt_ad = slap_schema.si_ad_userPassword) == NULL)
+      slap_str2ad("userPassword",      &st->st_userPassword.dt_ad,        &text);
 
    return(0);
 }
@@ -1158,10 +1158,10 @@ pwdshadow_get_attr(
    Attribute *       a;
    BerValue *        bv;
 
-   if (!(dat->dat_ad))
+   if (!(dat->dt_ad))
       return(0);
 
-   if ((a = attr_find(entry->e_attrs, dat->dat_ad)) != NULL)
+   if ((a = attr_find(entry->e_attrs, dat->dt_ad)) != NULL)
       a = (a->a_numvals > 0) ? a : NULL;
 
    bv = ((a)) ? &a->a_nvals[0] : NULL;
@@ -1226,7 +1226,7 @@ pwdshadow_get_attrs(
    // update pwdPolicy
    if ((ps->ps_use_policies))
    {
-      ad = st->st_policySubentry.dat_ad;
+      ad = st->st_policySubentry.dt_ad;
       if ((a = attr_find(entry->e_attrs, ad)) != NULL)
       {
          if ((a = (a->a_numvals > 0) ? a : NULL) != NULL)
@@ -1251,8 +1251,8 @@ pwdshadow_get_mods(
    BerValue *              bv;
 
    // set attribute description
-   dat->dat_ad = ((dat->dat_ad)) ? dat->dat_ad : mods->sml_desc;
-   if (dat->dat_ad != mods->sml_desc)
+   dat->dt_ad = ((dat->dt_ad)) ? dat->dt_ad : mods->sml_desc;
+   if (dat->dt_ad != mods->sml_desc)
       return(-1);
 
    // determines and sets operation type
@@ -1336,7 +1336,7 @@ pwdshadow_op_add(
    memcpy(&st, &ps->ps_state, sizeof(st));
    st.st_policy.bv_len           = ps->ps_def_policy.bv_len;
    st.st_policy.bv_val           = ps->ps_def_policy.bv_val;
-   st.st_policySubentry.dat_ad   = ps->ps_policy_ad;
+   st.st_policySubentry.dt_ad    = ps->ps_policy_ad;
 
    // determines existing attribtues
    pwdshadow_get_attrs(ps, &st, op->ora_e, PWDSHADOW_FLG_USERADD);
@@ -1370,7 +1370,7 @@ pwdshadow_op_add_attr(
 
    if ((pwdshadow_flg_usermods(dat)))
       return(0);
-   if ( (!(dat->dat_ad)) || (!(dat->dat_flag & PWDSHADOW_FLG_EVALADD)) )
+   if ( (!(dat->dt_ad)) || (!(dat->dat_flag & PWDSHADOW_FLG_EVALADD)) )
       return(0);
 
    // convert int to BV
@@ -1378,7 +1378,7 @@ pwdshadow_op_add_attr(
    bv.bv_len = snprintf(bv_val, sizeof(bv_val), "%i", dat->dat_post);
 
    // add attribute to entry
-   attr_merge_one(entry, dat->dat_ad, &bv, &bv);
+   attr_merge_one(entry, dat->dt_ad, &bv, &bv);
 
    return(0);
 }
@@ -1402,7 +1402,7 @@ pwdshadow_op_modify(
    on                            = (slap_overinst *)op->o_bd->bd_info;
    ps                            = on->on_bi.bi_private;
    memcpy(&st, &ps->ps_state, sizeof(st));
-   st.st_policySubentry.dat_ad   = ps->ps_policy_ad;
+   st.st_policySubentry.dt_ad    = ps->ps_policy_ad;
 
    // retrieve entry from backend
    bd_info              = op->o_bd->bd_info;
@@ -1427,37 +1427,37 @@ pwdshadow_op_modify(
    {
       mods = *next;
 
-      if (mods->sml_desc == st.st_pwdEndTime.dat_ad)
+      if (mods->sml_desc == st.st_pwdEndTime.dt_ad)
          pwdshadow_get_mods(mods, &st.st_pwdEndTime, PWDSHADOW_TYPE_TIME);
 
-      if (mods->sml_desc == st.st_pwdShadowExpire.dat_ad)
+      if (mods->sml_desc == st.st_pwdShadowExpire.dt_ad)
          pwdshadow_get_mods(mods, &st.st_pwdShadowExpire, PWDSHADOW_TYPE_DAYS);
 
-      if (mods->sml_desc == st.st_pwdShadowFlag.dat_ad)
+      if (mods->sml_desc == st.st_pwdShadowFlag.dt_ad)
          pwdshadow_get_mods(mods, &st.st_pwdShadowFlag, PWDSHADOW_TYPE_INTEGER);
 
-      if (mods->sml_desc == st.st_pwdShadowGenerate.dat_ad)
+      if (mods->sml_desc == st.st_pwdShadowGenerate.dt_ad)
          pwdshadow_get_mods(mods, &st.st_pwdShadowGenerate, PWDSHADOW_TYPE_BOOL);
 
-      if (mods->sml_desc == st.st_pwdShadowInactive.dat_ad)
+      if (mods->sml_desc == st.st_pwdShadowInactive.dt_ad)
          pwdshadow_get_mods(mods, &st.st_pwdShadowInactive, PWDSHADOW_TYPE_DAYS);
 
-      if (mods->sml_desc == st.st_pwdShadowLastChange.dat_ad)
+      if (mods->sml_desc == st.st_pwdShadowLastChange.dt_ad)
          pwdshadow_get_mods(mods, &st.st_pwdShadowLastChange, PWDSHADOW_TYPE_DAYS);
 
-      if (mods->sml_desc == st.st_pwdShadowMax.dat_ad)
+      if (mods->sml_desc == st.st_pwdShadowMax.dt_ad)
          pwdshadow_get_mods(mods, &st.st_pwdShadowMax, PWDSHADOW_TYPE_DAYS);
 
-      if (mods->sml_desc == st.st_pwdShadowMin.dat_ad)
+      if (mods->sml_desc == st.st_pwdShadowMin.dt_ad)
          pwdshadow_get_mods(mods, &st.st_pwdShadowMin, PWDSHADOW_TYPE_DAYS);
 
-      if (mods->sml_desc == st.st_pwdShadowWarning.dat_ad)
+      if (mods->sml_desc == st.st_pwdShadowWarning.dt_ad)
          pwdshadow_get_mods(mods, &st.st_pwdShadowWarning, PWDSHADOW_TYPE_DAYS);
 
-      if (mods->sml_desc == st.st_userPassword.dat_ad)
+      if (mods->sml_desc == st.st_userPassword.dt_ad)
          pwdshadow_get_mods(mods, &st.st_userPassword, PWDSHADOW_TYPE_EXISTS);
 
-      if (mods->sml_desc == st.st_policySubentry.dat_ad)
+      if (mods->sml_desc == st.st_policySubentry.dt_ad)
       {
          pwdshadow_get_mods(mods, &st.st_policySubentry, PWDSHADOW_TYPE_EXISTS);
          if ((pwdshadow_flg_userdel(&st.st_policySubentry)))
@@ -1476,25 +1476,25 @@ pwdshadow_op_modify(
       if (!(ps->ps_overrides))
          continue;
 
-      if (mods->sml_desc == st.st_shadowExpire.dat_ad)
+      if (mods->sml_desc == st.st_shadowExpire.dt_ad)
          pwdshadow_get_mods(mods, &st.st_shadowExpire, PWDSHADOW_TYPE_DAYS);
 
-      if (mods->sml_desc == st.st_shadowFlag.dat_ad)
+      if (mods->sml_desc == st.st_shadowFlag.dt_ad)
          pwdshadow_get_mods(mods, &st.st_shadowFlag, PWDSHADOW_TYPE_INTEGER);
 
-      if (mods->sml_desc == st.st_shadowInactive.dat_ad)
+      if (mods->sml_desc == st.st_shadowInactive.dt_ad)
          pwdshadow_get_mods(mods, &st.st_shadowInactive, PWDSHADOW_TYPE_DAYS);
 
-      if (mods->sml_desc == st.st_shadowLastChange.dat_ad)
+      if (mods->sml_desc == st.st_shadowLastChange.dt_ad)
          pwdshadow_get_mods(mods, &st.st_shadowLastChange, PWDSHADOW_TYPE_DAYS);
 
-      if (mods->sml_desc == st.st_shadowMax.dat_ad)
+      if (mods->sml_desc == st.st_shadowMax.dt_ad)
          pwdshadow_get_mods(mods, &st.st_shadowMax, PWDSHADOW_TYPE_DAYS);
 
-      if (mods->sml_desc == st.st_shadowMin.dat_ad)
+      if (mods->sml_desc == st.st_shadowMin.dt_ad)
          pwdshadow_get_mods(mods, &st.st_shadowMin, PWDSHADOW_TYPE_DAYS);
 
-      if (mods->sml_desc == st.st_shadowWarning.dat_ad)
+      if (mods->sml_desc == st.st_shadowWarning.dt_ad)
          pwdshadow_get_mods(mods, &st.st_shadowWarning, PWDSHADOW_TYPE_DAYS);
    };
 
@@ -1527,9 +1527,9 @@ pwdshadow_op_modify_mods(
 
    if ((pwdshadow_flg_usermods(dat)))
       return(0);
-   if ( (!(pwdshadow_ops(dat->dat_flag))) || (!(dat->dat_ad)) )
+   if ( (!(pwdshadow_ops(dat->dat_flag))) || (!(dat->dt_ad)) )
       return(0);
-   ad = dat->dat_ad;
+   ad = dat->dt_ad;
 
    // create initial modification
    mods  = (Modifications *) ch_malloc( sizeof( Modifications ) );
@@ -1572,7 +1572,7 @@ pwdshadow_set(
    struct lutil_timet      tt;
    AttributeDescription *  ad;
 
-   ad   = dat->dat_ad;
+   ad   = dat->dt_ad;
    type = ((pwdshadow_type(dat->dat_flag))) ? pwdshadow_type(dat->dat_flag) : pwdshadow_type(flags);
    if (pwdshadow_type(flags) != type)
       return(-1);
