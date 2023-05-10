@@ -810,9 +810,7 @@ pwdshadow_eval(
       st,
       dat,                          // data
       &st->st_shadowFlag,           // override attribute
-      (pwdshadow_data_t *[])        // triggering attributes
-      {  NULL
-      }
+      NULL                          // triggering attributes
    );
    pwdshadow_eval_postcheck(dat);
 
