@@ -297,15 +297,15 @@ pwdshadow_verify_attr_syntax(
 static slap_overinst pwdshadow;
 
 // internal attribute descriptions
-static AttributeDescription *       ad_pwdShadowAutoExpire  = NULL;
-static AttributeDescription *       ad_pwdShadowLastChange  = NULL;
-static AttributeDescription *       ad_pwdShadowMin         = NULL;
-static AttributeDescription *       ad_pwdShadowMax         = NULL;
-static AttributeDescription *       ad_pwdShadowWarning     = NULL;
-static AttributeDescription *       ad_pwdShadowInactive    = NULL;
-static AttributeDescription *       ad_pwdShadowExpire      = NULL;
-static AttributeDescription *       ad_pwdShadowFlag        = NULL;
-static AttributeDescription *       ad_pwdShadowGenerate    = NULL;
+static AttributeDescription *       ad_pwdShadowAutoExpire     = NULL;
+static AttributeDescription *       ad_pwdShadowLastChange     = NULL;
+static AttributeDescription *       ad_pwdShadowMin            = NULL;
+static AttributeDescription *       ad_pwdShadowMax            = NULL;
+static AttributeDescription *       ad_pwdShadowWarning        = NULL;
+static AttributeDescription *       ad_pwdShadowInactive       = NULL;
+static AttributeDescription *       ad_pwdShadowExpire         = NULL;
+static AttributeDescription *       ad_pwdShadowFlag           = NULL;
+static AttributeDescription *       ad_pwdShadowGenerate       = NULL;
 
 
 // # OID Base is iso(1) org(3) dod(6) internet(1) private(4) enterprise(1)
@@ -1280,11 +1280,11 @@ pwdshadow_op_add(
    pwdshadow_state_t       st;
 
    // initialize state
-   on                = (slap_overinst *)op->o_bd->bd_info;
-   ps                = on->on_bi.bi_private;
+   on                            = (slap_overinst *)op->o_bd->bd_info;
+   ps                            = on->on_bi.bi_private;
    memcpy(&st, &ps->ps_state, sizeof(st));
-   st.st_policy.bv_len = ps->ps_def_policy.bv_len;
-   st.st_policy.bv_val = ps->ps_def_policy.bv_val;
+   st.st_policy.bv_len           = ps->ps_def_policy.bv_len;
+   st.st_policy.bv_val           = ps->ps_def_policy.bv_val;
 
    // determines existing attribtues
    pwdshadow_get_attrs(ps, &st, op->ora_e, PWDSHADOW_FLG_USERADD);
@@ -1347,8 +1347,8 @@ pwdshadow_op_modify(
    pwdshadow_state_t       st;
 
    // initialize state
-   on                = (slap_overinst *)op->o_bd->bd_info;
-   ps                = on->on_bi.bi_private;
+   on                            = (slap_overinst *)op->o_bd->bd_info;
+   ps                            = on->on_bi.bi_private;
    memcpy(&st, &ps->ps_state, sizeof(st));
 
    // retrieve entry from backend
