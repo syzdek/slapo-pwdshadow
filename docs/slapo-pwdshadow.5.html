@@ -109,6 +109,21 @@ user&rsquo;s entry. This option may be specified in the
 config backend by setting <b>olcPwdShadowOverrides</b>. The
 default is <i>on</i>.</p>
 
+
+<p style="margin-left:11%; margin-top: 1em"><b>pwdshadow_policy_ad</b>
+<i>&lt;pwdShadowPolicySubentry-ad&gt;</i> <br>
+The value of <i>&lt;pwdShadowPolicySubentry-ad&gt;</i> is
+the name of the attribute which contains the reference to
+the subentry containing the <b>pwdPolicy</b> and
+<b>pwdShadowPolicy</b> objects used to generate
+<b>pwdshadow</b> attributes for a particular directory user.
+This option is useful for using the same subentry containing
+policy objects used by other overlays such as
+<b>pwdPolicy</b> and <b>slapo-ppolicy</b>(5). The attribute
+must be DN-valued. This option may be specified in the
+config backend by setting <b>olcPwdShadowPolicyAD</b>. The
+default value is <i>pwdShadowPolicySubentry.</i></p>
+
 <a name="OBJECT CLASS"></a>
 <h2>OBJECT CLASS</h2>
 

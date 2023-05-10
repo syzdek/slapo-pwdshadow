@@ -91,6 +91,28 @@ config backend by setting
 The default is
 .IR on .
 
+.SS
+.BI pwdshadow_policy_ad " <pwdShadowPolicySubentry-ad>"
+The value of
+.I <pwdShadowPolicySubentry-ad>
+is the name of the attribute which contains the reference to the subentry
+containing the
+.B pwdPolicy
+and
+.B pwdShadowPolicy
+objects used to generate
+.B pwdshadow
+attributes for a particular directory user.  This option is useful for using
+the same subentry containing policy objects used by other overlays such as
+.B pwdPolicy
+and
+.BR slapo-ppolicy (5).
+The attribute must be DN-valued. This option may be specified in the config
+backend by setting
+.BR olcPwdShadowPolicyAD .
+The default value is
+.IR pwdShadowPolicySubentry.
+
 .SH OBJECT CLASS
 .The
 .B pwdshadow
