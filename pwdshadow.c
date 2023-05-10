@@ -1134,6 +1134,7 @@ pwdshadow_get_attrs(
    int                     flags_days;
    int                     flags_exists;
    int                     flags_time;
+   int                     flags_integer;
    Attribute *             a;
    AttributeDescription *  ad;
 
@@ -1144,6 +1145,7 @@ pwdshadow_get_attrs(
    flags_days     = flags | PWDSHADOW_TYPE_DAYS;
    flags_exists   = flags | PWDSHADOW_TYPE_EXISTS;
    flags_time     = flags | PWDSHADOW_TYPE_TIME;
+   flags_integer  = flags | PWDSHADOW_TYPE_INTEGER;
 
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
    pwdshadow_get_attr(entry, &st->st_pwdChangedTime,       flags_time);
@@ -1161,7 +1163,7 @@ pwdshadow_get_attrs(
 
    // LDAP NIS attributes (RFC 2307)
    pwdshadow_get_attr(entry, &st->st_shadowExpire,         flags_days);
-   pwdshadow_get_attr(entry, &st->st_shadowFlag,           flags_days);
+   pwdshadow_get_attr(entry, &st->st_shadowFlag,           flags_integer);
    pwdshadow_get_attr(entry, &st->st_shadowInactive,       flags_days);
    pwdshadow_get_attr(entry, &st->st_shadowLastChange,     flags_days);
    pwdshadow_get_attr(entry, &st->st_shadowMax,            flags_days);
