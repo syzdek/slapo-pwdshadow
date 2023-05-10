@@ -155,7 +155,7 @@ typedef struct pwdshadow_t
 {
    struct berval              ps_def_policy;
    int                        ps_overrides;
-   int                        ps_cfg_use_policies;
+   int                        ps_use_policies;
    AttributeDescription *     ps_ad_policyattr;
    pwdshadow_state_t          ps_state;
 } pwdshadow_t;
@@ -525,7 +525,7 @@ static ConfigTable pwdshadow_cfg_ats[] =
       .max_args      = 2,
       .length        = 0,
       .arg_type      = ARG_ON_OFF|ARG_OFFSET,
-      .arg_item      = (void *)offsetof(pwdshadow_t,ps_cfg_use_policies),
+      .arg_item      = (void *)offsetof(pwdshadow_t,ps_use_policies),
       .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.3"
                         " NAME 'olcPwdShadowUsePolicies'"
                         " DESC 'Use pwdPolicy to determine values of generated attributes'"
@@ -744,7 +744,7 @@ pwdshadow_db_init(
    // set default values
    memset(ps, 0, sizeof(pwdshadow_t));
    ps->ps_overrides        = 1;
-   ps->ps_cfg_use_policies       = 1;
+   ps->ps_use_policies     = 1;
    ps->ps_ad_policyattr    = ad_pwdShadowPolicySubentry;
 
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
@@ -971,7 +971,7 @@ pwdshadow_eval_policy(
    bd_orig  = op->o_bd;
 
    // exit if not policy is specified or policies are disabled
-   if ( (!(st->st_policy.bv_val)) || (!(ps->ps_cfg_use_policies)) )
+   if ( (!(st->st_policy.bv_val)) || (!(ps->ps_use_policies)) )
       return(0);
 
    // retrieve backend of policy
@@ -1191,7 +1191,7 @@ pwdshadow_get_attrs(
    pwdshadow_get_attr(entry, &st->st_userPassword,         flags_exists);
 
    // update pwdPolicy
-   if ((ps->ps_cfg_use_policies))
+   if ((ps->ps_use_policies))
    {
       ad = st->st_policySubentry.dat_ad;
       if ((a = attr_find(entry->e_attrs, ad)) != NULL)
