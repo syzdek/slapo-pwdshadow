@@ -105,7 +105,7 @@ typedef struct pwdshadow_data_t
    int                        dt_flag;
    int                        dt_prev;
    int                        dt_mod;
-   int                        dat_post;
+   int                        dt_post;
 } pwdshadow_data_t;
 
 
@@ -830,7 +830,7 @@ pwdshadow_eval(
 
    on                = (slap_overinst *)op->o_bd->bd_info;
    ps                = on->on_bi.bi_private;
-   st->st_purge      = ((st->st_pwdShadowGenerate.dat_post)) ? 0 : 1;
+   st->st_purge      = ((st->st_pwdShadowGenerate.dt_post)) ? 0 : 1;
 
    // determine modification count
    count  = 0;
@@ -892,11 +892,11 @@ pwdshadow_eval(
    if ( ((pwdshadow_flg_evaladd(dat))) && (!(pwdshadow_flg_override(dat))) )
    {
       if ((pwdshadow_flg_useradd(&st->st_userPassword)))
-         dat->dat_post = ((int)time(NULL)) / 60 / 60 /24;
+         dat->dt_post = ((int)time(NULL)) / 60 / 60 /24;
       else if ((pwdshadow_flg_exists(&st->st_pwdChangedTime)))
-         dat->dat_post = st->st_pwdChangedTime.dat_post;
+         dat->dt_post = st->st_pwdChangedTime.dt_post;
       else
-         dat->dat_post = ((int)time(NULL)) / 60 / 60 /24;
+         dat->dt_post = ((int)time(NULL)) / 60 / 60 /24;
    };
    pwdshadow_eval_postcheck(dat);
 
@@ -961,15 +961,15 @@ pwdshadow_eval(
    if ( ((pwdshadow_flg_evaladd(dat))) && (!(pwdshadow_flg_override(dat))) )
    {
       if ((pwdshadow_flg_willexist(&st->st_pwdEndTime)))
-         dat->dat_post = st->st_pwdEndTime.dat_post;
+         dat->dt_post = st->st_pwdEndTime.dt_post;
       else if ( ((st->st_autoexpire)) &&
            ((pwdshadow_flg_willexist(&st->st_pwdShadowLastChange))) &&
            ((pwdshadow_flg_exists(&st->st_pwdMaxAge))) )
       {
-         dat->dat_post =  st->st_pwdShadowLastChange.dat_post;
-         dat->dat_post += st->st_pwdMaxAge.dat_post;
+         dat->dt_post =  st->st_pwdShadowLastChange.dt_post;
+         dat->dt_post += st->st_pwdMaxAge.dt_post;
          if ((pwdshadow_flg_exists(&st->st_pwdGraceExpiry)))
-            dat->dat_post += st->st_pwdGraceExpiry.dat_post;
+            dat->dt_post += st->st_pwdGraceExpiry.dt_post;
       }
       else
       {
@@ -1033,7 +1033,7 @@ pwdshadow_eval_policy(
    pwdshadow_get_attr(entry, &st->st_pwdShadowAutoExpire,   flags);
 
    if ((pwdshadow_flg_exists(&st->st_pwdShadowAutoExpire)))
-      st->st_autoexpire = ((st->st_pwdShadowAutoExpire.dat_post)) ? 1 : 0;
+      st->st_autoexpire = ((st->st_pwdShadowAutoExpire.dt_post)) ? 1 : 0;
 
    // release entry
 	be_entry_release_r(op, entry);
@@ -1052,7 +1052,7 @@ pwdshadow_eval_postcheck(
    if (!(pwdshadow_flg_exists(dat)))
       return(0);
 
-   if (dat->dt_prev == dat->dat_post)
+   if (dat->dt_prev == dat->dt_post)
    {
       dat->dt_flag &= ~PWDSHADOW_FLG_EVALADD;
       return(0);
@@ -1092,13 +1092,13 @@ pwdshadow_eval_precheck(
       if ((pwdshadow_flg_useradd(override)))
       {
          dat->dt_flag |= (PWDSHADOW_FLG_EVALADD | PWDSHADOW_FLG_OVERRIDE);
-         dat->dat_post = override->dat_post;
+         dat->dt_post = override->dt_post;
          return(0);
       };
       if ( ((pwdshadow_flg_exists(override))) && (!(pwdshadow_flg_userdel(override))) )
       {
          dat->dt_flag |= (PWDSHADOW_FLG_EVALADD | PWDSHADOW_FLG_OVERRIDE);
-         dat->dat_post = override->dat_post;
+         dat->dt_post = override->dt_post;
          return(0);
       };
    };
@@ -1109,13 +1109,13 @@ pwdshadow_eval_precheck(
       if ((pwdshadow_flg_useradd(triggers[idx])))
       {
          dat->dt_flag |= PWDSHADOW_FLG_EVALADD;
-         dat->dat_post = triggers[idx]->dat_post;
+         dat->dt_post = triggers[idx]->dt_post;
       } else
       if ( ((pwdshadow_flg_exists(triggers[idx]))) &&
            (!(pwdshadow_flg_userdel(triggers[idx]))) )
       {
          dat->dt_flag |= PWDSHADOW_FLG_EVALADD;
-         dat->dat_post = triggers[idx]->dat_post;
+         dat->dt_post = triggers[idx]->dt_post;
       };
       if ( ((pwdshadow_flg_exists(triggers[idx]))) && (!(pwdshadow_flg_userdel(triggers[idx]))) )
          should_exist++;
@@ -1375,7 +1375,7 @@ pwdshadow_op_add_attr(
 
    // convert int to BV
    bv.bv_val = bv_val;
-   bv.bv_len = snprintf(bv_val, sizeof(bv_val), "%i", dat->dat_post);
+   bv.bv_len = snprintf(bv_val, sizeof(bv_val), "%i", dat->dt_post);
 
    // add attribute to entry
    attr_merge_one(entry, dat->dt_ad, &bv, &bv);
@@ -1552,7 +1552,7 @@ pwdshadow_op_modify_mods(
    mods->sml_op               = LDAP_MOD_REPLACE;
    mods->sml_numvals          = 1;
    mods->sml_values           = ch_calloc( sizeof( struct berval ), 2 );
-   pwdshadow_copy_int_bv(dat->dat_post, &mods->sml_values[0]);
+   pwdshadow_copy_int_bv(dat->dt_post, &mods->sml_values[0]);
    mods->sml_values[1].bv_val = NULL;
    mods->sml_values[1].bv_len = 0;
 
@@ -1649,17 +1649,17 @@ pwdshadow_set_value(
    {
       case PWDSHADOW_FLG_EXISTS:
       dat->dt_prev = val;
-      dat->dat_post = val;
+      dat->dt_post = val;
       break;
 
       case PWDSHADOW_FLG_USERADD:
       dat->dt_mod  = val;
-      dat->dat_post = val;
+      dat->dt_post = val;
       break;
 
       case PWDSHADOW_FLG_USERDEL:
       dat->dt_mod  = 0;
-      dat->dat_post = 0;
+      dat->dt_post = 0;
       break;
 
       default:
