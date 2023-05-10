@@ -40,6 +40,7 @@
 #pragma mark - Definitions
 
 #define PWDSHADOW_CFG_DEF_POLICY    0x01
+#define PWDSHADOW_CFG_POLICY_ATTR   0x02
 
 #define PWDSHADOW_OP_UNKNOWN     -2
 #define PWDSHADOW_OP_DELETE      -1
@@ -534,6 +535,21 @@ static ConfigTable pwdshadow_cfg_ats[] =
                         " SINGLE-VALUE )"
    },
    {
+      .name          = "pwdshadow_policy_attr",
+      .what          = "pwdShadowPolicySubentry attribute",
+      .min_args      = 2,
+      .max_args      = 2,
+      .length        = 0,
+      .arg_type      = ARG_MAGIC|ARG_ATDESC|PWDSHADOW_CFG_POLICY_ATTR,
+      .arg_item      = pwdshadow_cfg_gen,
+      .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.4"
+                        " NAME 'olcPwdShadowPolicyAttr'"
+                        " DESC 'Use pwdPolicy to determine values of generated attributes'"
+                        " EQUALITY caseIgnoreMatch"
+                        " SYNTAX OMsDirectoryString"
+                        " SINGLE-VALUE )"
+   },
+   {
       .name          = NULL,
       .what          = NULL,
       .min_args      = 0,
@@ -596,6 +612,7 @@ pwdshadow_cfg_gen(
    slap_overinst *         on;
    pwdshadow_t *           ps;
    int                     rc;
+   AttributeDescription *  ad;
 
    on    = (slap_overinst *)c->bi;
    ps    = (pwdshadow_t *)on->on_bi.bi_private;
@@ -617,6 +634,10 @@ pwdshadow_cfg_gen(
          };
          return(0);
 
+         case PWDSHADOW_CFG_POLICY_ATTR:
+         c->value_ad = ps->ps_ad_policyattr;
+         return(0);
+
          default:
          Debug(LDAP_DEBUG_ANY, "pwdshadow_cfg_gen: unknown configuration option\n" );
          return( ARG_BAD_CONF );
@@ -634,6 +655,10 @@ pwdshadow_cfg_gen(
             ps->ps_def_policy.bv_val = NULL;
          };
          ps->ps_def_policy.bv_len = 0;
+         return(0);
+
+         case PWDSHADOW_CFG_POLICY_ATTR:
+         ps->ps_ad_policyattr = ad_pwdShadowPolicySubentry;
          return(0);
 
          default:
@@ -658,6 +683,21 @@ pwdshadow_cfg_gen(
          ber_memfree( c->value_dn.bv_val );
          BER_BVZERO( &c->value_dn );
          BER_BVZERO( &c->value_ndn );
+         return(0);
+
+         case PWDSHADOW_CFG_POLICY_ATTR:
+         ad = c->value_ad;
+         if (!(is_at_syntax(ad->ad_type, SLAPD_DN_SYNTAX)))
+         {
+            snprintf( c->cr_msg,
+                     sizeof( c->cr_msg ),
+                     "pwdshadow_policy_attr attribute=\"%s\" must have DN (%s) syntax",
+                     c->argv[1],
+                     SLAPD_DN_SYNTAX );
+            Debug(LDAP_DEBUG_CONFIG, "%s: %s.\n", c->log, c->cr_msg);
+            return(ARG_BAD_CONF);
+         };
+         ps->ps_ad_policyattr = ad;
          return(0);
 
          default:
