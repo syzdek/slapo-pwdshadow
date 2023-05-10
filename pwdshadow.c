@@ -157,7 +157,7 @@ typedef struct pwdshadow_t
    struct berval              ps_def_policy;
    int                        ps_overrides;
    int                        ps_use_policies;
-   AttributeDescription *     ps_ad_policyattr;
+   AttributeDescription *     ps_policy_ad;
    pwdshadow_state_t          ps_state;
 } pwdshadow_t;
 
@@ -629,7 +629,7 @@ pwdshadow_cfg_gen(
          return(0);
 
          case PWDSHADOW_CFG_POLICY_ATTR:
-         c->value_ad = ps->ps_ad_policyattr;
+         c->value_ad = ps->ps_policy_ad;
          return(0);
 
          default:
@@ -652,7 +652,7 @@ pwdshadow_cfg_gen(
          return(0);
 
          case PWDSHADOW_CFG_POLICY_ATTR:
-         ps->ps_ad_policyattr = ad_pwdShadowPolicySubentry;
+         ps->ps_policy_ad = ad_pwdShadowPolicySubentry;
          return(0);
 
          default:
@@ -691,7 +691,7 @@ pwdshadow_cfg_gen(
             Debug(LDAP_DEBUG_CONFIG, "%s: %s.\n", c->log, c->cr_msg);
             return(ARG_BAD_CONF);
          };
-         ps->ps_ad_policyattr = ad;
+         ps->ps_policy_ad = ad;
          return(0);
 
          default:
@@ -779,7 +779,7 @@ pwdshadow_db_init(
    memset(ps, 0, sizeof(pwdshadow_t));
    ps->ps_overrides        = 1;
    ps->ps_use_policies     = 1;
-   ps->ps_ad_policyattr    = ad_pwdShadowPolicySubentry;
+   ps->ps_policy_ad        = ad_pwdShadowPolicySubentry;
 
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
    slap_str2ad("pwdChangedTime",       &st->st_pwdChangedTime.dat_ad,      &text);
@@ -1337,7 +1337,7 @@ pwdshadow_op_add(
    memcpy(&st, &ps->ps_state, sizeof(st));
    st.st_policy.bv_len           = ps->ps_def_policy.bv_len;
    st.st_policy.bv_val           = ps->ps_def_policy.bv_val;
-   st.st_policySubentry.dat_ad   = ps->ps_ad_policyattr;
+   st.st_policySubentry.dat_ad   = ps->ps_policy_ad;
 
    // determines existing attribtues
    pwdshadow_get_attrs(ps, &st, op->ora_e, PWDSHADOW_FLG_USERADD);
@@ -1403,7 +1403,7 @@ pwdshadow_op_modify(
    on                            = (slap_overinst *)op->o_bd->bd_info;
    ps                            = on->on_bi.bi_private;
    memcpy(&st, &ps->ps_state, sizeof(st));
-   st.st_policySubentry.dat_ad   = ps->ps_ad_policyattr;
+   st.st_policySubentry.dat_ad   = ps->ps_policy_ad;
 
    // retrieve entry from backend
    bd_info              = op->o_bd->bd_info;
