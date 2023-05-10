@@ -1588,7 +1588,12 @@ pwdshadow_set_value(
          int                           val,
          int                           flags )
 {
-   switch(flags & (PWDSHADOW_FLG_EXISTS|PWDSHADOW_FLG_USERADD|PWDSHADOW_FLG_USERDEL))
+   int op;
+
+   op  = PWDSHADOW_FLG_EXISTS;
+   op |= PWDSHADOW_FLG_USERADD;
+   op |= PWDSHADOW_FLG_USERDEL;
+   switch(flags & op)
    {
       case PWDSHADOW_FLG_EXISTS:
       dat->dat_prev = val;
