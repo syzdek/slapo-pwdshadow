@@ -1419,6 +1419,11 @@ pwdshadow_op_modify(
    // determines existing attribtues
    pwdshadow_get_attrs(ps, &st, entry, PWDSHADOW_FLG_EXISTS);
 
+   // release entry
+   op->o_bd->bd_info = (BackendInfo *)on->on_info;
+   be_entry_release_r( op, entry );
+   op->o_bd->bd_info = (BackendInfo *)bd_info;
+
    // scan modifications for attributes of interest
    for(next = &op->orm_modlist; ((*next)); next = &(*next)->sml_next)
    {
@@ -1506,9 +1511,6 @@ pwdshadow_op_modify(
    pwdshadow_op_modify_mods(&st.st_pwdShadowMax,            &next);
    pwdshadow_op_modify_mods(&st.st_pwdShadowMin,            &next);
    pwdshadow_op_modify_mods(&st.st_pwdShadowWarning,        &next);
-
-   op->o_bd->bd_info = (BackendInfo *)on->on_info;
-   be_entry_release_r( op, entry );
 
    if (!(rs))
       return(SLAP_CB_CONTINUE);
