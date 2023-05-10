@@ -1201,14 +1201,13 @@ pwdshadow_get_mods(
    int                     op;
    BerValue *              bv;
 
-   op    = 0;
-
    // set attribute description
    dat->dat_ad = ((dat->dat_ad)) ? dat->dat_ad : mods->sml_desc;
    if (dat->dat_ad != mods->sml_desc)
       return(-1);
 
    // determines and sets operation type
+   op = 0;
    op = (mods->sml_op == LDAP_MOD_ADD)    ? PWDSHADOW_FLG_USERADD : op;
    op = (mods->sml_op == LDAP_MOD_DELETE) ? PWDSHADOW_FLG_USERDEL : op;
    if (mods->sml_op == LDAP_MOD_REPLACE)
