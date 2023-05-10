@@ -593,9 +593,9 @@ int
 pwdshadow_cfg_gen(
          ConfigArgs *                  c )
 {
-   slap_overinst *   on;
-   pwdshadow_t *     ps;
-   int               rc;
+   slap_overinst *         on;
+   pwdshadow_t *           ps;
+   int                     rc;
 
    on    = (slap_overinst *)c->bi;
    ps    = (pwdshadow_t *)on->on_bi.bi_private;
