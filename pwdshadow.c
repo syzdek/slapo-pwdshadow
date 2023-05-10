@@ -68,13 +68,13 @@
 #define PWDSHADOW_HAS_MODS       ( PWDSHADOW_DAT_ADD | PWDSHADOW_DAT_DEL )
 
 // query individual flags
-#define pwdshadow_flg_useradd(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_USERADD)
-#define pwdshadow_flg_userdel(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_USERDEL)
-#define pwdshadow_flg_usermods(dat) ((dat)->dat_flag & PWDSHADOW_FLG_USERMODS)
-#define pwdshadow_flg_exists(dat)   ((dat)->dat_flag & PWDSHADOW_FLG_EXISTS)
-#define pwdshadow_flg_evaladd(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_EVALADD)
-#define pwdshadow_flg_evaldel(dat)  ((dat)->dat_flag & PWDSHADOW_FLG_EVALDEL)
-#define pwdshadow_flg_override(dat) ((dat)->dat_flag & PWDSHADOW_FLG_OVERRIDE)
+#define pwdshadow_flg_useradd(dat)  ((dat)->dt_flag & PWDSHADOW_FLG_USERADD)
+#define pwdshadow_flg_userdel(dat)  ((dat)->dt_flag & PWDSHADOW_FLG_USERDEL)
+#define pwdshadow_flg_usermods(dat) ((dat)->dt_flag & PWDSHADOW_FLG_USERMODS)
+#define pwdshadow_flg_exists(dat)   ((dat)->dt_flag & PWDSHADOW_FLG_EXISTS)
+#define pwdshadow_flg_evaladd(dat)  ((dat)->dt_flag & PWDSHADOW_FLG_EVALADD)
+#define pwdshadow_flg_evaldel(dat)  ((dat)->dt_flag & PWDSHADOW_FLG_EVALDEL)
+#define pwdshadow_flg_override(dat) ((dat)->dt_flag & PWDSHADOW_FLG_OVERRIDE)
 
 // retrieve class of flags
 #define pwdshadow_ops(flags)        (flags & PWDSHADOW_OPS)
@@ -82,7 +82,7 @@
 #define pwdshadow_type(flags)       (flags & PWDSHADOW_TYPE)
 
 // set flags
-#define pwdshadow_purge(dat)        (dat)->dat_flag |= ((pwdshadow_flg_exists(dat))) ? PWDSHADOW_FLG_EVALDEL : 0
+#define pwdshadow_purge(dat)        (dat)->dt_flag |= ((pwdshadow_flg_exists(dat))) ? PWDSHADOW_FLG_EVALDEL : 0
 
 
 /////////////////
@@ -102,7 +102,7 @@ typedef struct pwdshadow_at_t
 typedef struct pwdshadow_data_t
 {
    AttributeDescription *     dt_ad;
-   int                        dat_flag;
+   int                        dt_flag;
    int                        dat_prev;
    int                        dat_mod;
    int                        dat_post;
@@ -973,9 +973,9 @@ pwdshadow_eval(
       }
       else
       {
-         dat->dat_flag &= ~PWDSHADOW_FLG_EVALADD;
+         dat->dt_flag &= ~PWDSHADOW_FLG_EVALADD;
          if ((pwdshadow_flg_exists(dat)))
-            dat->dat_flag |= PWDSHADOW_FLG_EVALDEL;
+            dat->dt_flag |= PWDSHADOW_FLG_EVALDEL;
       };
    };
    pwdshadow_eval_postcheck(dat);
@@ -1054,7 +1054,7 @@ pwdshadow_eval_postcheck(
 
    if (dat->dat_prev == dat->dat_post)
    {
-      dat->dat_flag &= ~PWDSHADOW_FLG_EVALADD;
+      dat->dt_flag &= ~PWDSHADOW_FLG_EVALADD;
       return(0);
    };
 
@@ -1091,13 +1091,13 @@ pwdshadow_eval_precheck(
    {
       if ((pwdshadow_flg_useradd(override)))
       {
-         dat->dat_flag |= (PWDSHADOW_FLG_EVALADD | PWDSHADOW_FLG_OVERRIDE);
+         dat->dt_flag |= (PWDSHADOW_FLG_EVALADD | PWDSHADOW_FLG_OVERRIDE);
          dat->dat_post = override->dat_post;
          return(0);
       };
       if ( ((pwdshadow_flg_exists(override))) && (!(pwdshadow_flg_userdel(override))) )
       {
-         dat->dat_flag |= (PWDSHADOW_FLG_EVALADD | PWDSHADOW_FLG_OVERRIDE);
+         dat->dt_flag |= (PWDSHADOW_FLG_EVALADD | PWDSHADOW_FLG_OVERRIDE);
          dat->dat_post = override->dat_post;
          return(0);
       };
@@ -1108,13 +1108,13 @@ pwdshadow_eval_precheck(
    {
       if ((pwdshadow_flg_useradd(triggers[idx])))
       {
-         dat->dat_flag |= PWDSHADOW_FLG_EVALADD;
+         dat->dt_flag |= PWDSHADOW_FLG_EVALADD;
          dat->dat_post = triggers[idx]->dat_post;
       } else
       if ( ((pwdshadow_flg_exists(triggers[idx]))) &&
            (!(pwdshadow_flg_userdel(triggers[idx]))) )
       {
-         dat->dat_flag |= PWDSHADOW_FLG_EVALADD;
+         dat->dt_flag |= PWDSHADOW_FLG_EVALADD;
          dat->dat_post = triggers[idx]->dat_post;
       };
       if ( ((pwdshadow_flg_exists(triggers[idx]))) && (!(pwdshadow_flg_userdel(triggers[idx]))) )
@@ -1125,7 +1125,7 @@ pwdshadow_eval_precheck(
 
    // determine if attribute should be removed
    if ( ((pwdshadow_flg_exists(dat))) && (!(should_exist)) )
-         dat->dat_flag |= PWDSHADOW_FLG_EVALDEL;
+         dat->dt_flag |= PWDSHADOW_FLG_EVALDEL;
 
    return(0);
 }
@@ -1135,15 +1135,15 @@ int
 pwdshadow_flg_willexist(
          pwdshadow_data_t *            dat)
 {
-   if ((dat->dat_flag & PWDSHADOW_FLG_EVALDEL))
+   if ((dat->dt_flag & PWDSHADOW_FLG_EVALDEL))
       return(0);
-   if ((dat->dat_flag & PWDSHADOW_FLG_USERDEL))
+   if ((dat->dt_flag & PWDSHADOW_FLG_USERDEL))
       return(0);
-   if ((dat->dat_flag & PWDSHADOW_FLG_EXISTS))
+   if ((dat->dt_flag & PWDSHADOW_FLG_EXISTS))
       return(1);
-   if ((dat->dat_flag & PWDSHADOW_FLG_USERADD))
+   if ((dat->dt_flag & PWDSHADOW_FLG_USERADD))
       return(1);
-   if ((dat->dat_flag & PWDSHADOW_FLG_EVALADD))
+   if ((dat->dt_flag & PWDSHADOW_FLG_EVALADD))
       return(1);
    return(0);
 }
@@ -1370,7 +1370,7 @@ pwdshadow_op_add_attr(
 
    if ((pwdshadow_flg_usermods(dat)))
       return(0);
-   if ( (!(dat->dt_ad)) || (!(dat->dat_flag & PWDSHADOW_FLG_EVALADD)) )
+   if ( (!(dat->dt_ad)) || (!(dat->dt_flag & PWDSHADOW_FLG_EVALADD)) )
       return(0);
 
    // convert int to BV
@@ -1527,7 +1527,7 @@ pwdshadow_op_modify_mods(
 
    if ((pwdshadow_flg_usermods(dat)))
       return(0);
-   if ( (!(pwdshadow_ops(dat->dat_flag))) || (!(dat->dt_ad)) )
+   if ( (!(pwdshadow_ops(dat->dt_flag))) || (!(dat->dt_ad)) )
       return(0);
    ad = dat->dt_ad;
 
@@ -1573,7 +1573,7 @@ pwdshadow_set(
    AttributeDescription *  ad;
 
    ad   = dat->dt_ad;
-   type = ((pwdshadow_type(dat->dat_flag))) ? pwdshadow_type(dat->dat_flag) : pwdshadow_type(flags);
+   type = ((pwdshadow_type(dat->dt_flag))) ? pwdshadow_type(dat->dt_flag) : pwdshadow_type(flags);
    if (pwdshadow_type(flags) != type)
       return(-1);
 
@@ -1666,7 +1666,7 @@ pwdshadow_set_value(
       return(-1);
    };
 
-   dat->dat_flag  |= flags;
+   dat->dt_flag  |= flags;
 
    return(0);
 }
