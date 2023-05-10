@@ -103,7 +103,7 @@ typedef struct pwdshadow_data_t
 {
    AttributeDescription *     dt_ad;
    int                        dt_flag;
-   int                        dat_prev;
+   int                        dt_prev;
    int                        dat_mod;
    int                        dat_post;
 } pwdshadow_data_t;
@@ -1052,7 +1052,7 @@ pwdshadow_eval_postcheck(
    if (!(pwdshadow_flg_exists(dat)))
       return(0);
 
-   if (dat->dat_prev == dat->dat_post)
+   if (dat->dt_prev == dat->dat_post)
    {
       dat->dt_flag &= ~PWDSHADOW_FLG_EVALADD;
       return(0);
@@ -1648,7 +1648,7 @@ pwdshadow_set_value(
    switch(flags & op)
    {
       case PWDSHADOW_FLG_EXISTS:
-      dat->dat_prev = val;
+      dat->dt_prev = val;
       dat->dat_post = val;
       break;
 
