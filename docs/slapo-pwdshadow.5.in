@@ -14,7 +14,7 @@
 .\"
 .TH SLAPO_PWDSHADOW 5 "RELEASEDATE" "slapo-pwdshadow LDVERSION"
 .SH NAME
-slapo\-pwdshadow \- Password Policy conversion to RFC2256 Shadow attribtues overlay
+slapo\-pwdshadow \- Password Policy conversion to RFC2256 Shadow attributes overlay
 .SH SYNOPSIS
 ETCDIR/slapd.conf
 .SH DESCRIPTION
