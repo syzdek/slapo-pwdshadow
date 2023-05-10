@@ -104,7 +104,7 @@ typedef struct pwdshadow_data_t
    AttributeDescription *     dt_ad;
    int                        dt_flag;
    int                        dt_prev;
-   int                        dat_mod;
+   int                        dt_mod;
    int                        dat_post;
 } pwdshadow_data_t;
 
@@ -1653,12 +1653,12 @@ pwdshadow_set_value(
       break;
 
       case PWDSHADOW_FLG_USERADD:
-      dat->dat_mod  = val;
+      dat->dt_mod  = val;
       dat->dat_post = val;
       break;
 
       case PWDSHADOW_FLG_USERDEL:
-      dat->dat_mod  = 0;
+      dat->dt_mod  = 0;
       dat->dat_post = 0;
       break;
 
