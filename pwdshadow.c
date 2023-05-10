@@ -111,7 +111,6 @@ typedef struct pwdshadow_data_t
 
 typedef struct pwdshadow_state_t
 {
-   Entry *                    st_entry;
    BerValue                   st_policy;
    int                        st_purge;
    int                        st_autoexpire;
@@ -1410,7 +1409,6 @@ pwdshadow_op_modify(
    op->o_bd->bd_info    = (BackendInfo *)on->on_info;
    rc                   = be_entry_get_rw( op, &op->o_req_ndn, NULL, NULL, 0, &entry );
    op->o_bd->bd_info    = (BackendInfo *)bd_info;
-   st.st_entry          = entry;
    st.st_policy.bv_len  = ps->ps_def_policy.bv_len;
    st.st_policy.bv_val  = ps->ps_def_policy.bv_val;
    if ( rc != LDAP_SUCCESS )
