@@ -1591,7 +1591,7 @@ pwdshadow_set(
    switch(type)
    {
       case PWDSHADOW_TYPE_BOOL:
-      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.7")))
+      if (!(is_at_syntax(ad->ad_type, "1.3.6.1.4.1.1466.115.121.1.7")))
          return(-1);
       ival = 0;
       if ( ((bv)) && ((bv->bv_val)) && (!(strcasecmp(bv->bv_val, "TRUE"))) )
@@ -1599,7 +1599,7 @@ pwdshadow_set(
       return(pwdshadow_set_value(dat, ival, flags));
 
       case PWDSHADOW_TYPE_DAYS:
-      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
+      if (!(is_at_syntax(ad->ad_type, SLAPD_INTEGER_SYNTAX)))
          return(-1);
       lutil_atoi(&ival, bv->bv_val);
       return(pwdshadow_set_value(dat, ival, flags));
@@ -1609,20 +1609,20 @@ pwdshadow_set(
       return(pwdshadow_set_value(dat, ival, flags));
 
       case PWDSHADOW_TYPE_INTEGER:
-      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
+      if (!(is_at_syntax(ad->ad_type, SLAPD_INTEGER_SYNTAX)))
          return(-1);
       lutil_atoi(&ival, bv->bv_val);
       return(pwdshadow_set_value(dat, ival, flags));
 
       case PWDSHADOW_TYPE_SECS:
-      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.27")))
+      if (!(is_at_syntax(ad->ad_type, SLAPD_INTEGER_SYNTAX)))
          return(-1);
       lutil_atoi(&ival, bv->bv_val);
       ival /= 60 * 60 * 24;
       return(pwdshadow_set_value(dat, ival, flags));
 
       case PWDSHADOW_TYPE_TIME:
-      if (!(pwdshadow_verify_attr_syntax(ad, "1.3.6.1.4.1.1466.115.121.1.24")))
+      if (!(is_at_syntax(ad->ad_type, "1.3.6.1.4.1.1466.115.121.1.24")))
          return(-1);
       if (lutil_parsetime(bv->bv_val, &tm) != 0)
          return(-1);
