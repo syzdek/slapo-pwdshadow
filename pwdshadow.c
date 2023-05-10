@@ -40,7 +40,7 @@
 #pragma mark - Definitions
 
 #define PWDSHADOW_CFG_DEF_POLICY    0x01
-#define PWDSHADOW_CFG_POLICY_ATTR   0x02
+#define PWDSHADOW_CFG_POLICY_AD     0x02
 
 #define PWDSHADOW_OP_UNKNOWN     -2
 #define PWDSHADOW_OP_DELETE      -1
@@ -529,15 +529,15 @@ static ConfigTable pwdshadow_cfg_ats[] =
                         " SINGLE-VALUE )"
    },
    {
-      .name          = "pwdshadow_policy_attr",
+      .name          = "pwdshadow_policy_ad",
       .what          = "pwdShadowPolicySubentry attribute",
       .min_args      = 2,
       .max_args      = 2,
       .length        = 0,
-      .arg_type      = ARG_MAGIC|ARG_ATDESC|PWDSHADOW_CFG_POLICY_ATTR,
+      .arg_type      = ARG_MAGIC|ARG_ATDESC|PWDSHADOW_CFG_POLICY_AD,
       .arg_item      = pwdshadow_cfg_gen,
       .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.4"
-                        " NAME 'olcPwdShadowPolicyAttr'"
+                        " NAME 'olcPwdShadowPolicyAD'"
                         " DESC 'Use pwdPolicy to determine values of generated attributes'"
                         " EQUALITY caseIgnoreMatch"
                         " SYNTAX OMsDirectoryString"
@@ -628,7 +628,7 @@ pwdshadow_cfg_gen(
          };
          return(0);
 
-         case PWDSHADOW_CFG_POLICY_ATTR:
+         case PWDSHADOW_CFG_POLICY_AD:
          c->value_ad = ps->ps_policy_ad;
          return(0);
 
@@ -651,7 +651,7 @@ pwdshadow_cfg_gen(
          ps->ps_def_policy.bv_len = 0;
          return(0);
 
-         case PWDSHADOW_CFG_POLICY_ATTR:
+         case PWDSHADOW_CFG_POLICY_AD:
          ps->ps_policy_ad = ad_pwdShadowPolicySubentry;
          return(0);
 
@@ -679,7 +679,7 @@ pwdshadow_cfg_gen(
          BER_BVZERO( &c->value_ndn );
          return(0);
 
-         case PWDSHADOW_CFG_POLICY_ATTR:
+         case PWDSHADOW_CFG_POLICY_AD:
          ad = c->value_ad;
          if (!(is_at_syntax(ad->ad_type, SLAPD_DN_SYNTAX)))
          {
