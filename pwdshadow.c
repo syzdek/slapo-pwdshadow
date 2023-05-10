@@ -154,7 +154,7 @@ typedef struct pwdshadow_state_t
 typedef struct pwdshadow_t
 {
    struct berval              ps_def_policy;
-   int                        ps_cfg_overrides;
+   int                        ps_overrides;
    int                        ps_cfg_use_policies;
    AttributeDescription *     ps_ad_policyattr;
    pwdshadow_state_t          ps_state;
@@ -510,7 +510,7 @@ static ConfigTable pwdshadow_cfg_ats[] =
       .max_args      = 2,
       .length        = 0,
       .arg_type      = ARG_ON_OFF|ARG_OFFSET,
-      .arg_item      = (void *)offsetof(pwdshadow_t,ps_cfg_overrides),
+      .arg_item      = (void *)offsetof(pwdshadow_t,ps_overrides),
       .attribute     = "( 1.3.6.1.4.1.27893.4.2.4.2"
                         " NAME 'olcPwdShadowOverrides'"
                         " DESC 'Allow shadow attributes to override the values of generated attribtues.'"
@@ -743,7 +743,7 @@ pwdshadow_db_init(
 
    // set default values
    memset(ps, 0, sizeof(pwdshadow_t));
-   ps->ps_cfg_overrides          = 1;
+   ps->ps_overrides        = 1;
    ps->ps_cfg_use_policies       = 1;
    ps->ps_ad_policyattr    = ad_pwdShadowPolicySubentry;
 
@@ -1054,7 +1054,7 @@ pwdshadow_eval_precheck(
    };
 
    // determine if override value is set for attribute
-   if ( ((ps->ps_cfg_overrides)) && ((override)) )
+   if ( ((ps->ps_overrides)) && ((override)) )
    {
       if ((pwdshadow_flg_useradd(override)))
       {
@@ -1436,7 +1436,7 @@ pwdshadow_op_modify(
       };
 
       // skip remaining attributes if override is disabled
-      if (!(ps->ps_cfg_overrides))
+      if (!(ps->ps_overrides))
          continue;
 
       if (mods->sml_desc == st.st_shadowExpire.dat_ad)
