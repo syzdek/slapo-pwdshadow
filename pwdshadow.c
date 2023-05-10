@@ -114,6 +114,7 @@ typedef struct pwdshadow_state_t
    BerValue                   st_policy;
    int                        st_purge;
    int                        st_autoexpire;
+   pwdshadow_data_t           st_policySubentry;
 
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
    pwdshadow_data_t           st_pwdChangedTime;
@@ -122,7 +123,6 @@ typedef struct pwdshadow_state_t
    pwdshadow_data_t           st_pwdGraceExpiry;
    pwdshadow_data_t           st_pwdMaxAge;
    pwdshadow_data_t           st_pwdMinAge;
-   pwdshadow_data_t           st_pwdPolicySubentry;
 
    // slapo-pwdshadow policy attributes
    pwdshadow_data_t           st_pwdShadowAutoExpire;
@@ -156,6 +156,7 @@ typedef struct pwdshadow_t
    struct berval              ps_def_policy;
    int                        ps_cfg_overrides;
    int                        ps_cfg_use_policies;
+   AttributeDescription *     ps_cfg_ad_policyattr;
    pwdshadow_state_t          ps_state;
 } pwdshadow_t;
 
@@ -306,6 +307,7 @@ static AttributeDescription *       ad_pwdShadowInactive       = NULL;
 static AttributeDescription *       ad_pwdShadowExpire         = NULL;
 static AttributeDescription *       ad_pwdShadowFlag           = NULL;
 static AttributeDescription *       ad_pwdShadowGenerate       = NULL;
+static AttributeDescription *       ad_pwdShadowPolicySubentry = NULL;
 
 
 // # OID Base is iso(1) org(3) dod(6) internet(1) private(4) enterprise(1)
@@ -446,6 +448,20 @@ static pwdshadow_at_t pwdshadow_ats[] =
                   " SYNTAX 1.3.6.1.4.1.1466.115.121.1.7"
                   " SINGLE-VALUE )",
       .ad      = &ad_pwdShadowAutoExpire
+   },
+   {  // pwdShadowPolicySubentry: This attribute specifies the pwdShadowPolicy
+      // subentry in effect for this object.  The attribute used to specify
+      // the pwdShadowPolicy subentry in affect may be changed using either
+      // olcPwdShadowPolicyAttr attribute in the config backend or by the
+      // pwdshadow_policy_attr option in slapd.conf.
+      .def     = "( 1.3.6.1.4.1.27893.4.2.2.3"
+                  " NAME ( 'pwdShadowPolicySubentry' )"
+                  " DESC 'The pwdShadowPolicy subentry in effect for this object'"
+                  " EQUALITY distinguishedNameMatch"
+                  " SYNTAX 1.3.6.1.4.1.1466.115.121.1.12"
+                  " SINGLE-VALUE "
+                  " USAGE directoryOperation )",
+      .ad      = &ad_pwdShadowPolicySubentry
    },
    {  
       .def     = NULL,
@@ -729,6 +745,7 @@ pwdshadow_db_init(
    memset(ps, 0, sizeof(pwdshadow_t));
    ps->ps_cfg_overrides          = 1;
    ps->ps_cfg_use_policies       = 1;
+   ps->ps_cfg_ad_policyattr      = ad_pwdShadowPolicySubentry;
 
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
    slap_str2ad("pwdChangedTime",       &st->st_pwdChangedTime.dat_ad,      &text);
@@ -737,7 +754,6 @@ pwdshadow_db_init(
    slap_str2ad("pwdGraceExpiry",       &st->st_pwdGraceExpiry.dat_ad,      &text);
    slap_str2ad("pwdMaxAge",            &st->st_pwdMaxAge.dat_ad,           &text);
    slap_str2ad("pwdMinAge",            &st->st_pwdMinAge.dat_ad,           &text);
-   slap_str2ad("pwdPolicySubentry",    &st->st_pwdPolicySubentry.dat_ad,   &text);
 
    // slapo-pwdshadow policy attributes
    st->st_pwdShadowAutoExpire.dat_ad   = ad_pwdShadowAutoExpire;
@@ -786,7 +802,7 @@ pwdshadow_eval(
    // determine modification count
    count  = 0;
    count += ((pwdshadow_flg_usermods(&st->st_pwdEndTime)))        ? 1 : 0;
-   count += ((pwdshadow_flg_usermods(&st->st_pwdPolicySubentry))) ? 1 : 0;
+   count += ((pwdshadow_flg_usermods(&st->st_policySubentry)))    ? 1 : 0;
    count += ((pwdshadow_flg_usermods(&st->st_pwdShadowGenerate))) ? 1 : 0;
    count += ((pwdshadow_flg_usermods(&st->st_shadowExpire)))      ? 1 : 0;
    count += ((pwdshadow_flg_usermods(&st->st_shadowFlag)))        ? 1 : 0;
@@ -1145,10 +1161,12 @@ pwdshadow_get_attrs(
    flags_time     = flags | PWDSHADOW_TYPE_TIME;
    flags_integer  = flags | PWDSHADOW_TYPE_INTEGER;
 
+   // slapo-ppolicy policy subentry
+   pwdshadow_get_attr(entry, &st->st_policySubentry,       flags_exists);
+
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
    pwdshadow_get_attr(entry, &st->st_pwdChangedTime,       flags_time);
    pwdshadow_get_attr(entry, &st->st_pwdEndTime,           flags_time);
-   pwdshadow_get_attr(entry, &st->st_pwdPolicySubentry,    flags_exists);
 
    // slapo-pwdshadow attributes
    pwdshadow_get_attr(entry, &st->st_pwdShadowExpire,      flags_days);
@@ -1175,7 +1193,7 @@ pwdshadow_get_attrs(
    // update pwdPolicy
    if ((ps->ps_cfg_use_policies))
    {
-      ad = st->st_pwdPolicySubentry.dat_ad;
+      ad = st->st_policySubentry.dat_ad;
       if ((a = attr_find(entry->e_attrs, ad)) != NULL)
       {
          if ((a = (a->a_numvals > 0) ? a : NULL) != NULL)
@@ -1285,6 +1303,7 @@ pwdshadow_op_add(
    memcpy(&st, &ps->ps_state, sizeof(st));
    st.st_policy.bv_len           = ps->ps_def_policy.bv_len;
    st.st_policy.bv_val           = ps->ps_def_policy.bv_val;
+   st.st_policySubentry.dat_ad   = ps->ps_cfg_ad_policyattr;
 
    // determines existing attribtues
    pwdshadow_get_attrs(ps, &st, op->ora_e, PWDSHADOW_FLG_USERADD);
@@ -1350,6 +1369,7 @@ pwdshadow_op_modify(
    on                            = (slap_overinst *)op->o_bd->bd_info;
    ps                            = on->on_bi.bi_private;
    memcpy(&st, &ps->ps_state, sizeof(st));
+   st.st_policySubentry.dat_ad   = ps->ps_cfg_ad_policyattr;
 
    // retrieve entry from backend
    bd_info              = op->o_bd->bd_info;
@@ -1400,15 +1420,15 @@ pwdshadow_op_modify(
       if (mods->sml_desc == st.st_userPassword.dat_ad)
          pwdshadow_get_mods(mods, &st.st_userPassword, PWDSHADOW_TYPE_EXISTS);
 
-      if (mods->sml_desc == st.st_pwdPolicySubentry.dat_ad)
+      if (mods->sml_desc == st.st_policySubentry.dat_ad)
       {
-         pwdshadow_get_mods(mods, &st.st_pwdPolicySubentry, PWDSHADOW_TYPE_EXISTS);
-         if ((pwdshadow_flg_userdel(&st.st_pwdPolicySubentry)))
+         pwdshadow_get_mods(mods, &st.st_policySubentry, PWDSHADOW_TYPE_EXISTS);
+         if ((pwdshadow_flg_userdel(&st.st_policySubentry)))
          {
             st.st_policy.bv_len  = ps->ps_def_policy.bv_len;
             st.st_policy.bv_val  = ps->ps_def_policy.bv_val;
          };
-         if ((pwdshadow_flg_useradd(&st.st_pwdPolicySubentry)))
+         if ((pwdshadow_flg_useradd(&st.st_policySubentry)))
          {
             st.st_policy.bv_len  = mods->sml_values[0].bv_len;
             st.st_policy.bv_val  = mods->sml_values[0].bv_val;
