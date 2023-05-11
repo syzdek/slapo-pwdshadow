@@ -191,6 +191,12 @@ pwdshadow_db_init(
 
 
 static int
+pwdshadow_db_open(
+         BackendDB *                   be,
+         ConfigReply *                 cr );
+
+
+static int
 pwdshadow_eval(
          Operation *                   op,
          pwdshadow_state_t *           st );
@@ -295,6 +301,8 @@ pwdshadow_state_initialize(
 #pragma mark - Variables
 
 static slap_overinst pwdshadow;
+static ldap_pvt_thread_mutex_t   pwdshadow_ad_mutex;
+static int                       pwdshadow_schema              = 0;
 
 // internal attribute descriptions
 static AttributeDescription *       ad_pwdShadowAutoExpire     = NULL;
@@ -307,6 +315,26 @@ static AttributeDescription *       ad_pwdShadowExpire         = NULL;
 static AttributeDescription *       ad_pwdShadowFlag           = NULL;
 static AttributeDescription *       ad_pwdShadowGenerate       = NULL;
 static AttributeDescription *       ad_pwdShadowPolicySubentry = NULL;
+
+// slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
+static AttributeDescription *       ad_pwdChangedTime          = NULL;
+static AttributeDescription *       ad_pwdEndTime              = NULL;
+static AttributeDescription *       ad_pwdExpireWarning        = NULL;
+static AttributeDescription *       ad_pwdGraceExpiry          = NULL;
+static AttributeDescription *       ad_pwdMaxAge               = NULL;
+static AttributeDescription *       ad_pwdMinAge               = NULL;
+
+// LDAP NIS attributes (RFC 2307)
+static AttributeDescription *       ad_shadowExpire            = NULL;
+static AttributeDescription *       ad_shadowFlag              = NULL;
+static AttributeDescription *       ad_shadowInactive          = NULL;
+static AttributeDescription *       ad_shadowLastChange        = NULL;
+static AttributeDescription *       ad_shadowMax               = NULL;
+static AttributeDescription *       ad_shadowMin               = NULL;
+static AttributeDescription *       ad_shadowWarning           = NULL;
+
+// User Schema (RFC 2256)
+static AttributeDescription *       ad_userPassword            = NULL;
 
 
 // # OID Base is iso(1) org(3) dod(6) internet(1) private(4) enterprise(1)
@@ -781,6 +809,59 @@ pwdshadow_db_init(
    ps->ps_use_policies     = 1;
    ps->ps_policy_ad        = ad_pwdShadowPolicySubentry;
 
+   return(0);
+}
+
+
+int
+pwdshadow_db_open(
+         BackendDB *                   be,
+         ConfigReply *                 cr )
+{
+   slap_overinst *         on;
+   pwdshadow_t *           ps;
+   const char *            text;
+
+   on                   = (slap_overinst *) be->bd_info;
+   ps                   = on->on_bi.bi_private;
+
+   ldap_pvt_thread_mutex_lock(&pwdshadow_ad_mutex);
+
+   // verifies schema has not aleady been retrieved
+   if ((pwdshadow_schema))
+   {
+      ldap_pvt_thread_mutex_unlock(&pwdshadow_ad_mutex);
+      return(0);
+   };
+   pwdshadow_schema = 1;
+
+   // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
+   slap_str2ad("pwdChangedTime",    &ad_pwdChangedTime,     &text);
+   slap_str2ad("pwdEndTime",        &ad_pwdEndTime,         &text);
+   slap_str2ad("pwdExpireWarning",  &ad_pwdExpireWarning,   &text);
+   slap_str2ad("pwdGraceExpiry",    &ad_pwdGraceExpiry,     &text);
+   slap_str2ad("pwdMaxAge",         &ad_pwdMaxAge,          &text);
+   slap_str2ad("pwdMinAge",         &ad_pwdMinAge,          &text);
+
+   // LDAP NIS attributes (RFC 2307)
+   slap_str2ad("shadowExpire",      &ad_shadowExpire,       &text);
+   slap_str2ad("shadowFlag",        &ad_shadowFlag,         &text);
+   slap_str2ad("shadowInactive",    &ad_shadowInactive,     &text);
+   slap_str2ad("shadowLastChange",  &ad_shadowLastChange,   &text);
+   slap_str2ad("shadowMax",         &ad_shadowMax,          &text);
+   slap_str2ad("shadowMin",         &ad_shadowMin,          &text);
+   slap_str2ad("shadowWarning",     &ad_shadowWarning,      &text);
+
+   // User Schema (RFC 2256)
+   if ((ad_userPassword = slap_schema.si_ad_userPassword) == NULL)
+      slap_str2ad("userPassword",   &ad_userPassword,       &text);
+
+   ldap_pvt_thread_mutex_unlock(&pwdshadow_ad_mutex);
+
+   if ((ps))
+      return(0);
+   if ((cr))
+      return(0);
    return(0);
 }
 
@@ -1273,10 +1354,13 @@ pwdshadow_initialize( void )
       return(code);
    };
 
+   ldap_pvt_thread_mutex_init(&pwdshadow_ad_mutex);
+
    pwdshadow.on_bi.bi_type          = "pwdshadow";
    pwdshadow.on_bi.bi_flags         = SLAPO_BFLAG_SINGLE;
 
    pwdshadow.on_bi.bi_db_init       = pwdshadow_db_init;
+   pwdshadow.on_bi.bi_db_open       = pwdshadow_db_open;
    pwdshadow.on_bi.bi_db_destroy    = pwdshadow_db_destroy;
 
    pwdshadow.on_bi.bi_op_add        = pwdshadow_op_add;
@@ -1638,13 +1722,13 @@ pwdshadow_state_initialize(
          pwdshadow_state_t *           st,
          pwdshadow_t *                 ps )
 {
-   const char *      text;
-
    memset(st, 0, sizeof(pwdshadow_state_t));
 
    st->st_policy.bv_len          = ps->ps_def_policy.bv_len;
    st->st_policy.bv_val          = ps->ps_def_policy.bv_val;
    st->st_policySubentry.dt_ad   = ps->ps_policy_ad;
+
+   ldap_pvt_thread_mutex_lock(&pwdshadow_ad_mutex);
 
    // slapo-pwdshadow policy attributes
    st->st_pwdShadowAutoExpire.dt_ad    = ad_pwdShadowAutoExpire;
@@ -1660,25 +1744,26 @@ pwdshadow_state_initialize(
    st->st_pwdShadowWarning.dt_ad       = ad_pwdShadowWarning;
 
    // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
-   slap_str2ad("pwdChangedTime",    &st->st_pwdChangedTime.dt_ad,    &text);
-   slap_str2ad("pwdEndTime",        &st->st_pwdEndTime.dt_ad,        &text);
-   slap_str2ad("pwdExpireWarning",  &st->st_pwdExpireWarning.dt_ad,  &text);
-   slap_str2ad("pwdGraceExpiry",    &st->st_pwdGraceExpiry.dt_ad,    &text);
-   slap_str2ad("pwdMaxAge",         &st->st_pwdMaxAge.dt_ad,         &text);
-   slap_str2ad("pwdMinAge",         &st->st_pwdMinAge.dt_ad,         &text);
+   st->st_pwdChangedTime.dt_ad         = ad_pwdChangedTime;
+   st->st_pwdEndTime.dt_ad             = ad_pwdEndTime;
+   st->st_pwdExpireWarning.dt_ad       = ad_pwdExpireWarning;
+   st->st_pwdGraceExpiry.dt_ad         = ad_pwdGraceExpiry;
+   st->st_pwdMaxAge.dt_ad              = ad_pwdMaxAge;
+   st->st_pwdMinAge.dt_ad              = ad_pwdMinAge;
 
    // LDAP NIS attributes (RFC 2307)
-   slap_str2ad("shadowExpire",      &st->st_shadowExpire.dt_ad,      &text);
-   slap_str2ad("shadowFlag",        &st->st_shadowFlag.dt_ad,        &text);
-   slap_str2ad("shadowInactive",    &st->st_shadowInactive.dt_ad,    &text);
-   slap_str2ad("shadowLastChange",  &st->st_shadowLastChange.dt_ad,  &text);
-   slap_str2ad("shadowMax",         &st->st_shadowMax.dt_ad,         &text);
-   slap_str2ad("shadowMin",         &st->st_shadowMin.dt_ad,         &text);
-   slap_str2ad("shadowWarning",     &st->st_shadowWarning.dt_ad,     &text);
+   st->st_shadowExpire.dt_ad           = ad_shadowExpire;
+   st->st_shadowFlag.dt_ad             = ad_shadowFlag;
+   st->st_shadowInactive.dt_ad         = ad_shadowInactive;
+   st->st_shadowLastChange.dt_ad       = ad_shadowLastChange;
+   st->st_shadowMax.dt_ad              = ad_shadowMax;
+   st->st_shadowMin.dt_ad              = ad_shadowMin;
+   st->st_shadowWarning.dt_ad          = ad_shadowWarning;
 
    // User Schema (RFC 2256)
-   if ((st->st_userPassword.dt_ad = slap_schema.si_ad_userPassword) == NULL)
-      slap_str2ad("userPassword",   &st->st_userPassword.dt_ad,      &text);
+   st->st_userPassword.dt_ad           = ad_userPassword;
+
+   ldap_pvt_thread_mutex_unlock(&pwdshadow_ad_mutex);
 
    return(0);
 }
