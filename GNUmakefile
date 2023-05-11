@@ -172,8 +172,6 @@ docs/slapo-pwdshadow.5.html: GNUmakefile docs/slapo-pwdshadow.5
 	   |sed -e 's/<!--.*-->//g' \
 	   |sed -e 's!<a href.*</a><br>!!g' \
 	   > $(@)
-	#egrep -v '^<!-- Creat|^<a |^<h1|^<hr' $(@).new > $(@)
-	#rm -f $(@).new
 	touch $(@)
 
 
