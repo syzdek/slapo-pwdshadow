@@ -5,7 +5,7 @@
 
 # start daemon with:
 #
-#   /tmp/openldap/libexec/slapd \
+#   /tmp/slapo-pwdshadow/libexec/slapd \
 #      -d conns,filter,config,acl,stats,sync \
 #      -f /tmp/openldap/etc/openldap/slapd.conf-test \
 #      -h "ldap://localhost ldapi://%2Ftmp%2Fopenldap%2Fvar%2Frun%2Fslapd.sock"
@@ -66,6 +66,7 @@ ppolicy_hash_cleartext
 pwdshadow_default	dc=example,dc=com
 pwdshadow_overrides	on
 pwdshadow_use_policies	on
+pwdshadow_policy_ad     pwdPolicySubEntry
 index	default		eq,pres
 index	objectClass	eq
 index	uid		eq,pres,sub
