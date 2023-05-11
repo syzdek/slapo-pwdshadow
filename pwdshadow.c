@@ -14,7 +14,7 @@
  *  <http://www.OpenLDAP.org/license.html>.
  */
 #include "portable.h"
-
+#ifdef SLAPD_OVER_PWDSHADOW
 
 ///////////////
 //           //
@@ -1793,4 +1793,5 @@ pwdshadow_state_initialize(
    return(0);
 }
 
+#endif
 /* end of source file */
