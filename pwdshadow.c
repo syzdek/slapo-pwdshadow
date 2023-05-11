@@ -282,6 +282,12 @@ pwdshadow_set_value(
          int                           flags );
 
 
+static int
+pwdshadow_state_initialize(
+         pwdshadow_state_t *           st,
+         pwdshadow_t *                 ps );
+
+
 /////////////////
 //             //
 //  Variables  //
@@ -1333,10 +1339,8 @@ pwdshadow_op_add(
    // initialize state
    on                            = (slap_overinst *)op->o_bd->bd_info;
    ps                            = on->on_bi.bi_private;
-   memcpy(&st, &ps->ps_state, sizeof(st));
-   st.st_policy.bv_len           = ps->ps_def_policy.bv_len;
-   st.st_policy.bv_val           = ps->ps_def_policy.bv_val;
-   st.st_policySubentry.dt_ad    = ps->ps_policy_ad;
+   pwdshadow_state_initialize(&st, ps);
+
 
    // determines existing attribtues
    pwdshadow_get_attrs(ps, &st, op->ora_e, PWDSHADOW_FLG_USERADD);
@@ -1401,16 +1405,13 @@ pwdshadow_op_modify(
    // initialize state
    on                            = (slap_overinst *)op->o_bd->bd_info;
    ps                            = on->on_bi.bi_private;
-   memcpy(&st, &ps->ps_state, sizeof(st));
-   st.st_policySubentry.dt_ad    = ps->ps_policy_ad;
+   pwdshadow_state_initialize(&st, ps);
 
    // retrieve entry from backend
    bd_info              = op->o_bd->bd_info;
    op->o_bd->bd_info    = (BackendInfo *)on->on_info;
    rc                   = be_entry_get_rw( op, &op->o_req_ndn, NULL, NULL, 0, &entry );
    op->o_bd->bd_info    = (BackendInfo *)bd_info;
-   st.st_policy.bv_len  = ps->ps_def_policy.bv_len;
-   st.st_policy.bv_val  = ps->ps_def_policy.bv_val;
    if ( rc != LDAP_SUCCESS )
       return(SLAP_CB_CONTINUE);
 
@@ -1667,6 +1668,56 @@ pwdshadow_set_value(
    };
 
    dat->dt_flag  |= flags;
+
+   return(0);
+}
+
+int
+pwdshadow_state_initialize(
+         pwdshadow_state_t *           st,
+         pwdshadow_t *                 ps )
+{
+   const char *      text;
+
+   memset(st, 0, sizeof(pwdshadow_state_t));
+
+   st->st_policy.bv_len          = ps->ps_def_policy.bv_len;
+   st->st_policy.bv_val          = ps->ps_def_policy.bv_val;
+   st->st_policySubentry.dt_ad   = ps->ps_policy_ad;
+
+   // slapo-pwdshadow policy attributes
+   st->st_pwdShadowAutoExpire.dt_ad    = ad_pwdShadowAutoExpire;
+
+   // slapo-pwdshadow attributes
+   st->st_pwdShadowExpire.dt_ad        = ad_pwdShadowExpire;
+   st->st_pwdShadowFlag.dt_ad          = ad_pwdShadowFlag;
+   st->st_pwdShadowGenerate.dt_ad      = ad_pwdShadowGenerate;
+   st->st_pwdShadowInactive.dt_ad      = ad_pwdShadowInactive;
+   st->st_pwdShadowLastChange.dt_ad    = ad_pwdShadowLastChange;
+   st->st_pwdShadowMax.dt_ad           = ad_pwdShadowMax;
+   st->st_pwdShadowMin.dt_ad           = ad_pwdShadowMin;
+   st->st_pwdShadowWarning.dt_ad       = ad_pwdShadowWarning;
+
+   // slapo-ppolicy attributes (IETF draft-behera-ldap-password-policy-11)
+   slap_str2ad("pwdChangedTime",    &st->st_pwdChangedTime.dt_ad,    &text);
+   slap_str2ad("pwdEndTime",        &st->st_pwdEndTime.dt_ad,        &text);
+   slap_str2ad("pwdExpireWarning",  &st->st_pwdExpireWarning.dt_ad,  &text);
+   slap_str2ad("pwdGraceExpiry",    &st->st_pwdGraceExpiry.dt_ad,    &text);
+   slap_str2ad("pwdMaxAge",         &st->st_pwdMaxAge.dt_ad,         &text);
+   slap_str2ad("pwdMinAge",         &st->st_pwdMinAge.dt_ad,         &text);
+
+   // LDAP NIS attributes (RFC 2307)
+   slap_str2ad("shadowExpire",      &st->st_shadowExpire.dt_ad,      &text);
+   slap_str2ad("shadowFlag",        &st->st_shadowFlag.dt_ad,        &text);
+   slap_str2ad("shadowInactive",    &st->st_shadowInactive.dt_ad,    &text);
+   slap_str2ad("shadowLastChange",  &st->st_shadowLastChange.dt_ad,  &text);
+   slap_str2ad("shadowMax",         &st->st_shadowMax.dt_ad,         &text);
+   slap_str2ad("shadowMin",         &st->st_shadowMin.dt_ad,         &text);
+   slap_str2ad("shadowWarning",     &st->st_shadowWarning.dt_ad,     &text);
+
+   // User Schema (RFC 2256)
+   if ((st->st_userPassword.dt_ad = slap_schema.si_ad_userPassword) == NULL)
+      slap_str2ad("userPassword",   &st->st_userPassword.dt_ad,      &text);
 
    return(0);
 }
