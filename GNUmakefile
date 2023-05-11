@@ -45,7 +45,6 @@ sysconfdir		?= $(prefix)/etc/openldap
 TEST_TARGET		= openldap/pwdshadow-$(OPENLDAP_VERSION)
 TEST_FILES		= openldap/contrib/slapd-modules/pwdshadow/GNUmakefile \
 			  openldap/contrib/slapd-modules/pwdshadow/pwdshadow.c \
-			  openldap/contrib/slapd-modules/pwdshadow/pwdshadow.h \
 			  openldap/contrib/slapd-modules/pwdshadow/docs/slapo-pwdshadow.5.in
 
 
@@ -69,7 +68,7 @@ docs/slapo-pwdshadow.5: docs/slapo-pwdshadow.5.in
 	touch $(@)
 
 
-pwdshadow.lo: pwdshadow.c pwdshadow.h
+pwdshadow.lo: pwdshadow.c
 	rm -f $(@)
 	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(CFLAGS) $(CFLAGS_EXTRA) \
 	   $(CPPFLAGS) $(CPPFLAGS_EXTRA) -o pwdshadow.lo -c pwdshadow.c
@@ -157,12 +156,6 @@ openldap/contrib/slapd-modules/pwdshadow/GNUmakefile: GNUmakefile $(TEST_TARGET)
 openldap/contrib/slapd-modules/pwdshadow/pwdshadow.c: pwdshadow.c $(TEST_TARGET)-all
 	mkdir -p openldap/contrib/slapd-modules/pwdshadow
 	cp -p pwdshadow.c $(@)
-	touch $(@)
-
-
-openldap/contrib/slapd-modules/pwdshadow/pwdshadow.h: pwdshadow.h $(TEST_TARGET)-all
-	mkdir -p openldap/contrib/slapd-modules/pwdshadow
-	cp -p pwdshadow.h $(@)
 	touch $(@)
 
 

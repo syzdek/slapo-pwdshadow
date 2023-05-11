@@ -13,7 +13,7 @@
  *  top-level directory of the distribution or, alternatively, at
  *  <http://www.OpenLDAP.org/license.html>.
  */
-#include "pwdshadow.h"
+#include "portable.h"
 
 
 ///////////////
@@ -23,7 +23,6 @@
 ///////////////
 #pragma mark - Headers
 
-#include "portable.h"
 #include <ldap.h>
 #include "slap.h"
 #include "slap-config.h"
@@ -167,6 +166,12 @@ typedef struct pwdshadow_t
 //////////////////
 #pragma mark - Prototypes
 
+extern int
+init_module(
+         int                           argc,
+         char *                        argv[] );
+
+
 static int
 pwdshadow_cfg_gen(
          ConfigArgs *                  c );
@@ -247,6 +252,11 @@ pwdshadow_get_mods(
          Modifications *               mods,
          pwdshadow_data_t *            dat,
          int                           flags );
+
+
+extern int
+pwdshadow_initialize(
+         void );
 
 
 static int
