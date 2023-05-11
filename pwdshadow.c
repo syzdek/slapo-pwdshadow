@@ -1046,26 +1046,43 @@ pwdshadow_eval_policy(
    pwdshadow_t *        ps;
    BackendDB *          bd_orig;
    Entry *              entry;
+   BerVarray            vals;
 
    on       = (slap_overinst *)op->o_bd->bd_info;
    ps       = on->on_bi.bi_private;
    bd_orig  = op->o_bd;
+   entry    = NULL;
 
-   // exit if not policy is specified or policies are disabled
-   if ( (!(st->st_policy.bv_val)) || (!(ps->ps_use_policies)) )
+   // exit if policies are disabled by the configuration
+   if (!(ps->ps_use_policies))
       return(0);
 
-   // retrieve backend of policy
-   op->o_bd = select_backend( &st->st_policy, 0 );
-   if ( op->o_bd == NULL )
+   // attempt to retrieve entry's specific policy
+   if ((st->st_policy.bv_val))
    {
-		op->o_bd = bd_orig;
-      return(0);
+      vals = &st->st_policy;
+      if ((op->o_bd = select_backend(vals, 0)) != NULL)
+      {
+         rc = be_entry_get_rw(op, vals, NULL, NULL, 0, &entry);
+         if ((rc))
+            entry = NULL;
+      };
    };
 
-   // retrieve entry
-	rc = be_entry_get_rw(op, &st->st_policy, NULL, NULL, 0, &entry);
-   if ((rc))
+   // attempt to retrieve entry's specific policy
+   if ( (!(entry)) && ((ps->ps_def_policy.bv_val)) )
+   {
+      vals = &ps->ps_def_policy;
+      if ((op->o_bd = select_backend(vals, 0)) != NULL)
+      {
+         rc = be_entry_get_rw(op, vals, NULL, NULL, 0, &entry);
+         if ((rc))
+            entry = NULL;
+      };
+   };
+
+   // exit if a policy was not retreived
+   if (!(entry))
    {
 		op->o_bd = bd_orig;
       return(0);
@@ -1508,8 +1525,8 @@ pwdshadow_op_modify(
          pwdshadow_get_mods(mods, &st.st_policySubentry, PWDSHADOW_TYPE_EXISTS);
          if ((pwdshadow_flg_userdel(&st.st_policySubentry)))
          {
-            st.st_policy.bv_len  = ps->ps_def_policy.bv_len;
-            st.st_policy.bv_val  = ps->ps_def_policy.bv_val;
+            st.st_policy.bv_len  = 0;
+            st.st_policy.bv_val  = NULL;
          };
          if ((pwdshadow_flg_useradd(&st.st_policySubentry)))
          {
@@ -1724,8 +1741,6 @@ pwdshadow_state_initialize(
 {
    memset(st, 0, sizeof(pwdshadow_state_t));
 
-   st->st_policy.bv_len          = ps->ps_def_policy.bv_len;
-   st->st_policy.bv_val          = ps->ps_def_policy.bv_val;
    st->st_policySubentry.dt_ad   = ps->ps_policy_ad;
 
    ldap_pvt_thread_mutex_lock(&pwdshadow_ad_mutex);
