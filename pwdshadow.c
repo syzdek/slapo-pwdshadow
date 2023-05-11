@@ -1012,12 +1012,12 @@ pwdshadow_eval(
          dat->dt_post = st->st_pwdEndTime.dt_post;
       else if ( ((st->st_autoexpire)) &&
            ((pwdshadow_flg_willexist(&st->st_pwdShadowLastChange))) &&
-           ((pwdshadow_flg_exists(&st->st_pwdMaxAge))) )
+           ((pwdshadow_flg_willexist(&st->st_pwdShadowMax))) )
       {
          dat->dt_post =  st->st_pwdShadowLastChange.dt_post;
-         dat->dt_post += st->st_pwdMaxAge.dt_post;
-         if ((pwdshadow_flg_exists(&st->st_pwdGraceExpiry)))
-            dat->dt_post += st->st_pwdGraceExpiry.dt_post;
+         dat->dt_post += st->st_pwdShadowMax.dt_post;
+         if ((pwdshadow_flg_willexist(&st->st_pwdShadowInactive)))
+            dat->dt_post += st->st_pwdShadowInactive.dt_post;
       }
       else
       {
