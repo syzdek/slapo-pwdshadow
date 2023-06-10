@@ -7,24 +7,24 @@
 #
 #   /tmp/slapo-pwdshadow/libexec/slapd \
 #      -d conns,filter,config,acl,stats,sync \
-#      -f /tmp/openldap/etc/openldap/slapd.conf-test \
-#      -h "ldap://localhost ldapi://%2Ftmp%2Fopenldap%2Fvar%2Frun%2Fslapd.sock"
+#      -f /tmp/slapo-pwdshadow/etc/openldap/slapd.conf-test \
+#      -h "ldap://localhost ldapi://%2Ftmp%2Fslapo-pwdshadow%2Fvar%2Frun%2Fslapd.sock"
 #
 
 # daemon options
-pidfile		/tmp/openldap/var/run/slapd.pid
-argsfile	/tmp/openldap/var/run/slapd.args
+pidfile  /tmp/slapo-pwdshadow/var/run/slapd.pid
+argsfile	/tmp/slapo-pwdshadow/var/run/slapd.args
 
 # schema
-include		/tmp/openldap/etc/openldap/schema/core.schema
-include		/tmp/openldap/etc/openldap/schema/cosine.schema
-include		/tmp/openldap/etc/openldap/schema/inetorgperson.schema
-include		/tmp/openldap/etc/openldap/schema/java.schema
-include		/tmp/openldap/etc/openldap/schema/nis.schema
-include		/tmp/openldap/etc/openldap/schema/misc.schema
+include		/tmp/slapo-pwdshadow/etc/openldap/schema/core.schema
+include		/tmp/slapo-pwdshadow/etc/openldap/schema/cosine.schema
+include		/tmp/slapo-pwdshadow/etc/openldap/schema/inetorgperson.schema
+include		/tmp/slapo-pwdshadow/etc/openldap/schema/java.schema
+include		/tmp/slapo-pwdshadow/etc/openldap/schema/nis.schema
+include		/tmp/slapo-pwdshadow/etc/openldap/schema/misc.schema
 
 # load modules
-modulepath	/tmp/openldap/libexec/openldap
+modulepath	/tmp/slapo-pwdshadow/libexec/openldap
 moduleload	accesslog.la
 moduleload	back_mdb.la
 moduleload	back_null.la
@@ -58,7 +58,7 @@ suffix			"dc=example,dc=com"
 maxsize			1073741824
 rootdn			"cn=Manager,dc=example,dc=com"
 rootpw			"drowssap"
-directory		/tmp/openldap/var/openldap-data
+directory		/tmp/slapo-pwdshadow/var/openldap-data
 overlay			ppolicy
 overlay			pwdshadow
 ppolicy_default		"dc=example,dc=com"
