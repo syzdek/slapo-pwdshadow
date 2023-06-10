@@ -1374,6 +1374,7 @@ pwdshadow_initialize( void )
 	int					i;
 	int					code;
 
+	// register user and operation attributeTypes
 	for(i = 0; ((pwdshadow_ats[i].def)); i++)
 	{
 		if ((code = register_at(pwdshadow_ats[i].def, pwdshadow_ats[i].ad, 0)) != 0)
@@ -1398,6 +1399,7 @@ pwdshadow_initialize( void )
 		};
 	};
 
+	// register configuration options/attributes
 	if ((code = config_register_schema( pwdshadow_cfg_ats, pwdshadow_cfg_ocs )) != 0)
 	{
 		Debug( LDAP_DEBUG_ANY, "pwdshadow_initialize: config_register_schema failed\n");
