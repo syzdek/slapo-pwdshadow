@@ -21,7 +21,9 @@
 //  Headers  //
 //           //
 ///////////////
-#pragma mark - Headers
+#ifndef SLAPD_OVER_HELLOWORLD
+#	pragma mark - Headers
+#endif
 
 #include <ldap.h>
 #include "slap.h"
@@ -36,7 +38,9 @@
 //  Definitions  //
 //               //
 ///////////////////
-#pragma mark - Definitions
+#ifndef SLAPD_OVER_HELLOWORLD
+#	pragma mark - Definitions
+#endif
 
 #define PWDSHADOW_CFG_DEF_POLICY	0x01
 #define PWDSHADOW_CFG_POLICY_AD		0x02
@@ -89,7 +93,9 @@
 //  Datatypes  //
 //             //
 /////////////////
-#pragma mark - Datatypes
+#ifndef SLAPD_OVER_HELLOWORLD
+#	pragma mark - Datatypes
+#endif
 
 typedef struct pwdshadow_at_t
 {
@@ -164,7 +170,9 @@ typedef struct pwdshadow_t
 //  Prototypes  //
 //              //
 //////////////////
-#pragma mark - Prototypes
+#ifndef SLAPD_OVER_HELLOWORLD
+#	pragma mark - Prototypes
+#endif
 
 extern int
 init_module(
@@ -308,7 +316,9 @@ pwdshadow_state_initialize(
 //  Variables  //
 //             //
 /////////////////
-#pragma mark - Variables
+#ifndef SLAPD_OVER_HELLOWORLD
+#	pragma mark - Variables
+#endif
 
 static slap_overinst				pwdshadow;
 static ldap_pvt_thread_mutex_t		pwdshadow_ad_mutex;
@@ -359,7 +369,6 @@ static AttributeDescription *		ad_userPassword				= NULL;
 
 
 // overlay's LDAP operational and user attributes
-#pragma mark pwdshadow_ats
 static pwdshadow_at_t pwdshadow_ats[] =
 {
 	{	// pwdShadowLastChange: The number of days since January 1, 1970 on which
@@ -508,7 +517,6 @@ static pwdshadow_at_t pwdshadow_ats[] =
 
 
 // overlay's LDAP user object classes
-#pragma mark pwdshadow_ocs
 static char * pwdshadow_ocs[] =
 {
 	"( 1.3.6.1.4.1.27893.4.2.3.1"
@@ -522,7 +530,6 @@ static char * pwdshadow_ocs[] =
 
 
 // overlay's configuration attribute types
-#pragma mark pwdshadow_cfg_ats
 static ConfigTable pwdshadow_cfg_ats[] =
 {
 	{	.name		= "pwdshadow_default",
@@ -594,7 +601,6 @@ static ConfigTable pwdshadow_cfg_ats[] =
 
 
 // overlay's configuration object classes
-#pragma mark pwdshadow_cfg_ocs
 static ConfigOCs pwdshadow_cfg_ocs[] =
 {
 	{	.co_def		= "( 1.3.6.1.4.1.27893.4.2.5.1"
@@ -619,7 +625,9 @@ static ConfigOCs pwdshadow_cfg_ocs[] =
 //  Functions  //
 //             //
 /////////////////
-#pragma mark - Functions
+#ifndef SLAPD_OVER_HELLOWORLD
+#	pragma mark - Functions
+#endif
 
 #if SLAPD_OVER_PWDSHADOW == SLAPD_MOD_DYNAMIC
 int
