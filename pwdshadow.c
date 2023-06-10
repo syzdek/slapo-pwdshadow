@@ -104,6 +104,13 @@ typedef struct pwdshadow_at_t
 } pwdshadow_at_t;
 
 
+typedef struct pwdshadow_oc_t
+{
+	char *						def;
+	ObjectClass **				oc;
+} pwdshadow_oc_t;
+
+
 typedef struct pwdshadow_data_t
 {
 	AttributeDescription *		dt_ad;
@@ -356,6 +363,9 @@ static AttributeDescription *		ad_shadowWarning			= NULL;
 // User Schema (RFC 2256)
 static AttributeDescription *		ad_userPassword				= NULL;
 
+// user objectClasses
+static ObjectClass *				oc_pwdShadowPolicy			= NULL;
+
 
 // # OID Base is iso(1) org(3) dod(6) internet(1) private(4) enterprise(1)
 //	dms(27893) software(4) slapo-pwdshadow(2).
@@ -521,15 +531,19 @@ static pwdshadow_at_t pwdshadow_ats[] =
 
 
 // overlay's LDAP user object classes
-static char * pwdshadow_ocs[] =
+static pwdshadow_oc_t pwdshadow_ocs[] =
 {
-	"( 1.3.6.1.4.1.27893.4.2.3.1"
-	" NAME 'pwdShadowPolicy'"
-	" DESC 'Attributes for controlling pwdShadow overlay'"
-	" SUP top"
-	" AUXILIARY"
-	" MAY ( pwdShadowAutoExpire ) )",
-	NULL
+	{	.def	= "( 1.3.6.1.4.1.27893.4.2.3.1"
+				" NAME 'pwdShadowPolicy'"
+				" DESC 'Attributes for controlling pwdShadow overlay'"
+				" SUP top"
+				" AUXILIARY"
+				" MAY ( pwdShadowAutoExpire ) )",
+		.oc		= &oc_pwdShadowPolicy
+    },
+	{	.def	= NULL,
+		.oc		= NULL
+	}
 };
 
 
@@ -1373,11 +1387,13 @@ pwdshadow_initialize( void )
 		};
 	};
 
-	for (i = 0; ((pwdshadow_ocs[i])); i++)
+	// register user objectClasses
+	for (i = 0; ((pwdshadow_ocs[i].def)); i++)
 	{
-		if ((code = register_oc( pwdshadow_ocs[i], NULL, 0 )) != 0)
+		if ((code = register_oc(pwdshadow_ocs[i].def, pwdshadow_ocs[i].oc, 0)) != 0)
 		{
-			Debug( LDAP_DEBUG_ANY, "pwdshadow_initialize: register_oc failed\n");
+			Debug(LDAP_DEBUG_ANY, "pwdshadow_initialize: register_oc failed\n");
+			Debug(LDAP_DEBUG_ANY, "pwdshadow_initialize: %s\n", pwdshadow_ocs[i].def);
 			return(code);
 		};
 	};
