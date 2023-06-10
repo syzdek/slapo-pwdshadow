@@ -371,10 +371,11 @@ static AttributeDescription *		ad_userPassword				= NULL;
 // overlay's LDAP operational and user attributes
 static pwdshadow_at_t pwdshadow_ats[] =
 {
-	{	// pwdShadowLastChange: The number of days since January 1, 1970 on which
-		// the password was last changed.  This attribute is the equivalent of
-		// 'shadowLastChange'.  The value of this attribute is set when the
-		// password is changed and is not calculated at the time of the query.
+	{	// pwdShadowLastChange: The number of days since January 1, 1970 on
+		// which the password was last changed.  This attribute is the
+		// equivalent of 'shadowLastChange'.  The value of this attribute is
+		// set when the password is changed and is not calculated at the time
+		// of the query.
 		.def	= "( 1.3.6.1.4.1.27893.4.2.1.5"
 				" NAME ( 'pwdShadowLastChange' )"
 				" DESC 'The generated value for shadowLastChange'"
@@ -401,9 +402,9 @@ static pwdshadow_at_t pwdshadow_ats[] =
 		.ad		= &ad_pwdShadowMin
 	},
 	{	// pwdShadowMax: The maximum number of days before a password expires.
-		// This attribute is the equivalent of 'shadowMax', but is derived from
-		// the value of 'pwdMaxAge' in current password policy (pwdMaxAge / 60 /
-		// 60 /24).
+		// This attribute is the equivalent of 'shadowMax', but is derived
+		// from the value of 'pwdMaxAge' in current password policy
+		// (pwdMaxAge / 60 / 60 /24).
 		.def	= "( 1.3.6.1.4.1.27893.4.2.1.7"
 				" NAME ( 'pwdShadowMax' )"
 				" DESC 'shadowMax equivalent derived from pwdMaxAge'"
@@ -414,10 +415,11 @@ static pwdshadow_at_t pwdshadow_ats[] =
 				" USAGE directoryOperation )",
 		.ad		= &ad_pwdShadowMax
 	},
-	{	// pwdShadowWarning: The number of days before a password expires during
-		// which a user should be warned.  This attribute is the equivalent of
-		//  'shadowWarning', but is derived from the value of 'pwdExpireWarning'
-		// in current password policy (pwdExpireWarning / 60 / 60 /24).
+	{	// pwdShadowWarning: The number of days before a password expires
+		// during which a user should be warned.  This attribute is the
+		// equivalent of 'shadowWarning', but is derived from the value of
+		// 'pwdExpireWarning' in current password policy (pwdExpireWarning /
+		// 60 / 60 /24).
 		.def	= "( 1.3.6.1.4.1.27893.4.2.1.8"
 				" NAME ( 'pwdShadowWarning' )"
 				" DESC 'shadowWarning equivalent derived from pwdExpireWarning'"
@@ -428,11 +430,11 @@ static pwdshadow_at_t pwdshadow_ats[] =
 				" USAGE directoryOperation )",
 		.ad		= &ad_pwdShadowWarning
 	},
-	{	// pwdShadowInactive: The number of days after a password expires during
-		// which the password should still be accepted.  This attribute is the
-		// equivalent of 'shadowInactive', but is derived from the value of
-		// 'pwdGraceExpiry' in current password policy (pwdGraceExpiry / 60 /
-		// 60 /24).
+	{	// pwdShadowInactive: The number of days after a password expires
+		// during which the password should still be accepted.  This attribute
+		// is the equivalent of 'shadowInactive', but is derived from the
+		// value of 'pwdGraceExpiry' in current password policy
+		// (pwdGraceExpiry / 60 / 60 /24).
 		.def	= "( 1.3.6.1.4.1.27893.4.2.1.9"
 				" NAME ( 'pwdShadowInactive' )"
 				" DESC 'shadowInactive equivalent derived from pwdGraceExpiry'"
@@ -443,9 +445,10 @@ static pwdshadow_at_t pwdshadow_ats[] =
 				" USAGE directoryOperation )",
 		.ad		= &ad_pwdShadowInactive
 	},
-	{	// pwdShadowExpire: The number of days after January 1, 1970 on which the
-		// account expires. This attribute is the equivalent of 'shadowExpire',
-		// but is derived from the value of 'pwdEndTime' of the entry.
+	{	// pwdShadowExpire: The number of days after January 1, 1970 on which
+		// the account expires. This attribute is the equivalent of
+		// 'shadowExpire', but is derived from the value of 'pwdEndTime' of
+		// the entry.
 		.def	= "( 1.3.6.1.4.1.27893.4.2.1.10"
 				" NAME ( 'pwdShadowExpire' )"
 				" DESC 'shadowExpire equivalent derived from pwdEndTime'"
@@ -457,10 +460,10 @@ static pwdshadow_at_t pwdshadow_ats[] =
 				" USAGE directoryOperation )",
 		.ad		= &ad_pwdShadowExpire
 	},
-	{	// pwdShadowFlag: This attribute is the equivalent of 'shadowFlag'. This
-		// attribute is not used by the overlay and is included so
-		// pwdShadowAccount is able to be used as a one for one replacement with
-		// shadowAccount.
+	{	// pwdShadowFlag: This attribute is the equivalent of 'shadowFlag'.
+		// This attribute is not used by the overlay and is included so
+		// pwdShadowAccount is able to be used as a one for one replacement
+		// with shadowAccount.
 		.def	= "( 1.3.6.1.4.1.27893.4.2.1.11"
 				" NAME ( 'pwdShadowFlag' )"
 				" DESC 'duplicates shadowFlag'"
@@ -471,8 +474,9 @@ static pwdshadow_at_t pwdshadow_ats[] =
 				" USAGE directoryOperation )",
 		.ad		= &ad_pwdShadowFlag
 	},
-	{	// pwdShadowGenerate: This attribute enables or disables the generation
-		// of shadow compatible attributes from the password policy attributes.
+	{	// pwdShadowGenerate: This attribute enables or disables the
+		// generation of shadow compatible attributes from the password policy
+		// attributes.
 		.def	= "( 1.3.6.1.4.1.27893.4.2.2.1"
 				" NAME ( 'pwdShadowGenerate' )"
 				" DESC 'generate shadowAccount equivalent attributes'"
@@ -495,11 +499,11 @@ static pwdshadow_at_t pwdshadow_ats[] =
 				" SINGLE-VALUE )",
 		.ad		= &ad_pwdShadowAutoExpire
 	},
-	{	// pwdShadowPolicySubentry: This attribute specifies the pwdShadowPolicy
-		// subentry in effect for this object.  The attribute used to specify
-		// the pwdShadowPolicy subentry in affect may be changed using either
-		// olcPwdShadowPolicyAttr attribute in the config backend or by the
-		// pwdshadow_policy_attr option in slapd.conf.
+	{	// pwdShadowPolicySubentry: This attribute specifies the
+		// pwdShadowPolicy subentry in effect for this object.  The attribute
+		// used to specify the pwdShadowPolicy subentry in affect may be
+		// changed using either olcPwdShadowPolicyAttr attribute in the config
+		// backend or by the pwdshadow_policy_attr option in slapd.conf.
 		.def	= "( 1.3.6.1.4.1.27893.4.2.2.3"
 				" NAME ( 'pwdShadowPolicySubentry' )"
 				" DESC 'The pwdShadowPolicy subentry in effect for this object'"
