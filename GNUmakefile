@@ -136,7 +136,7 @@ test-env: $(TEST_FILES)
 
 test-env-install: test-env $(TEST_TARGET)-install
 	make -C openldap/contrib/slapd-modules/pwdshadow prefix=/tmp/slapo-pwdshadow install
-	$(INSTALL) -m 644 docs/slapd.conf-test /tmp/slapo-pwdshadow/etc/openldap
+	$(INSTALL) -m 644 docs/test-env/slapd.conf /tmp/slapo-pwdshadow/etc/openldap
 
 
 openldap-$(OPENLDAP_VERSION).tgz:
