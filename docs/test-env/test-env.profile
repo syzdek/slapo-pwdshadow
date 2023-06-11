@@ -25,32 +25,32 @@ export LDAPSECRET
 
 test_env_modify()
 {
-   /tmp/slapo-pwdshadow/bin/ldapmodify -x -y "${LDAPSECRET}" "${@}"
+	/tmp/slapo-pwdshadow/bin/ldapmodify -x -y "${LDAPSECRET}" "${@}"
 }
 test_env_modrdn()
 {
-   /tmp/slapo-pwdshadow/bin/ldapmodrdn -x -y "${LDAPSECRET}" "${@}"
+	/tmp/slapo-pwdshadow/bin/ldapmodrdn -x -y "${LDAPSECRET}" "${@}"
 }
 test_env_search()
 {
-   /tmp/slapo-pwdshadow/bin/ldapsearch -x -y "${LDAPSECRET}" "${@}"
+	/tmp/slapo-pwdshadow/bin/ldapsearch -x -y "${LDAPSECRET}" "${@}"
 }
 
 
 test_env_ldif_load()
 {
-   cat "$(dirname "${LDAPCONF}")/test-env.ldif" \
-      |/tmp/slapo-pwdshadow/bin/ldapmodify -x -y "${LDAPSECRET}" -a -c
+	cat "$(dirname "${LDAPCONF}")/test-env.ldif" \
+		|/tmp/slapo-pwdshadow/bin/ldapmodify -x -y "${LDAPSECRET}" -a -c
 }
 
 
 test_env_debug()
 {
-   /tmp/slapo-pwdshadow/libexec/slapd \
-      -d conns,filter,config,acl,stats,sync \
-      -f /tmp/slapo-pwdshadow/etc/openldap/slapd.conf \
-      -h "ldap://localhost ldapi://%2Ftmp%2Fslapo-pwdshadow%2Fvar%2Frun%2Fslapd.sock" \
-      "${@}"
+	/tmp/slapo-pwdshadow/libexec/slapd \
+		-d conns,filter,config,acl,stats,sync \
+		-f /tmp/slapo-pwdshadow/etc/openldap/slapd.conf \
+		-h "ldap://localhost ldapi://%2Ftmp%2Fslapo-pwdshadow%2Fvar%2Frun%2Fslapd.sock" \
+		"${@}"
 }
 
 # end of profile
