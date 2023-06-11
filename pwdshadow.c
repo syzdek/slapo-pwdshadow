@@ -1094,7 +1094,9 @@ pwdshadow_eval_policy(
 		vals = &st->st_policy;
 		if ((op->o_bd = select_backend(vals, 0)) != NULL)
 		{
-			rc = be_entry_get_rw(op, vals, NULL, NULL, 0, &entry);
+			rc			= be_entry_get_rw(op, vals, NULL, NULL, 0, &entry);
+			op->o_bd	= bd_orig
+Debug( LDAP_DEBUG_ANY, "pwdshadow_initialize: entry %i\n", rc);
 			if ((rc))
 				entry = NULL;
 		};
@@ -1106,7 +1108,8 @@ pwdshadow_eval_policy(
 		vals = &ps->ps_def_policy;
 		if ((op->o_bd = select_backend(vals, 0)) != NULL)
 		{
-			rc = be_entry_get_rw(op, vals, NULL, NULL, 0, &entry);
+			rc 			= be_entry_get_rw(op, vals, NULL, NULL, 0, &entry);
+			op->o_bd	= bd_orig;
 			if ((rc))
 				entry = NULL;
 		};
@@ -1115,7 +1118,6 @@ pwdshadow_eval_policy(
 	// exit if a policy was not retreived
 	if (!(entry))
 	{
-		op->o_bd = bd_orig;
 		return(0);
 	};
 
@@ -1133,7 +1135,6 @@ pwdshadow_eval_policy(
 
 	// release entry
 	be_entry_release_r(op, entry);
-	op->o_bd = bd_orig;
 
 	return(0);
 }
