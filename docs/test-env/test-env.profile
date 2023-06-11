@@ -14,8 +14,35 @@
 #   <http://www.OpenLDAP.org/license.html>.
 #
 
-LDAPCONF="$(cd "$(dirname "${_}")" && pwd)/ldap.conf"
-echo $TEST_ENV_PROFILE_DIR
+LDAPPROFILE="${_}"
+
+LDAPCONF="$(cd "$(dirname "${LDAPPROFILE}")" && pwd)/ldap.conf"
+export LDAPCONF
+
+LDAPSECRET="$(cd "$(dirname "${LDAPPROFILE}")" && pwd)/ldap.secret"
+export LDAPSECRET
+
+
+test_env_modify()
+{
+   /tmp/slapo-pwdshadow/bin/ldapmodify -x -y "${LDAPSECRET}" "${@}"
+}
+test_env_modrdn()
+{
+   /tmp/slapo-pwdshadow/bin/ldapmodrdn -x -y "${LDAPSECRET}" "${@}"
+}
+test_env_search()
+{
+   /tmp/slapo-pwdshadow/bin/ldapsearch -x -y "${LDAPSECRET}" "${@}"
+}
+
+
+test_env_ldif_load()
+{
+   cat "$(dirname "${LDAPCONF}")/test-env.ldif" \
+      |/tmp/slapo-pwdshadow/bin/ldapmodify -x -y "${LDAPSECRET}" -a -c
+}
+
 
 test_env_debug()
 {
