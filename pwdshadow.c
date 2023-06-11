@@ -1078,11 +1078,15 @@ pwdshadow_eval_policy(
 	BackendDB *			bd_orig;
 	Entry *				entry;
 	BerVarray			vals;
+	struct berval		save_dn;
+	struct berval		save_ndn;
 
 	on			= (slap_overinst *)op->o_bd->bd_info;
 	ps			= on->on_bi.bi_private;
 	bd_orig		= op->o_bd;
 	entry		= NULL;
+	save_dn		= op->o_dn;
+	save_ndn	= op->o_ndn;
 
 	// exit if policies are disabled by the configuration
 	if (!(ps->ps_use_policies))
@@ -1094,9 +1098,10 @@ pwdshadow_eval_policy(
 		vals = &st->st_policy;
 		if ((op->o_bd = select_backend(vals, 0)) != NULL)
 		{
+			op->o_dn 	= op->o_bd->be_rootdn;
+			op->o_ndn	= op->o_bd->be_rootndn;
 			rc			= be_entry_get_rw(op, vals, NULL, NULL, 0, &entry);
 			op->o_bd	= bd_orig
-Debug( LDAP_DEBUG_ANY, "pwdshadow_initialize: entry %i\n", rc);
 			if ((rc))
 				entry = NULL;
 		};
@@ -1108,6 +1113,8 @@ Debug( LDAP_DEBUG_ANY, "pwdshadow_initialize: entry %i\n", rc);
 		vals = &ps->ps_def_policy;
 		if ((op->o_bd = select_backend(vals, 0)) != NULL)
 		{
+			op->o_dn 	= op->o_bd->be_rootdn;
+			op->o_ndn	= op->o_bd->be_rootndn;
 			rc 			= be_entry_get_rw(op, vals, NULL, NULL, 0, &entry);
 			op->o_bd	= bd_orig;
 			if ((rc))
@@ -1118,6 +1125,8 @@ Debug( LDAP_DEBUG_ANY, "pwdshadow_initialize: entry %i\n", rc);
 	// exit if a policy was not retreived
 	if (!(entry))
 	{
+		op->o_dn	= save_dn;
+		op->o_ndn	= save_ndn;
 		return(0);
 	};
 
@@ -1135,6 +1144,8 @@ Debug( LDAP_DEBUG_ANY, "pwdshadow_initialize: entry %i\n", rc);
 
 	// release entry
 	be_entry_release_r(op, entry);
+	op->o_dn	= save_dn;
+	op->o_ndn	= save_ndn;
 
 	return(0);
 }
