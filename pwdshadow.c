@@ -1101,7 +1101,7 @@ pwdshadow_eval_policy(
 			op->o_dn 	= op->o_bd->be_rootdn;
 			op->o_ndn	= op->o_bd->be_rootndn;
 			rc			= be_entry_get_rw(op, vals, NULL, NULL, 0, &entry);
-			op->o_bd	= bd_orig
+			op->o_bd	= bd_orig;
 			if ((rc))
 				entry = NULL;
 		};
